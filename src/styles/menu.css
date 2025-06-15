@@ -1,0 +1,28 @@
+.card-title {
+  color: var(--text-primary);
+}
+
+.card-text {
+  color: var(--text-secondary);
+}
+
+.card-img-top {
+  border-radius: 5px;
+}
+
+.badge {
+  font-size: 0.9rem;
+}
+
+.form-control,
+.form-select {
+  border-color: var(--border-color);
+  background-color: var(--background-light);
+  color: var(--text-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--accent-color);
+  box-shadow: var(--focus-shadow);
+}

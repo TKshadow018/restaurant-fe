@@ -1,0 +1,90 @@
+/* Theme Toggle Button Styles */
+.theme-selector {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--background-white);
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
+  max-width: 200px;
+}
+
+.theme-btn {
+  width: 28px;
+  height: 28px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.theme-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--text-secondary);
+}
+
+.theme-btn.active {
+  border-color: var(--accent-color);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Theme button gradients */
+.theme-btn.default {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+}
+
+.theme-btn.sunset {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+.theme-btn.forest {
+  background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+}
+
+.theme-btn.night {
+  background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
+}
+
+.theme-btn.ocean {
+  background: linear-gradient(135deg, #0077be 0%, #004c8c 100%);
+}
+
+.theme-btn.rose {
+  background: linear-gradient(135deg, #e84393 0%, #c44569 100%);
+}
+
+.theme-btn.autumn {
+  background: linear-gradient(135deg, #d63031 0%, #74b9ff 100%);
+}
+
+.theme-btn.mint {
+  background: linear-gradient(135deg, #00b894 0%, #55efc4 100%);
+}
+
+.theme-btn.mono {
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+}
+
+/* Responsive theme selector */
+@media (max-width: 768px) {
+  .theme-selector {
+    bottom: 10px;
+    right: 10px;
+    max-width: 150px;
+    padding: 8px;
+    gap: 6px;
+  }
+  
+  .theme-btn {
+    width: 24px;
+    height: 24px;
+  }
+}

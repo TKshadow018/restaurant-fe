@@ -1,0 +1,83 @@
+.banner-card {
+  min-height: 350px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25), 0 1.5rem 1rem rgba(0,0,0,0.10);
+  background: var(--background-white, #fff);
+}
+
+.banner-card-main {
+  min-height: 750px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25), 0 1.5rem 1rem rgba(0,0,0,0.10);
+  background: var(--background-white, #fff);
+}
+
+.banner-image {
+  object-fit: cover;
+  height: 350px;
+}
+
+.banner-image-main {
+  object-fit: cover;
+  height: 750px;
+}
+
+
+.banner-overlay {
+  background: rgba(0,0,0,0.2);
+  border-radius: inherit;
+  z-index: 1;
+  pointer-events: none; /* <-- Add this line */
+}
+
+.banner-text {
+  z-index: 2;
+  max-width: 80%;
+}
+
+.banner-text-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.banner-text-top-left {
+  top: 5%;
+  left: 5%;
+  text-align: left;
+}
+.banner-text-top-right {
+  top: 5%;
+  right: 5%;
+  left: auto;
+  text-align: right;
+}
+.banner-text-bottom-left {
+  bottom: 5%;
+  left: 5%;
+  text-align: left;
+}
+.banner-text-bottom-right {
+  bottom: 5%;
+  right: 5%;
+  left: auto;
+  text-align: right;
+}
+
+.banner-badge {
+  background: rgba(30, 30, 30, 0.9);
+  border: 2px solid var(--primary-color, #007bff);
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.25);
+  display: inline-block;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  color: var(--text-primary);
+  min-width: 220px;
+}
+
+.banner-title {
+  color: var(--primary-color);
+}
+.banner-subtitle {
+  color: var(--secondary-color);
+}
+.banner-desc {
+  color: var(--text-light);
+}
