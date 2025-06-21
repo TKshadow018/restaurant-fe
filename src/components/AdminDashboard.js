@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useAdmin } from '../contexts/AdminContext';
-import { useFood } from '../contexts/FoodContext';
-import UserManagement from './admin/UserManagement';
-import FoodManagement from './admin/FoodManagement';
-import OrderManagement from './admin/OrderManagement';
-import ContactManagement from './admin/ContactManagement';
-import UserFeedbackManagement from './admin/UserFeedbackManagement';
-import DashboardStats from './admin/DashboardStats';
-import CampaignManagement from './admin/CampaignManagement';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAdmin } from '@/contexts/AdminContext';
+import { useFood } from '@/contexts/FoodContext';
+import UserManagement from '@/components/admin/UserManagement';
+import FoodManagement from '@/components/admin/FoodManagement';
+import OrderManagement from '@/components/admin/OrderManagement';
+import ContactManagement from '@/components/admin/ContactManagement';
+import UserFeedbackManagement from '@/components/admin/UserFeedbackManagement';
+import DashboardStats from '@/components/admin/DashboardStats';
+import CampaignManagement from '@/components/admin/CampaignManagement';
+import Loading from '@/components/Loading';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { users, orders } = useAdmin();
-  const { foods } = useFood();
+  const { users = [], orders = [], loading: adminLoading } = useAdmin();
+  const { foods = [], loading: foodLoading } = useFood();
 
   const handleLogout = async () => {
     try {
@@ -48,6 +49,11 @@ const AdminDashboard = () => {
         return <DashboardStats users={users} foods={foods} orders={orders} />;
     }
   };
+
+  // Show loading spinner while data is being fetched
+  if (adminLoading || foodLoading) {
+    return <Loading message="Loading admin dashboard..." height="100vh" />;
+  }
 
   return (
     <div className="min-vh-100 bg-light">
@@ -89,7 +95,7 @@ const AdminDashboard = () => {
                     className={`nav-link btn btn-link text-start w-100 ${activeTab === 'users' ? 'active' : ''}`}
                     onClick={() => setActiveTab('users')}
                   >
-                    👥 Users ({users.length})
+                    👥 Users ({users?.length || 0})
                   </button>
                 </li>
                 <li className="nav-item">
@@ -97,7 +103,7 @@ const AdminDashboard = () => {
                     className={`nav-link btn btn-link text-start w-100 ${activeTab === 'foods' ? 'active' : ''}`}
                     onClick={() => setActiveTab('foods')}
                   >
-                    🍽️ Food Items ({foods.length})
+                    🍽️ Food Items ({foods?.length || 0})
                   </button>
                 </li>
                 <li className="nav-item">
@@ -105,7 +111,7 @@ const AdminDashboard = () => {
                     className={`nav-link btn btn-link text-start w-100 ${activeTab === 'orders' ? 'active' : ''}`}
                     onClick={() => setActiveTab('orders')}
                   >
-                    📦 Orders ({orders.length})
+                    📦 Orders ({orders?.length || 0})
                   </button>
                 </li>
                 <li className="nav-item">

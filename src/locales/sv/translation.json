@@ -1,0 +1,76 @@
+{
+  "navbar": {
+    "home": "Hem",
+    "menu": "Meny",
+    "campaign": "Kampanj",
+    "about": "Om Oss",
+    "adminPanel": "Admin Panel",
+    "signIn": "Logga In",
+    "logout": "Logga Ut",
+    "welcome": "Välkommen"
+  },
+  "home": {
+    "welcomeTitle": "Välkommen till {{title}}",
+    "subtitle": "Upplev den finaste matlagningen med vår noggrant utformade meny och exceptionella service.",
+    "getStarted": "Kom Igång",
+    "features": {
+      "menu": {
+        "title": "Utsökt Meny",
+        "description": "Upptäck vårt noggrant utvalda urval av rätter gjorda med de finaste ingredienserna."
+      },
+      "chefs": {
+        "title": "Expertkockar",
+        "description": "Våra världsklassiga kockar tillför år av erfarenhet och passion till varje rätt."
+      },
+      "atmosphere": {
+        "title": "Mysig Atmosfär",
+        "description": "Njut av din måltid i vår varma, välkomnande miljö perfekt för alla tillfällen."
+      }
+    }
+  },
+  "contact": {
+    "title": "Kontakta Oss",
+    "subtitle": "Kontakta oss för reservationer, förfrågningar eller feedback",
+    "getInTouch": "Kom i Kontakt",
+    "sendMessage": "Skicka ett Meddelande",
+    "findUs": "Hitta Oss",
+    "address": "Adress",
+    "phone": "Telefon",
+    "email": "E-post",
+    "businessHours": "Öppettider",
+    "followUs": "Följ Oss",
+    "form": {
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "email": "E-post",
+      "phone": "Telefon (Valfritt)",
+      "subject": "Ämne",
+      "message": "Meddelande",
+      "messagePlaceholder": "Berätta hur vi kan hjälpa dig...",
+      "required": "*",
+      "sending": "Skickar...",
+      "sendButton": "Skicka Meddelande",
+      "subjects": {
+        "choose": "Välj...",
+        "reservation": "Reservationsförfrågan",
+        "feedback": "Feedback",
+        "catering": "Cateringtjänster",
+        "general": "Allmän Fråga",
+        "other": "Annat"
+      }
+    },
+    "messages": {
+      "success": "Tack för att du kontaktade oss! Vi återkommer så snart som möjligt.",
+      "requiredFields": "Vänligen fyll i alla obligatoriska fält",
+      "invalidEmail": "Vänligen ange en giltig e-postadress",
+      "submitError": "Misslyckades att skicka meddelande. Försök igen.",
+      "loadingContact": "Laddar kontaktinformation...",
+      "loadingMap": "Laddar karta..."
+    },
+    "defaultHours": {
+      "monday": "Måndag - Fredag: 11:00 - 22:00",
+      "saturday": "Lördag: 12:00 - 23:00",
+      "sunday": "Söndag: 12:00 - 21:00"
+    }
+  }
+}

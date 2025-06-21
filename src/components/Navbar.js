@@ -1,10 +1,15 @@
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { isUserAdmin } from '@/utils/adminUtils';
 import '@/styles/theme.css';
+import '@/styles/navbar.css';
 
 const Navbar = ({ onNavigate }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     try {
@@ -16,23 +21,37 @@ const Navbar = ({ onNavigate }) => {
   };
 
   const handleNavigation = (key) => {
-    if (onNavigate) onNavigate(key);
+    if (onNavigate) {
+      onNavigate(key);
+    }
     // Close navbar collapse on mobile
     const navbarCollapse = document.getElementById('navbarNav');
     if (navbarCollapse && navbarCollapse.classList.contains('show')) {
       navbarCollapse.classList.remove('show');
-    } else if (onNavigate && key === 'admin') {
+    }
+    
+    // Handle direct navigation for login and admin
+    if (key === 'login' || key === 'admin') {
       navigate(`/${key}`);
     }
   };
 
-  // Check if user is admin
-  const isAdmin = currentUser?.email === process.env.REACT_APP_ADMIN_EMAIL;
+  // Check if user is admin using utility function
+  const isAdmin = isUserAdmin(currentUser?.email);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="px-5 container-fluid">
-        <span className="navbar-brand fw-bold">🍽️ {process.env.REACT_APP_APP_TITLE}</span>
+        <div className="navbar-brand fw-bold d-flex flex-column bg-white py-1 px-2 text-center">
+          {process.env.REACT_APP_APP_TITLE?.split(' ').map((word, index) => (
+            <span 
+              key={index} 
+              className={index % 2 === 0 ? 'navbar-title-top' : 'navbar-title-bottom'}
+            >
+              {word}
+            </span>
+          ))}
+        </div>
         
         <button
           className="navbar-toggler"
@@ -47,62 +66,66 @@ const Navbar = ({ onNavigate }) => {
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
               <button
-                className="btn btn-link text-white nav-link border-0"
+                className="btn btn-link text-white nav-link border-0 fs-5 fw-bold"
                 onClick={() => handleNavigation('home')}
               >
-                Home
+                {t('navbar.home')}
               </button>
             </li>
             <li className="nav-item">
               <button
-                className="btn btn-link text-white nav-link border-0"
+                className="btn btn-link text-white nav-link border-0 fs-5 fw-bold"
                 onClick={() => handleNavigation('menu')}
               >
-                Menu
+                {t('navbar.menu')}
               </button>
             </li>
             <li className="nav-item">
               <button
-                className="btn btn-link text-white nav-link border-0"
+                className="btn btn-link text-white nav-link border-0 fs-5 fw-bold"
                 onClick={() => handleNavigation('campaign')}
               >
-                Campaign
+                {t('navbar.campaign')}
               </button>
             </li>
             <li className="nav-item">
               <button
-                className="btn btn-link text-white nav-link border-0"
+                className="btn btn-link text-white nav-link border-0 fs-5 fw-bold"
                 onClick={() => handleNavigation('about')}
               >
-                About Us
+                {t('navbar.about')}
               </button>
             </li>
           </ul>
           
           <div className="navbar-nav ms-auto d-flex align-items-center">
+            <LanguageSwitcher />
             {currentUser ? (
               <>
-                <span className="navbar-text text-white me-3">
-                  Welcome, {currentUser?.displayName || currentUser?.email}
-                </span>
                 {isAdmin && (
                   <button
-                    className="btn btn-warning me-2"
+                    className="btn btn-warning me-2 fs-5 fw-bold"
                     onClick={() => handleNavigation('admin')}
+                    style={{ minWidth: '140px' }}
                   >
-                    Admin Panel
+                    {t('navbar.adminPanel')}
                   </button>
                 )}
-                <button className="btn btn-danger" onClick={handleLogout}>
-                  Logout
+                <button 
+                  className="btn btn-danger fs-5 fw-bold" 
+                  onClick={handleLogout}
+                  style={{ minWidth: '120px' }}
+                >
+                  {t('navbar.logout')}
                 </button>
               </>
             ) : (
               <button 
-                className="btn btn-success" 
+                className="btn btn-success fs-5 fw-bold" 
                 onClick={() => handleNavigation('login')}
+                style={{ minWidth: '120px' }}
               >
-                Sign In
+                {t('navbar.signIn')}
               </button>
             )}
           </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAdmin } from '../../contexts/AdminContext';
+import { useAdmin } from '@/contexts/AdminContext';
 
 const OrderManagement = () => {
   const { orders, updateOrderStatus, users } = useAdmin();

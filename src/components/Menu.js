@@ -13,7 +13,7 @@ import {
 } from "@/store/selectors/menuSelectors";
 import Loading from "@/components/Loading";
 import MenuItemModal from "@/components/MenuItemModal";
-import '@/styles/theme.css';
+import "@/styles/theme.css";
 
 const Menu = () => {
   const dispatch = useDispatch();
@@ -83,10 +83,8 @@ const Menu = () => {
 
   return (
     <>
-
       <div className="px-5 my-5">
         <h1 className="text-center mb-4 text-primary">MENU</h1>
-
         {error && (
           <div
             className="alert alert-danger alert-dismissible fade show"

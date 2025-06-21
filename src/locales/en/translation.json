@@ -1,0 +1,76 @@
+{
+  "navbar": {
+    "home": "Home",
+    "menu": "Menu",
+    "campaign": "Campaign",
+    "about": "About Us",
+    "adminPanel": "Admin Panel",
+    "signIn": "Sign In",
+    "logout": "Logout",
+    "welcome": "Welcome"
+  },
+  "home": {
+    "welcomeTitle": "Welcome to {{title}}",
+    "subtitle": "Experience the finest dining with our carefully crafted menu and exceptional service.",
+    "getStarted": "Get Started",
+    "features": {
+      "menu": {
+        "title": "Exquisite Menu",
+        "description": "Discover our carefully curated selection of dishes made with the finest ingredients."
+      },
+      "chefs": {
+        "title": "Expert Chefs",
+        "description": "Our world-class chefs bring years of experience and passion to every dish."
+      },
+      "atmosphere": {
+        "title": "Cozy Atmosphere",
+        "description": "Enjoy your meal in our warm, welcoming environment perfect for any occasion."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with us for reservations, inquiries, or feedback",
+    "getInTouch": "Get In Touch",
+    "sendMessage": "Send Us a Message",
+    "findUs": "Find Us",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "businessHours": "Business Hours",
+    "followUs": "Follow Us",
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone (Optional)",
+      "subject": "Subject",
+      "message": "Message",
+      "messagePlaceholder": "Tell us how we can help you...",
+      "required": "*",
+      "sending": "Sending...",
+      "sendButton": "Send Message",
+      "subjects": {
+        "choose": "Choose...",
+        "reservation": "Reservation Inquiry",
+        "feedback": "Feedback",
+        "catering": "Catering Services",
+        "general": "General Question",
+        "other": "Other"
+      }
+    },
+    "messages": {
+      "success": "Thank you for contacting us! We'll get back to you as soon as possible.",
+      "requiredFields": "Please fill in all required fields",
+      "invalidEmail": "Please enter a valid email address",
+      "submitError": "Failed to send message. Please try again.",
+      "loadingContact": "Loading contact information...",
+      "loadingMap": "Loading map..."
+    },
+    "defaultHours": {
+      "monday": "Monday - Friday: 11:00 AM - 10:00 PM",
+      "saturday": "Saturday: 12:00 PM - 11:00 PM",
+      "sunday": "Sunday: 12:00 PM - 9:00 PM"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useFood } from '../../contexts/FoodContext';
-import FoodModal from './FoodModal';
+import { useFood } from '@/contexts/FoodContext';
+import FoodModal from '@/components/admin/FoodModal';
 import { 
   collection, 
   addDoc, 
@@ -10,7 +10,7 @@ import {
   doc, 
   onSnapshot 
 } from 'firebase/firestore';
-import { db } from '../../firebase/config'; // Adjust path as needed
+import { db } from '@/firebase/config';
 
 const FoodManagement = () => {
   const { foods, deleteFood, updateFood, setFoods } = useFood();

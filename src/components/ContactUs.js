@@ -5,17 +5,19 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
-import Loading from "./Loading";
-import FeedbackModal from "./FeedbackModal";
+import { db } from "@/firebase/config";
+import Loading from "@/components/Loading";
+import FeedbackModal from "@/components/FeedbackModal";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchContactInfo,
   setContactInfo,
   clearError,
-} from "../store/slices/contactSlice";
+} from "@/store/slices/contactSlice";
+import { useTranslation } from "react-i18next";
 
 const ContactUs = () => {
+  const { t, i18n } = useTranslation(); // Add i18n to get current language
   const dispatch = useDispatch();
   const { contactInfo, loading, error } = useSelector(
     (state) => state.contact
@@ -95,13 +97,13 @@ const ContactUs = () => {
         !formData.subject ||
         !formData.message
       ) {
-        throw new Error("Please fill in all required fields");
+        throw new Error(t('contact.messages.requiredFields'));
       }
 
       // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
-        throw new Error("Please enter a valid email address");
+        throw new Error(t('contact.messages.invalidEmail'));
       }
 
       // Save to Firebase
@@ -132,7 +134,7 @@ const ContactUs = () => {
     } catch (err) {
       console.error("Error submitting form:", err);
       setSubmitError(
-        err.message || "Failed to send message. Please try again."
+        err.message || t('contact.messages.submitError')
       );
     } finally {
       setSubmitting(false);
@@ -149,7 +151,7 @@ const ContactUs = () => {
   };
 
   if (loading) {
-    return <Loading message="Loading contact information..." height="100vh" />;
+    return <Loading message={t('contact.messages.loadingContact')} height="100vh" />;
   }
 
   return (
@@ -160,10 +162,10 @@ const ContactUs = () => {
             <div className="col-lg-8">
               <div className="text-center mb-5">
                 <h1 className="display-4 fw-bold mb-3 text-primary">
-                  Contact Us
+                  {t('contact.title')}
                 </h1>
                 <p className="lead text-secondary">
-                  Get in touch with us for reservations, inquiries, or feedback
+                  {t('contact.subtitle')}
                 </p>
               </div>
             </div>
@@ -187,7 +189,7 @@ const ContactUs = () => {
             isSuccess={submitSuccess}
             message={
               submitSuccess
-                ? "Thank you for contacting us! We'll get back to you as soon as possible."
+                ? t('contact.messages.success')
                 : submitError
             }
             onClose={handleModalClose}
@@ -198,7 +200,7 @@ const ContactUs = () => {
             <div className="col-lg-6">
               <div className="card border-0 shadow-lg h-100">
                 <div className="card-body p-4">
-                  <h3 className="card-title mb-4 text-primary">Get In Touch</h3>
+                  <h3 className="card-title mb-4 text-primary">{t('contact.getInTouch')}</h3>
 
                   {/* Address */}
                   <div className="d-flex align-items-start mb-4">
@@ -218,7 +220,7 @@ const ContactUs = () => {
                       </div>
                     </div>
                     <div className="flex-grow-1 ms-3">
-                      <h5 className="mb-1 text-dark">Address</h5>
+                      <h5 className="mb-1 text-dark">{t('contact.address')}</h5>
                       <p className="mb-0 text-muted">{contactInfo?.address}</p>
                     </div>
                   </div>
@@ -239,7 +241,7 @@ const ContactUs = () => {
                       </div>
                     </div>
                     <div className="flex-grow-1 ms-3">
-                      <h5 className="mb-1 text-dark">Phone</h5>
+                      <h5 className="mb-1 text-dark">{t('contact.phone')}</h5>
                       <a
                         href={`tel:${contactInfo?.phone}`}
                         className="text-decoration-none text-primary"
@@ -266,7 +268,7 @@ const ContactUs = () => {
                       </div>
                     </div>
                     <div className="flex-grow-1 ms-3">
-                      <h5 className="mb-1 text-dark">Email</h5>
+                      <h5 className="mb-1 text-dark">{t('contact.email')}</h5>
                       <a
                         href={`mailto:${contactInfo?.email}`}
                         className="text-decoration-none text-primary"
@@ -294,7 +296,7 @@ const ContactUs = () => {
                       </div>
                     </div>
                     <div className="flex-grow-1 ms-3">
-                      <h5 className="mb-1 text-dark">Business Hours</h5>
+                      <h5 className="mb-1 text-dark">{t('contact.businessHours')}</h5>
                       {contactInfo?.businessHours ? (
                         <div>
                           {formatBusinessHours(contactInfo.businessHours)}
@@ -302,13 +304,13 @@ const ContactUs = () => {
                       ) : (
                         <div>
                           <p className="mb-1 text-muted">
-                            Monday - Friday: 11:00 AM - 10:00 PM
+                            {t('contact.defaultHours.monday')}
                           </p>
                           <p className="mb-1 text-muted">
-                            Saturday: 12:00 PM - 11:00 PM
+                            {t('contact.defaultHours.saturday')}
                           </p>
                           <p className="mb-0 text-muted">
-                            Sunday: 12:00 PM - 9:00 PM
+                            {t('contact.defaultHours.sunday')}
                           </p>
                         </div>
                       )}
@@ -335,7 +337,7 @@ const ContactUs = () => {
                         </div>
                       </div>
                       <div className="flex-grow-1 ms-3">
-                        <h5 className="mb-2 text-dark">Follow Us</h5>
+                        <h5 className="mb-2 text-dark">{t('contact.followUs')}</h5>
                         <div className="d-flex gap-2 flex-wrap">
                           {contactInfo?.socialMedia?.facebook && (
                             <a
@@ -380,7 +382,7 @@ const ContactUs = () => {
               <div className="card border-0 shadow-lg h-100">
                 <div className="card-body p-4">
                   <h3 className="card-title mb-4 text-primary">
-                    Send Us a Message
+                    {t('contact.sendMessage')}
                   </h3>
                   <form onSubmit={handleSubmit}>
                     <div className="row g-3">
@@ -389,7 +391,7 @@ const ContactUs = () => {
                           htmlFor="firstName"
                           className="form-label text-dark"
                         >
-                          First Name *
+                          {t('contact.form.firstName')} {t('contact.form.required')}
                         </label>
                         <input
                           type="text"
@@ -406,7 +408,7 @@ const ContactUs = () => {
                           htmlFor="lastName"
                           className="form-label text-dark"
                         >
-                          Last Name *
+                          {t('contact.form.lastName')} {t('contact.form.required')}
                         </label>
                         <input
                           type="text"
@@ -420,7 +422,7 @@ const ContactUs = () => {
                       </div>
                       <div className="col-12">
                         <label htmlFor="email" className="form-label text-dark">
-                          Email *
+                          {t('contact.form.email')} {t('contact.form.required')}
                         </label>
                         <input
                           type="email"
@@ -434,7 +436,7 @@ const ContactUs = () => {
                       </div>
                       <div className="col-12">
                         <label htmlFor="phone" className="form-label text-dark">
-                          Phone (Optional)
+                          {t('contact.form.phone')}
                         </label>
                         <input
                           type="tel"
@@ -450,7 +452,7 @@ const ContactUs = () => {
                           htmlFor="subject"
                           className="form-label text-dark"
                         >
-                          Subject *
+                          {t('contact.form.subject')} {t('contact.form.required')}
                         </label>
                         <select
                           className="form-select"
@@ -460,14 +462,16 @@ const ContactUs = () => {
                           required
                           disabled={submitting}
                         >
-                          <option value="">Choose...</option>
+                          <option value="">{t('contact.form.subjects.choose')}</option>
                           <option value="reservation">
-                            Reservation Inquiry
+                            {t('contact.form.subjects.reservation')}
                           </option>
-                          <option value="feedback">Feedback</option>
-                          <option value="catering">Catering Services</option>
-                          <option value="general">General Question</option>
-                          <option value="other">Other</option>
+                          <option value="feedback">{t('contact.form.subjects.feedback')}</option>
+                          <option value="catering">
+                            {t('contact.form.subjects.catering')}
+                          </option>
+                          <option value="general">{t('contact.form.subjects.general')}</option>
+                          <option value="other">{t('contact.form.subjects.other')}</option>
                         </select>
                       </div>
                       <div className="col-12">
@@ -475,7 +479,7 @@ const ContactUs = () => {
                           htmlFor="message"
                           className="form-label text-dark"
                         >
-                          Message *
+                          {t('contact.form.message')} {t('contact.form.required')}
                         </label>
                         <textarea
                           className="form-control"
@@ -484,7 +488,7 @@ const ContactUs = () => {
                           value={formData.message}
                           onChange={handleInputChange}
                           required
-                          placeholder="Tell us how we can help you..."
+                          placeholder={t('contact.form.messagePlaceholder')}
                           disabled={submitting}
                         ></textarea>
                       </div>
@@ -501,10 +505,10 @@ const ContactUs = () => {
                                 role="status"
                                 aria-hidden="true"
                               ></span>
-                              Sending...
+                              {t('contact.form.sending')}
                             </>
                           ) : (
-                            "Send Message"
+                            t('contact.form.sendButton')
                           )}
                         </button>
                       </div>
@@ -519,7 +523,7 @@ const ContactUs = () => {
             <div className="col-12">
               <div className="card border-0 shadow-lg">
                 <div className="card-body p-0">
-                  <h3 className="card-title p-4 mb-0 text-primary">Find Us</h3>
+                  <h3 className="card-title p-4 mb-0 text-primary">{t('contact.findUs')}</h3>
                   <div
                     className="map-container"
                     style={{ height: "400px", position: "relative" }}
@@ -527,14 +531,14 @@ const ContactUs = () => {
                     <iframe
                       src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2131.8181843147266!2d11.968582316073845!3d57.69718398108996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x464ff30b3b7f3f3f%3A0x4c9b9b9b9b9b9b9b!2s${encodeURIComponent(
                         contactInfo?.address || ""
-                      )}!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus`}
+                      )}!5e0!3m2!1s${i18n.language}!2s${i18n.language === 'sv' ? 'se' : 'us'}!4v1234567890123!5m2!1s${i18n.language}!2s${i18n.language === 'sv' ? 'se' : 'us'}`}
                       width="100%"
                       height="400"
                       style={{ border: 0 }}
                       allowFullScreen=""
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
-                      title={`${contactInfo?.name || process.env.REACT_APP_APP_TITLE } Location`}
+                      title={`${contactInfo?.name || process.env.REACT_APP_APP_TITLE} ${t('contact.findUs')}`}
                     ></iframe>
 
                     <div
@@ -547,10 +551,10 @@ const ContactUs = () => {
                           role="status"
                         >
                           <span className="visually-hidden">
-                            Loading map...
+                            {t('contact.messages.loadingMap')}
                           </span>
                         </div>
-                        <p className="text-muted">Loading map...</p>
+                        <p className="text-muted">{t('contact.messages.loadingMap')}</p>
                       </div>
                     </div>
                   </div>

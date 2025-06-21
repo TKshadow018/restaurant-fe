@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase/config';
+import { db } from '@/firebase/config';
 
 export const fetchCampaigns = createAsyncThunk('campaigns/fetchCampaigns', async () => {
   const snapshot = await getDocs(collection(db, 'campaigns'));

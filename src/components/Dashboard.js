@@ -1,12 +1,13 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import UserHome from './UserHome';
+import { useAuth } from '@/contexts/AuthContext';
+import UserHome from '@/components/UserHome';
+import { isUserAdmin } from '@/utils/adminUtils';
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
 
-  // Check if user is admin (you can implement your own logic)
-  const isAdmin = currentUser?.email === process.env.REACT_APP_ADMIN_EMAIL;
+  // Check if user is admin using utility function
+  const isAdmin = isUserAdmin(currentUser?.email);
 
   return (
     <div className="min-vh-100 bg-light">

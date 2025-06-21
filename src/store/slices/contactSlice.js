@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase/config';
+import { db } from '@/firebase/config';
 
 // Async thunk for fetching contact info
 export const fetchContactInfo = createAsyncThunk(

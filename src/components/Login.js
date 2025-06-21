@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { isUserAdmin } from '@/utils/adminUtils';
+
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,14 +17,14 @@ const Login = () => {
   // Handle navigation when user becomes authenticated
   useEffect(() => {
     if (currentUser) {
-      const isAdmin = currentUser?.email === process.env.REACT_APP_ADMIN_EMAIL;
+      const isAdmin = isUserAdmin(currentUser.email);
+
       console.log('User authenticated, navigating to dashboard', currentUser.email );
-      if(isAdmin){
-        console.log('User is admin, navigating to admin dashboard');
+      if (isAdmin) {
+        console.log('User has admin rights, navigating to admin dashboard');
         navigate('/admin', { replace: true });
-        return;
-      } else{
-        console.log('User is user, navigating to admin dashboard', currentUser);
+      } else {
+        console.log('User is regular user, navigating to dashboard', currentUser);
         navigate('/dashboard', { replace: true });
       }
     }
@@ -117,7 +119,9 @@ const Login = () => {
       
       // Add a small delay to ensure state is updated
       setTimeout(() => {
-        if(result.user.email === 'tushartk018@gmail.com'){
+        const isAdmin = isUserAdmin(result.user.email);
+        
+        if (isAdmin) {
           navigate('/admin', { replace: true });
           console.log('Current user is admin, navigating to admin dashboard');
         } else {
@@ -125,7 +129,6 @@ const Login = () => {
           console.log('Current user is user, navigating to dashboard');
         }
         console.log('Navigation attempted');
-        return;
       }, 100);
       
     } catch (error) {

@@ -7,6 +7,7 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
     description: '',
     price: '',
     category: 'Appetizer',
+    subCategory: '',
     image: '',
     available: true
   });
@@ -17,7 +18,8 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
         name: food.name || '',
         description: food.description || '',
         price: food.price || '',
-        category: food.category || 'Appetizer',
+        category: food.category || 'Other',
+        subCategory: food.subCategory || '',
         image: food.image || '',
         available: food.available !== undefined ? food.available : true
       });
@@ -26,7 +28,8 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
         name: '',
         description: '',
         price: '',
-        category: 'Appetizer',
+        category: 'Other',
+        subCategory: '',
         image: '',
         available: true
       });
@@ -104,6 +107,17 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
               <option value="Dessert">Dessert</option>
               <option value="Beverage">Beverage</option>
             </Form.Select>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Sub Category</Form.Label>
+            <Form.Control
+              type="text"
+              name="subCategory"
+              value={formData.subCategory}
+              onChange={handleChange}
+              placeholder="Enter sub category"
+            />
           </Form.Group>
 
           <Form.Group className="mb-3">

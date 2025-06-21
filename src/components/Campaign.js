@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Banner from "./Banner";
+import Banner from "@/components/Banner";
 import Loading from "@/components/Loading";
 import { fetchCampaigns } from '@/store/slices/campaignSlice';
 

@@ -5,19 +5,20 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useDispatch } from "react-redux";
 import { fetchMenuItems } from "@/store/slices/menuSlice";
-import { fetchCampaigns } from '@/store/slices/campaignSlice';
-import { fetchContactInfo } from '@/store/slices/contactSlice'; // <-- add this import
-import Login from "./Login";
-import Register from "./Register";
-import UserWrapper from "./UserWrapper";
-import AdminDashboard from "./AdminDashboard";
-import NotFound from "./NotFound";
-import ContactUs from "./ContactUs";
-import Menu from "./Menu";
-import Campaign from "./Campaign";
+import { fetchCampaigns } from "@/store/slices/campaignSlice";
+import { fetchContactInfo } from "@/store/slices/contactSlice";
+import { isUserAdmin } from "@/utils/adminUtils";
+import Login from "@/components/Login";
+import Register from "@/components/Register";
+import UserWrapper from "@/components/UserWrapper";
+import AdminDashboard from "@/components/AdminDashboard";
+import NotFound from "@/components/NotFound";
+import ContactUs from "@/components/ContactUs";
+import Menu from "@/components/Menu";
+import Campaign from "@/components/Campaign";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -32,12 +33,14 @@ const AdminRoute = ({ children }) => {
 
   // Debug logging
   console.log("AdminRoute - Current User:", currentUser?.email);
-  console.log("AdminRoute - Admin Email:", process.env.REACT_APP_ADMIN_EMAIL);
+  console.log("AdminRoute - Admin Emails:", [
+    process.env.REACT_APP_ADMIN_EMAIL,
+    process.env.REACT_APP_DEV_EMAIL,
+    process.env.REACT_APP_CONTACT_EMAIL
+  ]);
 
-  // Check if user is admin
-  const isAdmin =
-    currentUser?.email?.toLowerCase().trim() ===
-    process.env.REACT_APP_ADMIN_EMAIL?.toLowerCase().trim();
+  // Check if user is admin using utility function
+  const isAdmin = isUserAdmin(currentUser?.email);
 
   console.log("AdminRoute - Is Admin:", isAdmin);
 

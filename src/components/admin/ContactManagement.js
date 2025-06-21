@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ContactModal from './ContactModal';
+import ContactModal from '@/components/admin/ContactModal';
 import { 
   collection, 
   addDoc, 
@@ -7,8 +7,8 @@ import {
   updateDoc, 
   doc, 
   onSnapshot 
-} from 'firebase/firestore';
-import { db } from '../../firebase/config';
+} from '@firebase/firestore';
+import { db } from '@/firebase/config';
 
 const ContactManagement = () => {
   const [contact, setContact] = useState(null);

@@ -8,7 +8,8 @@ import {
   getRedirectResult,
   signOut
 } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase/config';
+import { auth, googleProvider, db } from '@/firebase/config';
+import { doc, setDoc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -24,13 +25,52 @@ export const AuthProvider = ({ children }) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  // Helper function to save/update user in Firestore
+  const saveUserToFirestore = async (user) => {
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userRef);
+      
+      const userData = {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        lastLoginAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
+      if (!userDoc.exists()) {
+        // New user
+        await setDoc(userRef, {
+          ...userData,
+          createdAt: serverTimestamp(),
+          isActive: true,
+          role: 'customer' // Default role
+        });
+      } else {
+        // Existing user - just update login time
+        await updateDoc(userRef, userData);
+      }
+    } catch (error) {
+      console.error('Error saving user to Firestore:', error);
+    }
+  };
+
+  const login = async (email, password) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await saveUserToFirestore(result.user);
+      return result;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const signInWithGoogle = async () => {
     try {
-      return await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      await saveUserToFirestore(result.user);
+      return result;
     } catch (error) {
       console.error('Popup sign-in failed:', error);
       
@@ -55,6 +95,11 @@ export const AuthProvider = ({ children }) => {
       setCurrentUser(user);
       setLoading(false);
       
+      // Save/update user data when they sign in
+      if (user) {
+        saveUserToFirestore(user);
+      }
+      
       // Optional: Clean up any existing localStorage entries
       if (!user) {
         localStorage.removeItem('user');
@@ -65,6 +110,7 @@ export const AuthProvider = ({ children }) => {
     getRedirectResult(auth).then((result) => {
       if (result) {
         console.log('Redirect sign-in successful:', result);
+        saveUserToFirestore(result.user);
       }
     }).catch((error) => {
       console.error('Redirect result error:', error);
