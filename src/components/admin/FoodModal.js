@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Spinner } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
-const FoodModal = ({ show, onHide, food, onSave }) => {
+const FoodModal = ({ show, onHide, food, onSave, categories }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: '',
-    category: 'Appetizer',
+    category: '',
     subCategory: '',
     image: '',
     available: true
   });
+
+  // Safely get categories from Redux store with fallbacks
+  const categoriesState = useSelector((state) => state.categories);
+  const reduxCategories = categoriesState?.items || [];
+  const categoriesStatus = categoriesState?.status || 'idle';
+  
+  // Use passed categories prop or fall back to Redux state
+  const availableCategories = categories || reduxCategories || [];
 
   useEffect(() => {
     if (food) {
@@ -18,23 +27,27 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
         name: food.name || '',
         description: food.description || '',
         price: food.price || '',
-        category: food.category || 'Other',
+        category: food.category || '',
         subCategory: food.subCategory || '',
         image: food.image || '',
         available: food.available !== undefined ? food.available : true
       });
     } else {
+      // For new food items, set the default category to the first available category
+      // or empty string if no categories exist yet
+      const defaultCategory = availableCategories.length > 0 ? availableCategories[0].name : '';
+      
       setFormData({
         name: '',
         description: '',
         price: '',
-        category: 'Other',
+        category: defaultCategory,
         subCategory: '',
         image: '',
         available: true
       });
     }
-  }, [food]);
+  }, [food, availableCategories]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,6 +64,9 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
+
+  // Loading state for categories
+  const isLoading = categoriesStatus === 'loading';
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -96,17 +112,29 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
 
           <Form.Group className="mb-3">
             <Form.Label>Category</Form.Label>
-            <Form.Select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-            >
-              <option value="Appetizer">Appetizer</option>
-              <option value="Main Course">Main Course</option>
-              <option value="Dessert">Dessert</option>
-              <option value="Beverage">Beverage</option>
-            </Form.Select>
+            {isLoading ? (
+              <div className="d-flex align-items-center">
+                <Spinner animation="border" size="sm" className="me-2" />
+                <span>Loading categories...</span>
+              </div>
+            ) : availableCategories.length > 0 ? (
+              <Form.Select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+              >
+                {availableCategories.map(category => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
+              </Form.Select>
+            ) : (
+              <div className="alert alert-warning">
+                No categories found. Please add categories first.
+              </div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -145,7 +173,11 @@ const FoodModal = ({ show, onHide, food, onSave }) => {
           <Button variant="secondary" onClick={onHide}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit">
+          <Button 
+            variant="primary" 
+            type="submit"
+            disabled={isLoading || availableCategories.length === 0}
+          >
             {food ? 'Update' : 'Add'} Food Item
           </Button>
         </Modal.Footer>

@@ -344,9 +344,16 @@ const ContactUs = () => {
                               href={contactInfo.socialMedia.facebook}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="btn btn-sm btn-outline-primary text-decoration-none"
+                              className="btn btn-sm btn-outline-primary text-decoration-none d-flex align-items-center"
                             >
-                              📘 Facebook
+                              <img 
+                                src="/sns/facebook.png" 
+                                alt="Facebook" 
+                                width="18" 
+                                height="18" 
+                                className="me-2"
+                              />
+                              Facebook
                             </a>
                           )}
                           {contactInfo?.socialMedia?.instagram && (
@@ -354,9 +361,16 @@ const ContactUs = () => {
                               href={contactInfo.socialMedia.instagram}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="btn btn-sm btn-outline-primary text-decoration-none"
+                              className="btn btn-sm btn-outline-primary text-decoration-none d-flex align-items-center"
                             >
-                              📷 Instagram
+                              <img 
+                                src="/sns/instagram.png" 
+                                alt="Instagram" 
+                                width="18" 
+                                height="18" 
+                                className="me-2"
+                              />
+                              Instagram
                             </a>
                           )}
                           {contactInfo?.socialMedia?.twitter && (
@@ -364,9 +378,16 @@ const ContactUs = () => {
                               href={contactInfo.socialMedia.twitter}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="btn btn-sm btn-outline-primary text-decoration-none"
+                              className="btn btn-sm btn-outline-primary text-decoration-none d-flex align-items-center"
                             >
-                              🐦 Twitter
+                              <img 
+                                src="/sns/twitter.png" 
+                                alt="Twitter" 
+                                width="18" 
+                                height="18" 
+                                className="me-2"
+                              />
+                              Twitter
                             </a>
                           )}
                         </div>

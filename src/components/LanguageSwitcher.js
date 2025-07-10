@@ -19,7 +19,8 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="d-flex align-items-center me-3 bg-light rounded-pill p-2 shadow-sm">
+    <div className="d-flex align-items-center me-3 bg-light rounded-pill p-2 shadow-sm"
+    style={{ width: '100px' }}>
       {/* English Flag */}
       <button
         className={`btn rounded-circle p-1 me-2 ${

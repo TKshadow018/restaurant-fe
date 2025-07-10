@@ -4,12 +4,14 @@ import Home from '@/components/Home';
 import Menu from '@/components/Menu';
 import Campaign from '@/components/Campaign';
 import ContactUs from '@/components/ContactUs';
+import Help from '@/components/Help';
 
 const COMPONENTS = {
   home: <Home />,
   menu: <Menu />,
   campaign: <Campaign />,
   about: <ContactUs />,
+  help: <Help />,
 };
 
 const UserWrapper = () => {

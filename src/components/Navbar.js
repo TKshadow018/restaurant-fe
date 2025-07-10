@@ -98,15 +98,15 @@ const Navbar = ({ onNavigate }) => {
             </li>
           </ul>
           
-          <div className="navbar-nav ms-auto d-flex align-items-center">
+          <div className="navbar-nav ms-auto d-flex align-items-left gap-2">
             <LanguageSwitcher />
             {currentUser ? (
               <>
                 {isAdmin && (
                   <button
-                    className="btn btn-warning me-2 fs-5 fw-bold"
+                    className="btn btn-warning fs-5 fw-bold"
                     onClick={() => handleNavigation('admin')}
-                    style={{ minWidth: '140px' }}
+                    style={{ minWidth: '120px', maxWidth: '150px' }}
                   >
                     {t('navbar.adminPanel')}
                   </button>
@@ -114,7 +114,7 @@ const Navbar = ({ onNavigate }) => {
                 <button 
                   className="btn btn-danger fs-5 fw-bold" 
                   onClick={handleLogout}
-                  style={{ minWidth: '120px' }}
+                  style={{ minWidth: '120px', maxWidth: '150px' }}
                 >
                   {t('navbar.logout')}
                 </button>

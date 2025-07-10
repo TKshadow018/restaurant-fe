@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { fetchMenuItems } from "@/store/slices/menuSlice";
 import { fetchCampaigns } from "@/store/slices/campaignSlice";
 import { fetchContactInfo } from "@/store/slices/contactSlice";
+import { fetchCategories } from "@/store/slices/categorySlice";
 import { isUserAdmin } from "@/utils/adminUtils";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
@@ -36,7 +37,7 @@ const AdminRoute = ({ children }) => {
   console.log("AdminRoute - Admin Emails:", [
     process.env.REACT_APP_ADMIN_EMAIL,
     process.env.REACT_APP_DEV_EMAIL,
-    process.env.REACT_APP_CONTACT_EMAIL
+    process.env.REACT_APP_CONTACT_EMAIL,
   ]);
 
   // Check if user is admin using utility function
@@ -65,6 +66,7 @@ const AppRouter = () => {
     dispatch(fetchMenuItems());
     dispatch(fetchCampaigns());
     dispatch(fetchContactInfo());
+    dispatch(fetchCategories());
     // dispatch other fetch actions as needed
   }, [dispatch]);
 
