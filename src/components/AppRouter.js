@@ -20,6 +20,7 @@ import NotFound from "@/components/NotFound";
 import ContactUs from "@/components/ContactUs";
 import Menu from "@/components/Menu";
 import Campaign from "@/components/Campaign";
+import Cart from "@/components/Cart";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -123,6 +124,9 @@ const AppRouter = () => {
 
           {/* Campaign Route */}
           <Route path="/campaign" element={<Campaign />} />
+
+          {/* Cart Route */}
+          <Route path="/cart" element={<Cart />} />
 
           {/* Catch all route - 404 */}
           <Route path="*" element={<NotFound />} />

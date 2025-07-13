@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ContactModal from '@/components/admin/ContactModal';
 import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  updateDoc, 
   doc, 
+  getDoc, 
+  setDoc, // Use setDoc for creating/overwriting with a specific ID
   onSnapshot 
-} from '@firebase/firestore';
+} from 'firebase/firestore'; // Corrected import
 import { db } from '@/firebase/config';
 
 const ContactManagement = () => {
@@ -16,62 +14,39 @@ const ContactManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Load contact from Firebase on component mount
+  // Define the specific document reference
+  const contactDocRef = doc(db, 'contacts', 'main');
+
   useEffect(() => {
-    const loadContactFromFirebase = async () => {
-      try {
-        setLoading(true);
-        const querySnapshot = await getDocs(collection(db, 'contacts'));
-        
-        if (querySnapshot.docs.length > 0) {
-          // Get the first (and only) contact document
-          const contactData = {
-            id: querySnapshot.docs[0].id,
-            ...querySnapshot.docs[0].data()
-          };
-          setContact(contactData);
+    // Set up a real-time listener on the specific 'main' document
+    const unsubscribe = onSnapshot(contactDocRef, 
+      (docSnap) => {
+        if (docSnap.exists()) {
+          setContact({ id: docSnap.id, ...docSnap.data() });
         } else {
-          // Create default contact if none exists
-          const defaultContact = {
-            name: process.env.REACT_APP_APP_TITLE || 'Shah\'s Eatery',
-            address: 'Övre Husargatan 25B, 413 14, Göteborg, Sverige',
-            phone: '+46734770107',
-            email: process.env.REACT_APP_CONTACT_EMAIL || '',
-            businessHours: 'Monday - Friday: 11:00 AM - 10:00 PM\nSaturday: 12:00 PM - 11:00 PM\nSunday: 12:00 PM - 9:00 PM',
-            active: true,
-            socialMedia: {
-              facebook: '',
-              instagram: '',
-              twitter: ''
-            },
-            createdAt: new Date(),
-            updatedAt: new Date()
+          // If the document doesn't exist, create it.
+          const createDefaultContact = async () => {
+            const defaultContact = {
+              name: process.env.REACT_APP_APP_TITLE || 'Shah\'s Eatery',
+              address: 'Övre Husargatan 25B, 413 14, Göteborg, Sverige',
+              phone: '+46734770107',
+              email: process.env.REACT_APP_CONTACT_EMAIL || 'contact@shahseatery.com',
+              businessHours: 'Monday - Friday: 11:00 AM - 10:00 PM\nSaturday: 12:00 PM - 11:00 PM\nSunday: 12:00 PM - 9:00 PM',
+              active: true,
+              socialMedia: { facebook: '', instagram: '', twitter: '' },
+              createdAt: new Date(),
+              updatedAt: new Date()
+            };
+            try {
+              // Use setDoc to create the document with the ID 'main'
+              await setDoc(contactDocRef, defaultContact);
+              setContact({ id: 'main', ...defaultContact });
+            } catch (err) {
+              console.error("Failed to create default contact:", err);
+              setError("Failed to create default contact information.");
+            }
           };
-          
-          const docRef = await addDoc(collection(db, 'contacts'), defaultContact);
-          setContact({ id: docRef.id, ...defaultContact });
-        }
-        setError(null);
-      } catch (err) {
-        console.error('Error loading contact:', err);
-        setError('Failed to load contact information');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadContactFromFirebase();
-
-    // Set up real-time listener
-    const unsubscribe = onSnapshot(
-      collection(db, 'contacts'),
-      (querySnapshot) => {
-        if (querySnapshot.docs.length > 0) {
-          const contactData = {
-            id: querySnapshot.docs[0].id,
-            ...querySnapshot.docs[0].data()
-          };
-          setContact(contactData);
+          createDefaultContact();
         }
         setLoading(false);
       },
@@ -83,7 +58,7 @@ const ContactManagement = () => {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, []); // The dependency array is empty because contactDocRef is stable
 
   const handleEdit = () => {
     setShowModal(true);
@@ -91,13 +66,11 @@ const ContactManagement = () => {
 
   const handleSaveContact = async (contactData) => {
     try {
-      if (contact) {
-        // Update existing contact
-        await updateDoc(doc(db, 'contacts', contact.id), {
-          ...contactData,
-          updatedAt: new Date()
-        });
-      }
+      // Always update the 'main' document
+      await setDoc(contactDocRef, {
+        ...contactData,
+        updatedAt: new Date()
+      });
       setShowModal(false);
       setError(null);
     } catch (err) {

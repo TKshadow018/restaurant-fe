@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Item Modal Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-case {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .price-option {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .price-option.selected {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Menu Item Modal - Volume Selection Test</h1>
+    
+    <div class="test-case">
+        <h3>Test Case 1: Multiple Volumes (Pizza)</h3>
+        <div>
+            <strong>Item:</strong> Chicken Kebab Pizza<br>
+            <strong>Available Volumes:</strong><br>
+            <div class="price-option selected">Small - 69 SEK</div>
+            <div class="price-option">Medium - 119 SEK</div>
+            <div class="price-option">Large - 139 SEK</div>
+        </div>
+        <p><strong>Expected Behavior:</strong> Should show volume selector with 3 options, price updates based on selection</p>
+    </div>
+
+    <div class="test-case">
+        <h3>Test Case 2: Single Volume (Side Item)</h3>
+        <div>
+            <strong>Item:</strong> Wings (5 pcs)<br>
+            <strong>Available Volumes:</strong><br>
+            <div class="price-option selected">Normal - 39 SEK</div>
+        </div>
+        <p><strong>Expected Behavior:</strong> Should NOT show volume selector, price displays directly</p>
+    </div>
+
+    <div class="test-case">
+        <h3>Test Case 3: Volume Names Translation</h3>
+        <div>
+            <strong>English:</strong> Small, Medium, Large, Normal<br>
+            <strong>Swedish:</strong> Liten, Mellan, Stor, Normal
+        </div>
+        <p><strong>Expected Behavior:</strong> Volume names should change based on selected language</p>
+    </div>
+
+    <h2>Updated Menu Item Modal Features:</h2>
+    <ul>
+        <li>✅ Volume/Size selector appears when multiple sizes are available</li>
+        <li>✅ Price updates dynamically based on selected volume</li>
+        <li>✅ Volume names are localized (Swedish/English)</li>
+        <li>✅ Selected volume is included in cart item</li>
+        <li>✅ Add to Cart button shows selected size</li>
+        <li>✅ Volume selection resets to first option when modal opens</li>
+        <li>✅ Handles both legacy and new price structures</li>
+    </ul>
+
+    <h2>Data Structure Examples:</h2>
+    <pre>
+// Multiple volumes (Pizza)
+"price": [
+  { "volume": "small", "price": "69" },
+  { "volume": "medium", "price": "119" },
+  { "volume": "large", "price": "139" }
+]
+
+// Single volume (Side item)
+"price": [
+  { "volume": "normal", "price": "39" }
+]
+
+// Cart item with selected volume
+{
+  ...item,
+  selectedVolume: "medium",
+  selectedPrice: 119,
+  quantity: 2,
+  totalPrice: "238.00"
+}
+    </pre>
+</body>
+</html>

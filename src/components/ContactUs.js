@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  doc,
   collection,
   onSnapshot,
   addDoc,
@@ -19,7 +20,8 @@ import { useTranslation } from "react-i18next";
 const ContactUs = () => {
   const { t, i18n } = useTranslation(); // Add i18n to get current language
   const dispatch = useDispatch();
-  const { contactInfo, loading, error } = useSelector(
+  // Correctly destructure 'info' and rename it to 'contactInfo'
+  const { info: contactInfo, loading, error } = useSelector(
     (state) => state.contact
   );
 
@@ -42,16 +44,29 @@ const ContactUs = () => {
       dispatch(fetchContactInfo());
     }
 
-    // Set up real-time listener for updates
+    // Define the specific document reference, just like ContactManagement.js
+    const contactDocRef = doc(db, "contacts", "main");
+
+    // Set up a real-time listener on the specific 'main' document
     const unsubscribe = onSnapshot(
-      collection(db, "contacts"),
-      (querySnapshot) => {
-        if (querySnapshot.docs.length > 0) {
-          const contactData = {
-            id: querySnapshot.docs[0].id,
-            ...querySnapshot.docs[0].data(),
+      contactDocRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+
+          const sanitizedData = {
+            ...data,
+            // Convert Timestamps to a serializable format (ISO string)
+            createdAt: data.createdAt?.toDate().toISOString(),
+            updatedAt: data.updatedAt?.toDate().toISOString(),
           };
-          // Update Redux store with real-time data
+
+          const contactData = {
+            id: docSnap.id,
+            ...sanitizedData,
+          };
+
+          // Update Redux store with the sanitized real-time data
           dispatch(setContactInfo(contactData));
         }
       },
@@ -60,8 +75,9 @@ const ContactUs = () => {
       }
     );
 
+    // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, [dispatch, contactInfo]);
+  }, [dispatch]); // Dependency array optimized to prevent re-renders
 
   const formatBusinessHours = (hours) => {
     if (!hours) return null;

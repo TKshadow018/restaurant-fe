@@ -270,11 +270,16 @@ const CampaignManagement = () => {
               value={form.eligibleDishes || []}
               onChange={handleChange}
             >
-              {foods.map((food) => (
-                <option key={food.id} value={food.id}>
-                  {food.name}
-                </option>
-              ))}
+              {foods.map((food) => {
+                const displayName = typeof food.name === 'string' 
+                  ? food.name 
+                  : food.name?.english || food.name?.swedish || 'Unnamed Item';
+                return (
+                  <option key={food.id} value={food.id}>
+                    {displayName}
+                  </option>
+                );
+              })}
             </select>
             <div className="form-text">
               Hold Ctrl (Windows) or Cmd (Mac) to select multiple dishes.

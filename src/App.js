@@ -7,6 +7,7 @@ import ThemeSelector from '@/components/ThemeSelector';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AdminProvider } from '@/contexts/AdminContext';
 import { FoodProvider } from '@/contexts/FoodContext';
+import { CartProvider } from '@/contexts/CartContext';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 
@@ -16,10 +17,12 @@ function App() {
       <AuthProvider>
         <AdminProvider>
           <FoodProvider>
-            <div className="App">
-              <ThemeSelector />
-              <AppRouter />
-            </div>
+            <CartProvider>
+              <div className="App">
+                <ThemeSelector />
+                <AppRouter />
+              </div>
+            </CartProvider>
           </FoodProvider>
         </AdminProvider>
       </AuthProvider>

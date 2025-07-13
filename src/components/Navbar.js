@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -8,6 +9,7 @@ import '@/styles/navbar.css';
 
 const Navbar = ({ onNavigate }) => {
   const { currentUser, logout } = useAuth();
+  const { cartItems, totalPrice } = useCart();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -33,6 +35,8 @@ const Navbar = ({ onNavigate }) => {
     // Handle direct navigation for login and admin
     if (key === 'login' || key === 'admin') {
       navigate(`/${key}`);
+    } else if (key === 'cart') {
+      navigate('/cart');
     }
   };
 
@@ -99,6 +103,26 @@ const Navbar = ({ onNavigate }) => {
           </ul>
           
           <div className="navbar-nav ms-auto d-flex align-items-left gap-2">
+            {/* Cart Button */}
+            <button
+              className="btn btn-outline-light position-relative fs-5 fw-bold"
+              onClick={() => handleNavigation('cart')}
+              title={t('navbar.cart', 'Cart')}
+            >
+              <i className="bi bi-cart3"></i>
+              {cartItems.length > 0 && (
+                <>
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {cartItems.reduce((total, item) => total + item.quantity, 0)}
+                    <span className="visually-hidden">items in cart</span>
+                  </span>
+                  <small className="d-none d-sm-inline ms-2">
+                    {totalPrice} SEK
+                  </small>
+                </>
+              )}
+            </button>
+            
             <LanguageSwitcher />
             {currentUser ? (
               <>

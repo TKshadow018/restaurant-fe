@@ -1,0 +1,1495 @@
+[
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kycklingkebabpizza",
+      "english": "Chicken Kebab Pizza"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Kycklingkebab, Rödlök, Svartpeppar, Kebabkrydda, Torkad vitlök, Röd/Vit kebabsås på toppen",
+      "english": "Tomato Sauce, Mozzarella Cheese, Chicken Kebab, Red Onion, Black Pepper, Kebab Spice, Dried Garlic, Kebab Sauce on Top"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "69"
+      },
+      {
+        "volume": "medium",
+        "price": "119"
+      },
+      {
+        "volume": "large",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Shah's Special",
+      "english": "Shah's Special"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Pepperoni, Lök, Ananas, Svarta oliver",
+      "english": "Tomato Sauce, Mozzarella Cheese, Pepperoni, Onion, Pineapple, Black Olives"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "69"
+      },
+      {
+        "volume": "medium",
+        "price": "119"
+      },
+      {
+        "volume": "large",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Nötkebabpizza",
+      "english": "Beef Kebab Pizza"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Nötkebab, Rödlök, Svartpeppar, Kebabkrydda, Torkad vitlök, Röd/Vit kebabsås på toppen",
+      "english": "Tomato Sauce, Mozzarella Cheese, Beef Kebab, Red Onion, Black Pepper, Kebab Spice, Dried Garlic, Kebab Sauce on Top"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "75"
+      },
+      {
+        "volume": "medium",
+        "price": "125"
+      },
+      {
+        "volume": "large",
+        "price": "145"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Pepperoni Heaven Pizza",
+      "english": "Pepperoni Heaven Pizza"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Pepperoni",
+      "english": "Tomato Sauce, Mozzarella Cheese, Pepperoni"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "79"
+      },
+      {
+        "volume": "medium",
+        "price": "129"
+      },
+      {
+        "volume": "large",
+        "price": "149"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krämig Kycklingpizza",
+      "english": "Creamy Chicken Pizza"
+    },
+    "description": {
+      "swedish": "Crème fraîche, Mozzarellaost, Kycklingfajita, Rödlök, Blandade paprikor, Champinjoner, BBQ-sås",
+      "english": "Crème Fraîche, Mozzarella Cheese, Chicken Fajita, Red Onion, Mixed Peppers, Mushrooms"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "79"
+      },
+      {
+        "volume": "medium",
+        "price": "129"
+      },
+      {
+        "volume": "large",
+        "price": "149"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Hotty BBQ Kycklingpizza",
+      "english": "Hotty BBQ Chicken Pizza"
+    },
+    "description": {
+      "swedish": "BBQ-sås, Mozzarellaost, Kycklingfajita, Rödlök, Jalapeño, Champinjoner, Chiliflakes",
+      "english": "BBQ Sauce, Mozzarella Cheese, Chicken Fajita, Red Onion, Jalapeño, Mushrooms, Chili Flakes"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "85"
+      },
+      {
+        "volume": "medium",
+        "price": "135"
+      },
+      {
+        "volume": "large",
+        "price": "155"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Mixad kebabpizza",
+      "english": "Mixed Kebab Pizza"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Kycklingkebab, Nötkebab, Rödlök, Svartpeppar, Kebabkrydda, Torkad vitlök, Röd/Vit kebabsås på toppen",
+      "english": "Tomato Sauce, Mozzarella Cheese, Chicken Kebab, Beef Kebab, Red Onion, Black Pepper, Kebab Spice, Dried Garlic, Kebab Sauce on Top"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "89"
+      },
+      {
+        "volume": "medium",
+        "price": "139"
+      },
+      {
+        "volume": "large",
+        "price": "169"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krämig BBQ Kycklingpizza",
+      "english": "Creamy BBQ Chicken Pizza"
+    },
+    "description": {
+      "swedish": "Crème fraîche, Mozzarellaost, Kycklingfajita, Rödlök, Jalapeño, Champinjoner, BBQ-sås",
+      "english": "Crème Fraîche, Mozzarella Cheese, Chicken Fajita, Red Onion, Jalapeño, Mushrooms, BBQ Sauce"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "89"
+      },
+      {
+        "volume": "medium",
+        "price": "139"
+      },
+      {
+        "volume": "large",
+        "price": "169"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Meatocracy Pizza",
+      "english": "Meatocracy Pizza"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Pepperoni, Nötkebab, Kycklingkebab, Kycklingfajita",
+      "english": "Tomato Sauce, Mozzarella Cheese, Pepperoni, Beef Kebab, Chicken Kebab, Chicken Fajita"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "89"
+      },
+      {
+        "volume": "medium",
+        "price": "139"
+      },
+      {
+        "volume": "large",
+        "price": "169"
+      }
+    ],
+    "subCategory": "Classic & Kebab Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Margherita",
+      "english": "Margherita Pizza"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Örter",
+      "english": "Tomato Sauce, Mozzarella Cheese, Herbs"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "55"
+      },
+      {
+        "volume": "medium",
+        "price": "105"
+      },
+      {
+        "volume": "large",
+        "price": "125"
+      }
+    ],
+    "subCategory": "Vegetarian Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Klassisk Veggie",
+      "english": "Classic Veggie"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Rödlök, Blandade paprikor, Svarta oliver, Broccoli, Örter",
+      "english": "Tomato Sauce, Mozzarella Cheese, Red Onion, Mixed Peppers, Black Olives, Broccoli, Herbs"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "69"
+      },
+      {
+        "volume": "medium",
+        "price": "119"
+      },
+      {
+        "volume": "large",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Vegetarian Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Hotty Veggie",
+      "english": "Hotty Veggie"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Rödlök, Blandade paprikor, Jalapeños, Soltorkade tomater, Chiliflakes, Örter",
+      "english": "Tomato Sauce, Mozzarella Cheese, Red Onion, Mixed Peppers, Jalapeños, Sundried Tomatoes, Chili Flakes, Herbs"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "75"
+      },
+      {
+        "volume": "medium",
+        "price": "125"
+      },
+      {
+        "volume": "large",
+        "price": "145"
+      }
+    ],
+    "subCategory": "Vegetarian Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krämig Veggie",
+      "english": "Creamy Veggie"
+    },
+    "description": {
+      "swedish": "Crème fraîche, Mozzarellaost, Rödlök, Blandade paprikor, Broccoli, Örter",
+      "english": "Crème Fraîche, Mozzarella Cheese, Red Onion, Mixed Peppers, Broccoli, Herbs"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "75"
+      },
+      {
+        "volume": "medium",
+        "price": "125"
+      },
+      {
+        "volume": "large",
+        "price": "145"
+      }
+    ],
+    "subCategory": "Vegetarian Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Super Veggie",
+      "english": "Super Veggie"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Rödlök, Gul morot, Orange morot, Blandade paprikor, Svarta oliver, Broccoli, Sojabönor, Örter",
+      "english": "Tomato Sauce, Mozzarella Cheese, Red Onion, Yellow Carrot, Orange Carrot, Mixed Peppers, Black Olives, Broccoli, Soy Beans, Herbs"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "79"
+      },
+      {
+        "volume": "medium",
+        "price": "129"
+      },
+      {
+        "volume": "large",
+        "price": "149"
+      }
+    ],
+    "subCategory": "Vegetarian Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Klassisk Räka",
+      "english": "Classic Shrimp"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Räkor, Rödlök, Blandade paprikor, Svarta oliver",
+      "english": "Tomato Sauce, Mozzarella Cheese, Shrimp, Red Onion, Mixed Peppers, Black Olives"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "59"
+      },
+      {
+        "volume": "medium",
+        "price": "109"
+      },
+      {
+        "volume": "large",
+        "price": "129"
+      }
+    ],
+    "subCategory": "Seafood Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Hotty Räka",
+      "english": "Hotty Shrimp"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Räkor, Rödlök, Jalapeños, Chiliflakes",
+      "english": "Tomato Sauce, Mozzarella Cheese, Shrimp, Red Onion, Jalapeños, Chili Flakes"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "69"
+      },
+      {
+        "volume": "medium",
+        "price": "119"
+      },
+      {
+        "volume": "large",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Seafood Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Klassisk Lax",
+      "english": "Classic Salmon"
+    },
+    "description": {
+      "swedish": "Tomatsås, Mozzarellaost, Rödlök, Lax, Blandade paprikor, Svarta oliver",
+      "english": "Tomato Sauce, Mozzarella Cheese, Red Onion, Salmon, Black Olives"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "75"
+      },
+      {
+        "volume": "medium",
+        "price": "125"
+      },
+      {
+        "volume": "large",
+        "price": "145"
+      }
+    ],
+    "subCategory": "Seafood Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Pizza",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krämig BBQ Lax",
+      "english": "Creamy BBQ Salmon"
+    },
+    "description": {
+      "swedish": "Crème fraîche, Mozzarellaost, Marinerad lax, Rödlök, Blandade paprikor, Champinjoner, BBQ-sås",
+      "english": "Crème Fraîche, Mozzarella Cheese, Marinated Salmon, Red Onion, Mixed Peppers, Mushrooms, BBQ Sauce"
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "79"
+      },
+      {
+        "volume": "medium",
+        "price": "129"
+      },
+      {
+        "volume": "large",
+        "price": "149"
+      }
+    ],
+    "subCategory": "Seafood Pizzas",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Vingar (5 st)",
+      "english": "Wings (5 pcs)"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Chicken Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Strips (5 st)",
+      "english": "Strips (5 pcs)"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Chicken Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Popcornkyckling (7 st)",
+      "english": "Popcorns (7 pcs)"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Chicken Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kycklingköttbullar (7 st)",
+      "english": "Meatballs (7 pcs)"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Chicken Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Smörstekta räkor (3 st)",
+      "english": "Buttered Shrimp (3 pcs)"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "35"
+      }
+    ],
+    "subCategory": "Shrimp Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krispiga räkpopcorn (3 st)",
+      "english": "Crispy Shrimp Popcorns (3 pcs)"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Shrimp Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Saltad Edamame",
+      "english": "Salty Edamame"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "35"
+      }
+    ],
+    "subCategory": "Green Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kryddig Edamame",
+      "english": "Spicy Edamame"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Green Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Smörstekta potatisstrimlor",
+      "english": "Buttered Potato Strips"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "25"
+      }
+    ],
+    "subCategory": "Green Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kryddiga smörstekta potatisstrimlor",
+      "english": "Spicy Buttered Potato Strips"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "25"
+      }
+    ],
+    "subCategory": "Green Sides",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Honung-Kanel Bröd",
+      "english": "Cinnamon-Honey Bread"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": "Desserts",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Chokladchipskakor",
+      "english": "Choco Chip Cookies"
+    },
+    "description": {
+      "swedish": "",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "small",
+        "price": "13"
+      },
+      {
+        "volume": "medium",
+        "price": "st"
+      },
+      {
+        "volume": "large"
+      }
+    ],
+    "subCategory": "Desserts",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Rolls",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "California Roll",
+      "english": "California Roll"
+    },
+    "description": {
+      "swedish": "Krabbmix, Avokado, Inlagd gurka, Sriracha-majo",
+      "english": "Crab Meat Mix, Avocado, Pickled Cucumber, Sriracha Mayo"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "109"
+      }
+    ],
+    "subCategory": "Rolls (10 Pieces)",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Rolls",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Lax Maki Roll",
+      "english": "Salmon Maki Roll"
+    },
+    "description": {
+      "swedish": "Lax, Avokado, Inlagd gurka, Picklad lök ovanpå, Sriracha-majo",
+      "english": "Salmon, Avocado, Pickled Cucumber, Pickled Onion on top, Sriracha Mayo"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "119"
+      }
+    ],
+    "subCategory": "Rolls (10 Pieces)",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Rolls",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Tempura Räka Roll",
+      "english": "Tempura Shrimp Roll"
+    },
+    "description": {
+      "swedish": "Avokado, Friterade räkor, Inlagd gurka, Sriracha-majo, Rostad lök ovanpå",
+      "english": "Avocado, Fried Tempura Shrimps, Pickled Cucumber, Sriracha Mayo, Roasted Onion on Top"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "129"
+      }
+    ],
+    "subCategory": "Rolls (10 Pieces)",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Rolls",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Shrimp Dragon",
+      "english": "Dragon Shrimp Roll"
+    },
+    "description": {
+      "swedish": "Inlagd gurka, Friterade räkor, Avokado ovanpå med sriracha-majo",
+      "english": "Pickled Cucumber, Fried Shrimps, Avocado on top with Sriracha Mayo"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Rolls (10 Pieces)",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Rolls",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Tofu-Avokado Roll",
+      "english": "Tofu-Avocado Roll"
+    },
+    "description": {
+      "swedish": "Tofu Inari, Avokado, Inlagd gurka",
+      "english": "Tofu Inari, Avocado, Pickled Cucumber"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "109"
+      }
+    ],
+    "subCategory": "Rolls (10 Pieces)",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Sparrisnigiri",
+      "english": "Asparagus Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "10"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Tofunigiri",
+      "english": "Tofu Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "11"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Räknigiri",
+      "english": "Shrimp Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "12"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krabbnigiri",
+      "english": "Crab Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "13"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Avokadonigiri",
+      "english": "Avocado Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "14"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Laxnigiri",
+      "english": "Salmon Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "15"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Nigiri",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad Lax Nigiri",
+      "english": "Fried Salmon Nigiri"
+    },
+    "description": {
+      "swedish": null,
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "17"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad Sparris Bowl",
+      "english": "Chicken Dumplings 4 pcs"
+    },
+    "description": {
+      "swedish": "Sushiris, gurksallad, mango, blandade bönor, majs, rödkål, 3 bitar pankofriterad sparris",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "109"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "BBQ Kyckling Bowl",
+      "english": "Spring Rolls 5 pcs"
+    },
+    "description": {
+      "swedish": "Sushiris, kycklingfajita, sallad, morot, majs, picklad rödkål, picklad rödlök, ingefära, BBQ-sås",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "129"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kycklingkorv Bowl",
+      "english": "Tofu Avocado Bao Bun"
+    },
+    "description": {
+      "swedish": "Sushiris, gurksallad, rödkål, ingefära, picklad rödlök, morot, salladsblad, 3 bitar kycklingkorv",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "109"
+      }
+    ],
+    "subCategory": "Bao Buns",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krispig Räka Bowl",
+      "english": "Chicken Kebab Bao Bun"
+    },
+    "description": {
+      "swedish": "Sushiris, gurksallad, mango, rödkål, blandade bönor, majs, sallad, 1¼ skivad avokado, 3 tempuraräkor, sriracha-majonnäs",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Bao Buns",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Krispig Kyckling Bowl",
+      "english": "Beef Kebab Bao Bun"
+    },
+    "description": {
+      "swedish": "Sushiris, gurksallad, ingefära, rödkål, blandade bönor, majs, sallad, 1¼ skivad avokado, kycklingstrimlor, sriracha-majonnäs",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Bao Buns",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Lax Bowl",
+      "english": "Mixed Kebab Bao Bun"
+    },
+    "description": {
+      "swedish": "Sushiris, gurksallad, mango, rödkål, blandade bönor, majs, sallad, 1½ skivad avokado, marinerad lax, sriracha-majonnäs",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "139"
+      }
+    ],
+    "subCategory": "Bao Buns",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kombo 10",
+      "english": "Fried Chicken Bao Bun"
+    },
+    "description": {
+      "swedish": "6 bitar California Roll + 4 bitar Nigiri (1 Lax Nigiri, 1 Avokado Nigiri, 1 Krabba Nigiri, Räka Nigiri)",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "119"
+      }
+    ],
+    "subCategory": "Bao Buns",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kombo 15",
+      "english": "Fried Shrimp Bao Bun"
+    },
+    "description": {
+      "swedish": "8 bitar California Roll + 7 bitar Nigiri (2 Lax Nigiri, 2 Avokado Nigiri, 2 Krabba Nigiri, 1 Räka Nigiri)",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "169"
+      }
+    ],
+    "subCategory": "Bao Buns",
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Sides",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kombo 20",
+      "english": "Lemonade"
+    },
+    "description": {
+      "swedish": "10 bitar California Roll + 10 bitar Nigiri (3 Lax Nigiri, 2 Avokado Nigiri, 2 Krabba Nigiri, 2 Räka Nigiri)",
+      "english": null
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "219"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Bowl",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kombo Veggie 10",
+      "english": "Fried Asparagus Bowl"
+    },
+    "description": {
+      "swedish": "6 bitar Tofu-Avokado Roll + 4 bitar Nigiri (2 Avokado Nigiri, 1 Tofu Nigiri, 1 Sparris Nigiri)",
+      "english": "Sushi rice, Pickled Cucumber salad, mango, mixed beans, maize, red cabbage, 3 pieces of panko-fried asparagus"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "119"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Bowl",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kombo Veggie 15",
+      "english": "BBQ Chicken Bowl"
+    },
+    "description": {
+      "swedish": "8 bitar Tofu-Avokado Roll + 7 bitar Nigiri (3 Avokado Nigiri, 2 Tofu Nigiri, 2 Sparris Nigiri)",
+      "english": "Sushi rice, chicken fajita, salad, carrot, maize, pickled red cabbage, pickled red onion, ginger, BBQ sauce"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "169"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Bowl",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kombo Veggie 20",
+      "english": "Crispy Chicken Bowl"
+    },
+    "description": {
+      "swedish": "10 bitar Tofu-Avokado Roll + 10 bitar Nigiri (4 Avokado Nigiri, 3 Tofu Nigiri, 3 Sparris Nigiri)",
+      "english": "Sushi rice, Pickled Cucumber salad, ginger, red cabbage, mixed beans, maize, salad, sliced avocado, chicken strips, sriracha mayo"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "219"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Bowl",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad California Roll",
+      "english": "Salmon Bowl"
+    },
+    "description": {
+      "swedish": "Krabbstick Inlagd gurka Picklad Rödlök Srirachamajonnäs",
+      "english": "Sushi rice, Pickled Cucumber salad, mango, red cabbage, mixed beans, maize, salad, sliced avocado, marinated Salmon, sriracha mayo"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "129"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Bowl",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad Lax Maki Roll",
+      "english": "Crispy Shrimp Bowl"
+    },
+    "description": {
+      "swedish": "Lax Inlagd gurka Picklad Rödlök Srirachamajo Shichimi på toppen",
+      "english": "Sushi rice, Pickled Cucumber salad, mango, red cabbage, mixed beans, maize, salad, sliced avocado, 3 tempura shrimp, sriracha mayo"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "139"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Combo",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad Tempura Räkrulle",
+      "english": "Combo 10"
+    },
+    "description": {
+      "swedish": "Tempuraräka Inlagd gurka Picklad Rödlök Bang Bang-sås",
+      "english": "6 pcs California Roll + 4 pcs Nigiri (1 Salmon Nigiri, 1 Avocado Nigiri, 1 Crab Nigiri, 1 Prawn Nigiri)"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "149"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Combo",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad BBQ Kycklingrulle",
+      "english": "Combo 15"
+    },
+    "description": {
+      "swedish": "BBQ-kyckling Inlagd gurka Picklad Rödlök Koreansk BBQ-sås",
+      "english": "8 pcs California Roll + 7 pcs Nigiri (2 Salmon Nigiri, 2 Avocado Nigiri, 2 Crab Nigiri, 1 Prawn Nigiri)"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "149"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Combo",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Friterad Sparrisrulle",
+      "english": "Combo 20"
+    },
+    "description": {
+      "swedish": "Sparris Inlagd gurka Picklad Rödlök Kimchimajonnäs",
+      "english": "10 pcs California Roll + 10 pcs Nigiri (3 Salmon Nigiri, 3 Avocado Nigiri, 2 Crab Nigiri, 2 Prawn Nigiri)"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "139"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Combo",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Kycklingdumplings (4 st)",
+      "english": "Combo Veggie 10"
+    },
+    "description": {
+      "swedish": null,
+      "english": "6 pcs Tofu Avocado Roll + 4 pcs Nigiri (2 Avocado Nigiri, 1 Tofu Nigiri, 1 Asparagus Nigiri)"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  },
+  {
+    "available": true,
+    "category": "Combo",
+    "createdAt": "2025-07-12T02:46:30.676Z",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&h=750&q=80",
+    "name": {
+      "swedish": "Vårrullar (5 st)",
+      "english": "Combo Veggie 15"
+    },
+    "description": {
+      "swedish": null,
+      "english": "8 pcs Tofu Avocado Roll + 7 pcs Nigiri (3 Avocado Nigiri, 2 Tofu Nigiri, 2 Asparagus Nigiri)"
+    },
+    "price": [
+      {
+        "volume": "normal",
+        "price": "39"
+      }
+    ],
+    "subCategory": null,
+    "updatedAt": "2025-07-12T02:50:10.929Z"
+  }
+]

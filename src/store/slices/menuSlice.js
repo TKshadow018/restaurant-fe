@@ -8,10 +8,20 @@ export const fetchMenuItems = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const querySnapshot = await getDocs(collection(db, 'foods'));
-      const items = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const items = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        // Convert Firestore Timestamps to ISO strings to make them serializable
+        const sanitizedData = {
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString(),
+          updatedAt: data.updatedAt?.toDate().toISOString(),
+        };
+        console.log('Fetched menu item:', sanitizedData);
+        return {
+          id: doc.id,
+          ...sanitizedData,
+        };
+      });
       return items;
     } catch (error) {
       console.error('Error fetching menu items:', error);
@@ -37,6 +47,7 @@ const menuSlice = createSlice({
   reducers: {
     setMenuItems: (state, action) => {
       state.menuItems = action.payload;
+      console.log("Menu items set:", state.menuItems);
       state.lastFetched = Date.now();
     },
     clearError: (state) => {

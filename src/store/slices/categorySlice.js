@@ -8,13 +8,18 @@ export const fetchCategories = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const querySnapshot = await getDocs(collection(db, "categories"));
-      const categories = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const categories = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        // Convert Firestore Timestamps to ISO strings
+        const sanitizedData = {
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString(),
+          updatedAt: data.updatedAt?.toDate().toISOString(),
+        };
+        return { id: doc.id, ...sanitizedData };
+      });
       return categories;
     } catch (error) {
-      console.error("Error fetching categories:", error);
       return rejectWithValue(error.message);
     }
   }

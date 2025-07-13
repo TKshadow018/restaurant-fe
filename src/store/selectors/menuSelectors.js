@@ -8,7 +8,16 @@ export const selectFilteredMenuItems = createSelector(
     const { menuItems, searchTerm, filterCategory, filterAvailability } = menuState;
     
     return menuItems.filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      // Handle multilingual search
+      const getSearchableText = (textObj) => {
+        if (typeof textObj === 'string') return textObj;
+        if (!textObj) return '';
+        return `${textObj.swedish || ''} ${textObj.english || ''}`;
+      };
+
+      const searchableContent = `${getSearchableText(item.name)} ${getSearchableText(item.description)}`;
+      const matchesSearch = searchableContent.toLowerCase().includes(searchTerm.toLowerCase());
+      
       const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
       const matchesAvailability =
         filterAvailability === 'all' ||

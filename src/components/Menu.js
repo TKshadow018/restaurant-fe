@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   fetchMenuItems,
   clearError,
@@ -17,6 +18,8 @@ import "@/styles/theme.css";
 
 const Menu = () => {
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
   const {
     loading,
     error,
@@ -56,6 +59,25 @@ const Menu = () => {
     dispatch(setFilterAvailability(e.target.value));
   };
 
+  // Helper functions to get localized content
+  const getLocalizedText = (textObj, fallback = 'Unnamed Item') => {
+    if (typeof textObj === 'string') return textObj;
+    if (!textObj) return fallback;
+    return textObj[currentLanguage] || textObj.english || textObj.swedish || fallback;
+  };
+
+  const formatPriceDisplay = (price) => {
+    if (typeof price === 'number') return `${price} SEK`;
+    if (typeof price === 'string') return `${price} SEK`;
+    if (Array.isArray(price) && price.length > 0) {
+      const validPrices = price.filter(p => p.price && p.price !== '');
+      if (validPrices.length === 0) return 'No price set';
+      if (validPrices.length === 1) return `${validPrices[0].price} SEK`;
+      return `${validPrices[0].price}-${validPrices[validPrices.length - 1].price} SEK`;
+    }
+    return 'No price set';
+  };
+
   // Modal handlers
   const handleItemClick = (item) => {
     if (item.available) {
@@ -67,18 +89,6 @@ const Menu = () => {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedItem(null);
-  };
-
-  const handleAddToCart = (itemWithQuantity) => {
-    // TODO: Implement add to cart functionality
-    console.log("Adding to cart:", itemWithQuantity);
-    // You can dispatch an action to add to cart here
-    // dispatch(addToCart(itemWithQuantity));
-
-    // Show success message (optional)
-    alert(
-      `${itemWithQuantity.name} (${itemWithQuantity.quantity}x) added to cart!`
-    );
   };
 
   return (
@@ -172,7 +182,7 @@ const Menu = () => {
                       <img
                         src={item.image}
                         className="card-img-top"
-                        alt={item.name}
+                        alt={getLocalizedText(item.name)}
                         style={{ height: "200px", objectFit: "cover" }}
                       />
                       {item.discount?.enabled && item.discount?.value > 0 && (
@@ -200,7 +210,7 @@ const Menu = () => {
                     </div>
                     <div className="card-body d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-start mb-2">
-                        <h5 className="card-title text-dark">{item.name}</h5>
+                        <h5 className="card-title text-dark">{getLocalizedText(item.name)}</h5>
                         <span
                           className={`badge ${
                             item.available ? "bg-success" : "bg-secondary"
@@ -209,17 +219,17 @@ const Menu = () => {
                           {item.available ? "Available" : "Unavailable"}
                         </span>
                       </div>
-                      <p className="card-text text-muted">{item.description}</p>
+                      <p className="card-text text-muted">{getLocalizedText(item.description, 'No description available')}</p>
                       <div className="mt-auto">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <div className="d-flex align-items-center gap-2">
                             <span className="h5 text-primary mb-0">
-                              ${item.price}
+                              {formatPriceDisplay(item.price)}
                             </span>
                             {item.originalPrice &&
                               item.originalPrice > item.price && (
                                 <small className="text-muted text-decoration-line-through">
-                                  ${item.originalPrice}
+                                  {item.originalPrice} SEK
                                 </small>
                               )}
                           </div>
@@ -246,7 +256,6 @@ const Menu = () => {
         item={selectedItem}
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        onAddToCart={handleAddToCart}
       />
     </>
   );

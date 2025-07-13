@@ -4,9 +4,19 @@ import { useSelector } from 'react-redux';
 
 const FoodModal = ({ show, onHide, food, onSave, categories }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
+    name: {
+      swedish: '',
+      english: ''
+    },
+    description: {
+      swedish: '',
+      english: ''
+    },
+    price: [
+      { volume: 'small', price: '' },
+      { volume: 'medium', price: '' },
+      { volume: 'large', price: '' }
+    ],
     category: '',
     subCategory: '',
     image: '',
@@ -23,11 +33,40 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
 
   useEffect(() => {
     if (food) {
+      // When editing an existing food item
+      const categoryExists = availableCategories.some(
+        (cat) => cat.name === food.category
+      );
+
+      // If the food's category exists, use it. Otherwise, default to the first available category.
+      const categoryToSet = categoryExists
+        ? food.category
+        : availableCategories.length > 0
+        ? availableCategories[0].name
+        : '';
+
+      // Handle price array - ensure we have at least 3 entries for small, medium, large
+      const priceArray = Array.isArray(food.price) ? food.price : [];
+      const formatPrice = (volume) => {
+        const found = priceArray.find(p => p.volume === volume);
+        return found ? found.price : '';
+      };
+
       setFormData({
-        name: food.name || '',
-        description: food.description || '',
-        price: food.price || '',
-        category: food.category || '',
+        name: {
+          swedish: food.name?.swedish || '',
+          english: food.name?.english || ''
+        },
+        description: {
+          swedish: food.description?.swedish || '',
+          english: food.description?.english || ''
+        },
+        price: [
+          { volume: 'small', price: formatPrice('small') },
+          { volume: 'medium', price: formatPrice('medium') },
+          { volume: 'large', price: formatPrice('large') }
+        ],
+        category: categoryToSet,
         subCategory: food.subCategory || '',
         image: food.image || '',
         available: food.available !== undefined ? food.available : true
@@ -38,9 +77,19 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
       const defaultCategory = availableCategories.length > 0 ? availableCategories[0].name : '';
       
       setFormData({
-        name: '',
-        description: '',
-        price: '',
+        name: {
+          swedish: '',
+          english: ''
+        },
+        description: {
+          swedish: '',
+          english: ''
+        },
+        price: [
+          { volume: 'small', price: '' },
+          { volume: 'medium', price: '' },
+          { volume: 'large', price: '' }
+        ],
         category: defaultCategory,
         subCategory: '',
         image: '',
@@ -51,22 +100,77 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({
+    
+    // Validate that at least one price is provided
+    const validPrices = formData.price
+      .filter(p => p.price && p.price.trim() !== '')
+      .map(p => ({
+        volume: p.volume,
+        price: p.price.toString() // Keep as string to match the data structure
+      }));
+
+    if (validPrices.length === 0) {
+      alert('Please provide at least one price.');
+      return;
+    }
+
+    // Validate that both languages have names and descriptions
+    if (!formData.name.swedish.trim() || !formData.name.english.trim()) {
+      alert('Please provide names in both Swedish and English.');
+      return;
+    }
+
+    if (!formData.description.swedish.trim() || !formData.description.english.trim()) {
+      alert('Please provide descriptions in both Swedish and English.');
+      return;
+    }
+
+    const processedData = {
       ...formData,
-      price: parseFloat(formData.price)
-    });
+      price: validPrices
+    };
+    
+    onSave(processedData);
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    
+    if (name.startsWith('name.') || name.startsWith('description.')) {
+      const [field, language] = name.split('.');
+      setFormData(prev => ({
+        ...prev,
+        [field]: {
+          ...prev[field],
+          [language]: value
+        }
+      }));
+    } else if (name.startsWith('price.')) {
+      const [field, index] = name.split('.');
+      const priceIndex = parseInt(index);
+      setFormData(prev => ({
+        ...prev,
+        price: prev.price.map((item, idx) => 
+          idx === priceIndex ? { ...item, price: value } : item
+        )
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }));
+    }
   };
 
   // Loading state for categories
   const isLoading = categoriesStatus === 'loading';
+
+  // Debugging output to trace render state
+  console.log('Render state:', {
+    availableCategories: availableCategories.map(c => c.name),
+    selectedCategory: formData.category,
+    matchFound: availableCategories.some(c => c.name === formData.category)
+  });
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -75,39 +179,102 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+          {/* Name Fields */}
+          <div className="row">
+            <div className="col-md-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Name (Swedish)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name.swedish"
+                  value={formData.name.swedish}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </div>
+            <div className="col-md-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Name (English)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name.english"
+                  value={formData.name.english}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </div>
+          </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+          {/* Description Fields */}
+          <div className="row">
+            <div className="col-md-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Description (Swedish)</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="description.swedish"
+                  value={formData.description.swedish}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </div>
+            <div className="col-md-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Description (English)</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="description.english"
+                  value={formData.description.english}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </div>
+          </div>
 
+          {/* Price Fields */}
           <Form.Group className="mb-3">
-            <Form.Label>Price ($)</Form.Label>
-            <Form.Control
-              type="number"
-              step="0.01"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
+            <Form.Label>Prices (SEK)</Form.Label>
+            <div className="row">
+              <div className="col-md-4">
+                <Form.Label className="text-muted small">Small</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="price.0"
+                  value={formData.price[0]?.price || ''}
+                  onChange={handleChange}
+                  placeholder="Small price"
+                />
+              </div>
+              <div className="col-md-4">
+                <Form.Label className="text-muted small">Medium</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="price.1"
+                  value={formData.price[1]?.price || ''}
+                  onChange={handleChange}
+                  placeholder="Medium price"
+                />
+              </div>
+              <div className="col-md-4">
+                <Form.Label className="text-muted small">Large</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="price.2"
+                  value={formData.price[2]?.price || ''}
+                  onChange={handleChange}
+                  placeholder="Large price"
+                />
+              </div>
+            </div>
+            <Form.Text className="text-muted">
+              Leave empty for sizes not available. At least one price is required.
+            </Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -124,8 +291,19 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
                 onChange={handleChange}
                 required
               >
+                {/* Render a disabled placeholder option if category doesn't match */}
+                {formData.category && !availableCategories.some(c => c.name === formData.category) && (
+                  <option value="" disabled>
+                    Selected category not found
+                  </option>
+                )}
+                
+                {/* Map through available categories */}
                 {availableCategories.map(category => (
-                  <option key={category.id} value={category.name}>
+                  <option 
+                    key={category.id} 
+                    value={category.name}
+                  >
                     {category.name}
                   </option>
                 ))}

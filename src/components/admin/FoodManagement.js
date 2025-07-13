@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Add useRef
 import { useFood } from '@/contexts/FoodContext';
 import FoodModal from '@/components/admin/FoodModal';
 import CategoryModal from '@/components/admin/CategoryModal'; // New import
@@ -9,7 +9,8 @@ import {
   updateDoc, 
   deleteDoc, 
   doc, 
-  onSnapshot 
+  onSnapshot,
+  writeBatch // Import writeBatch for bulk operations
 } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 
@@ -22,8 +23,10 @@ const FoodManagement = () => {
   const [filterCategory, setFilterCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [categories, setCategories] = useState([]); // Changed from static array
+  const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false); // State for bulk upload
+  const fileInputRef = useRef(null); // Ref for the hidden file input
 
   // Load categories from Firebase
   useEffect(() => {
@@ -121,7 +124,12 @@ const FoodManagement = () => {
   }, [setFoods]);
 
   const filteredFoods = foods.filter(food => {
-    const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
+    // Handle multilingual name search
+    const nameText = typeof food.name === 'string' 
+      ? food.name 
+      : `${food.name?.swedish || ''} ${food.name?.english || ''}`;
+    
+    const matchesSearch = nameText.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === 'all' || food.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
@@ -190,6 +198,115 @@ const FoodManagement = () => {
     }
   };
 
+  const handleBulkUploadClick = () => {
+    // Trigger the hidden file input
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'application/json') {
+      setError('Invalid file type. Please upload a JSON file.');
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const itemsToUpload = JSON.parse(e.target.result);
+        if (!Array.isArray(itemsToUpload)) {
+          throw new Error('JSON file must contain an array of food items.');
+        }
+
+        // Use a batch write for efficiency
+        const batch = writeBatch(db);
+        let uploadedCount = 0;
+
+        itemsToUpload.forEach(item => {
+          // Basic validation to skip malformed items
+          const hasValidName = item.name && (
+            (typeof item.name === 'string') ||
+            (item.name.swedish || item.name.english)
+          );
+          
+          if (!hasValidName || !item.category || !item.price) {
+            console.warn('Skipping invalid item:', item);
+            return;
+          }
+
+          // Process the price data based on new structure
+          let processedPrice = [];
+          if (Array.isArray(item.price)) {
+            // New structure: array of price objects
+            processedPrice = item.price.filter(p => p.price && p.price !== '');
+          } else if (typeof item.price === 'string' && item.price.includes('/')) {
+            // Legacy structure: "69/119/139 SEK" format
+            const prices = item.price.replace(' SEK', '').split('/');
+            const volumes = ['small', 'medium', 'large'];
+            processedPrice = prices.map((price, index) => ({
+              volume: volumes[index] || 'normal',
+              price: price.trim()
+            }));
+          } else {
+            // Single price value
+            const priceValue = typeof item.price === 'string' 
+              ? item.price.replace(/[^0-9.]/g, '') 
+              : item.price.toString();
+            processedPrice = [{ volume: 'normal', price: priceValue }];
+          }
+
+          // Process names and descriptions
+          const processedName = typeof item.name === 'string' 
+            ? { english: item.name, swedish: item.name }
+            : item.name;
+
+          const processedDescription = typeof item.description === 'string'
+            ? { english: item.description, swedish: item.description }
+            : item.description || { english: '', swedish: '' };
+
+          const newFoodDocRef = doc(collection(db, 'foods'));
+          batch.set(newFoodDocRef, {
+            name: processedName,
+            description: processedDescription,
+            price: processedPrice,
+            category: item.category,
+            subCategory: item.subCategory || '',
+            image: item.image || 'https://via.placeholder.com/300x200.png?text=No+Image',
+            available: item.available !== undefined ? item.available : true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          uploadedCount++;
+        });
+
+        await batch.commit();
+        alert(`${uploadedCount} items uploaded successfully! The list will now refresh.`);
+
+      } catch (err) {
+        console.error('Error processing or uploading bulk data:', err);
+        setError(`Failed to upload bulk data: ${err.message}`);
+      } finally {
+        setIsUploading(false);
+        // Reset file input to allow re-uploading the same file
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      }
+    };
+
+    reader.onerror = () => {
+      setError('Failed to read the file.');
+      setIsUploading(false);
+    };
+
+    reader.readAsText(file);
+  };
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
@@ -205,6 +322,35 @@ const FoodManagement = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 className="h2">Food Management</h1>
         <div className="d-flex gap-2">
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="application/json"
+            style={{ display: 'none' }}
+          />
+          {/* Bulk Upload Button */}
+          <button 
+            className="btn btn-success" 
+            onClick={handleBulkUploadClick}
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Uploading...
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-upload me-2" viewBox="0 0 16 16">
+                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                </svg>
+                Bulk Upload
+              </>
+            )}
+          </button>
           <button className="btn btn-outline-secondary" onClick={handleManageCategories}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-tags me-2" viewBox="0 0 16 16">
               <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/>
@@ -291,26 +437,52 @@ const FoodManagement = () => {
             </div>
           </div>
         ) : (
-          filteredFoods.map(food => (
+          filteredFoods.map(food => {
+            // Helper function to get display name
+            const getDisplayName = (name) => {
+              if (typeof name === 'string') return name;
+              return name?.english || name?.swedish || 'Unnamed Item';
+            };
+
+            // Helper function to get display description
+            const getDisplayDescription = (description) => {
+              if (typeof description === 'string') return description;
+              return description?.english || description?.swedish || 'No description';
+            };
+
+            // Helper function to format price display
+            const formatPriceDisplay = (price) => {
+              if (typeof price === 'number') return `${price} SEK`;
+              if (typeof price === 'string') return `${price} SEK`;
+              if (Array.isArray(price) && price.length > 0) {
+                const validPrices = price.filter(p => p.price && p.price !== '');
+                if (validPrices.length === 0) return 'No price set';
+                if (validPrices.length === 1) return `${validPrices[0].price} SEK`;
+                return `${validPrices[0].price}-${validPrices[validPrices.length - 1].price} SEK`;
+              }
+              return 'No price set';
+            };
+
+            return (
             <div key={food.id} className="col-md-6 col-lg-4">
               <div className="card h-100 border-0 shadow-sm">
                 <img 
                   src={food.image} 
                   className="card-img-top" 
-                  alt={food.name}
+                  alt={getDisplayName(food.name)}
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
                 <div className="card-body d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-start mb-2">
-                    <h5 className="card-title">{food.name}</h5>
+                    <h5 className="card-title">{getDisplayName(food.name)}</h5>
                     <span className={`badge ${food.available ? 'bg-success' : 'bg-secondary'}`}>
                       {food.available ? 'Available' : 'Unavailable'}
                     </span>
                   </div>
-                  <p className="card-text text-muted">{food.description}</p>
+                  <p className="card-text text-muted">{getDisplayDescription(food.description)}</p>
                   <div className="mt-auto">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <span className="h5 text-primary mb-0">${food.price}</span>
+                      <span className="h5 text-primary mb-0">{formatPriceDisplay(food.price)}</span>
                       <small className="text-muted">{food.category}</small>
                     </div>
                     <div className="btn-group w-100" role="group">
@@ -337,7 +509,8 @@ const FoodManagement = () => {
                 </div>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 
