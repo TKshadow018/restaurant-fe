@@ -4,7 +4,7 @@ const DashboardStats = ({ users, foods, orders }) => {
   const activeUsers = users.filter(user => user.isActive).length;
   const availableFoods = foods.filter(food => food.available).length;
   const pendingOrders = orders.filter(order => order.status === 'pending').length;
-  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
   return (
     <div>
@@ -50,7 +50,7 @@ const DashboardStats = ({ users, foods, orders }) => {
             <div className="card-body text-center">
               <div className="display-6 text-info mb-3">💰</div>
               <h5 className="card-title">Total Revenue</h5>
-              <p className="display-6 fw-bold text-info mb-0">${totalRevenue.toFixed(2)}</p>
+              {/* <p className="display-6 fw-bold text-info mb-0">${totalRevenue.toFixed(2)}</p> */}
               <small className="text-muted">All time</small>
             </div>
           </div>
@@ -90,7 +90,9 @@ const DashboardStats = ({ users, foods, orders }) => {
                 <div key={order.id} className="d-flex justify-content-between align-items-center py-2 border-bottom">
                   <div>
                     <div className="fw-semibold">Order #{order.id}</div>
-                    <small className="text-muted">${order.total.toFixed(2)}</small>
+                    <small className="text-muted">{order.totalPrice} SEK</small>
+                    <br />
+                    <small className="text-muted">{order.userEmail}</small>
                   </div>
                   <span className={`badge ${
                     order.status === 'completed' ? 'bg-success' : 

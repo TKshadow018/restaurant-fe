@@ -22,6 +22,12 @@ const OrderManagement = () => {
     }
   };
 
+  const getLocalizedText = (textObj, fallback = 'Unnamed Item') => {
+    if (typeof textObj === 'string') return textObj;
+    if (!textObj) return fallback;
+    return textObj.english || textObj.swedish || fallback;
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -62,22 +68,26 @@ const OrderManagement = () => {
                       <td className="fw-semibold">#{order.id}</td>
                       <td>
                         <div>
-                          <div className="fw-semibold">{user?.displayName || 'Unknown'}</div>
-                          <small className="text-muted">{user?.email}</small>
+                          <div className="fw-semibold">{user?.displayName || order.userEmail || 'Unknown'}</div>
+                          <small className="text-muted">{order.userEmail || user?.email}</small>
                         </div>
                       </td>
                       <td>
                         <div>
                           {order.items.map((item, index) => (
                             <div key={index} className="small">
-                              {item.quantity}x {item.name}
+                              {item.quantity}x {getLocalizedText(item.name)}
                             </div>
                           ))}
                         </div>
                       </td>
-                      <td className="fw-semibold">${order.total.toFixed(2)}</td>
+                      <td className="fw-semibold">{order.totalPrice} SEK</td>
                       <td>
-                        <small>{order.orderDate.toLocaleDateString()}</small>
+                        <small>
+                          {order.createdAt?.toDate
+                            ? order.createdAt.toDate().toLocaleDateString()
+                            : ''}
+                        </small>
                       </td>
                       <td>
                         <span className={`badge ${getStatusColor(order.status)}`}>

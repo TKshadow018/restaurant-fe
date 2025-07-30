@@ -2,12 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useTranslation } from 'react-i18next';
+import { db } from "@/firebase/config";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { useAuth } from '@/contexts/AuthContext'; // Adjust path if needed
 import '@/styles/theme.css';
 
 const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart();
   const { i18n } = useTranslation();
+  const { user } = useAuth(); // user.email should be available
   const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
 
   // Helper function to get localized text
@@ -38,11 +42,27 @@ const Cart = () => {
     updateQuantity(index, newQuantity);
   };
 
-  const handleCheckout = () => {
-    // TODO: Implement checkout functionality
-    alert(currentLanguage === 'swedish' 
-      ? 'Kassan är inte implementerad ännu!' 
-      : 'Checkout is not implemented yet!');
+  const handleCheckout = async () => {
+    try {
+      const orderData = {
+        items: cartItems,
+        totalPrice,
+        createdAt: Timestamp.now(),
+        userEmail: user?.email || 'guest'
+      };
+      await addDoc(collection(db, "orders"), orderData);
+      clearCart();
+      alert(currentLanguage === 'swedish' 
+        ? 'Din beställning har sparats!' 
+        : 'Your order has been saved!');
+      // Optionally navigate to a confirmation page
+      // navigate('/order-confirmation');
+    } catch (error) {
+      alert(currentLanguage === 'swedish' 
+        ? 'Det gick inte att spara beställningen.' 
+        : 'Failed to save order.');
+      console.error("Error saving order:", error);
+    }
   };
 
   if (cartItems.length === 0) {
