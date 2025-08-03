@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Spinner } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { storage } from '../../firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const FoodModal = ({ show, onHide, food, onSave, categories }) => {
   const [formData, setFormData] = useState({
@@ -22,6 +24,10 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
     image: '',
     available: true
   });
+
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState('');
 
   // Safely get categories from Redux store with fallbacks
   const categoriesState = useSelector((state) => state.categories);
@@ -71,6 +77,7 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
         image: food.image || '',
         available: food.available !== undefined ? food.available : true
       });
+      setImagePreview(food.image || '');
     } else {
       // For new food items, set the default category to the first available category
       // or empty string if no categories exist yet
@@ -95,10 +102,41 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
         image: '',
         available: true
       });
+      setImagePreview('');
     }
   }, [food, availableCategories]);
 
-  const handleSubmit = (e) => {
+  // Cleanup function to revoke object URLs
+  useEffect(() => {
+    return () => {
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Clean up previous preview URL if it was a blob
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+      
+      setImageFile(file);
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+      
+      // Clear the URL input when file is selected
+      setFormData(prev => ({
+        ...prev,
+        image: ''
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validate that at least one price is provided
@@ -125,8 +163,32 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
       return;
     }
 
+    // Handle image upload if file is selected
+    let imageUrl = formData.image;
+    if (imageFile) {
+      try {
+        setUploading(true);
+        const storageRef = ref(storage, `food-images/${Date.now()}_${imageFile.name}`);
+        await uploadBytes(storageRef, imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+        setUploading(false);
+      } catch (error) {
+        setUploading(false);
+        alert('Failed to upload image. Please try again.');
+        console.error('Image upload error:', error);
+        return;
+      }
+    }
+
+    // Validate that we have an image (either uploaded or URL)
+    if (!imageUrl && !formData.image) {
+      alert('Please provide an image (upload file or enter URL).');
+      return;
+    }
+
     const processedData = {
       ...formData,
+      image: imageUrl,
       price: validPrices
     };
     
@@ -159,6 +221,12 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
         ...prev,
         [name]: type === 'checkbox' ? checked : value
       }));
+      
+      // Update image preview when URL changes
+      if (name === 'image') {
+        setImagePreview(value);
+        setImageFile(null); // Clear file selection if URL is entered
+      }
     }
   };
 
@@ -327,14 +395,65 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Image URL</Form.Label>
-            <Form.Control
-              type="url"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              required
-            />
+            <Form.Label>Image</Form.Label>
+            
+            {/* Image Upload Section */}
+            <div className="mb-3">
+              <Form.Label className="fw-bold">Upload Image File</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+              {uploading && (
+                <div className="mt-2 d-flex align-items-center">
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  <span>Uploading image...</span>
+                </div>
+              )}
+            </div>
+
+            {/* OR Divider */}
+            <div className="text-center mb-3">
+              <span className="text-muted">OR</span>
+            </div>
+
+            {/* Image URL Section */}
+            <div className="mb-3">
+              <Form.Label className="fw-bold">Image URL</Form.Label>
+              <Form.Control
+                type="url"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="Enter image URL"
+                disabled={!!imageFile || uploading}
+              />
+              <Form.Text className="text-muted">
+                {imageFile ? 'File selected - URL input disabled' : 'Enter a direct image URL'}
+              </Form.Text>
+            </div>
+
+            {/* Image Preview */}
+            {imagePreview && (
+              <div className="mb-3">
+                <Form.Label className="fw-bold">Preview</Form.Label>
+                <div>
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    style={{ 
+                      maxWidth: '200px', 
+                      maxHeight: '200px', 
+                      objectFit: 'cover',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px'
+                    }} 
+                  />
+                </div>
+              </div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -354,9 +473,16 @@ const FoodModal = ({ show, onHide, food, onSave, categories }) => {
           <Button 
             variant="primary" 
             type="submit"
-            disabled={isLoading || availableCategories.length === 0}
+            disabled={isLoading || availableCategories.length === 0 || uploading}
           >
-            {food ? 'Update' : 'Add'} Food Item
+            {uploading ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Uploading...
+              </>
+            ) : (
+              <>{food ? 'Update' : 'Add'} Food Item</>
+            )}
           </Button>
         </Modal.Footer>
       </Form>

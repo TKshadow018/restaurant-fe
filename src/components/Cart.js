@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useTranslation } from 'react-i18next';
+import { Modal, Button } from 'react-bootstrap';
 import { db } from "@/firebase/config";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { useAuth } from '@/contexts/AuthContext'; // Adjust path if needed
@@ -11,8 +12,14 @@ const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart();
   const { i18n } = useTranslation();
-  const { user } = useAuth(); // user.email should be available
+  const { currentUser } = useAuth(); // Fix: use currentUser instead of user
   const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  // Debug user state
+  console.log("Auth currentUser state:", currentUser);
+  console.log("CurrentUser type:", typeof currentUser);
+  console.log("CurrentUser keys:", currentUser ? Object.keys(currentUser) : 'No currentUser object');
 
   // Helper function to get localized text
   const getLocalizedText = (textObj, fallback = 'Unnamed Item') => {
@@ -43,18 +50,52 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
+    // Check if user is logged in
+    if (!currentUser) {
+      alert(currentLanguage === 'swedish' 
+        ? 'Du måste logga in för att slutföra din beställning.' 
+        : 'You must be logged in to complete your order.');
+      navigate('/login'); // Redirect to login page
+      return;
+    }
+    
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentMethod = async (paymentMethod) => {
+    setShowPaymentModal(false);
+    
+    if (paymentMethod === 'online') {
+      alert(currentLanguage === 'swedish' 
+        ? 'Online betalning är inte tillgänglig just nu. Vänligen välj kontant vid leverans.' 
+        : 'Online payment is not available right now. Please choose cash on delivery.');
+      return;
+    }
+
+    // Cash on delivery - proceed with order
     try {
+      // Get user email with proper fallback
+      const userEmail = currentUser?.email || 'guest@example.com';
+      const userName = currentUser?.displayName || currentUser?.email || 'Guest User';
+      
       const orderData = {
         items: cartItems,
         totalPrice,
+        paymentMethod: 'cash_on_delivery',
         createdAt: Timestamp.now(),
-        userEmail: user?.email || 'guest'
+        userEmail: userEmail,
+        userName: userName,
+        status: 'pending' // Add default status
       };
+      
+      console.log("CurrentUser :==>", currentUser);
+      console.log("Order data :==>", orderData);
+      
       await addDoc(collection(db, "orders"), orderData);
       clearCart();
       alert(currentLanguage === 'swedish' 
-        ? 'Din beställning har sparats!' 
-        : 'Your order has been saved!');
+        ? 'Din beställning har sparats! Vi kommer att kontakta dig snart.' 
+        : 'Your order has been saved! We will contact you soon.');
       // Optionally navigate to a confirmation page
       // navigate('/order-confirmation');
     } catch (error) {
@@ -241,7 +282,10 @@ const Cart = () => {
                 onClick={handleCheckout}
               >
                 <i className="bi bi-credit-card me-2"></i>
-                {currentLanguage === 'swedish' ? 'Gå till kassan' : 'Proceed to Checkout'}
+                {currentUser 
+                  ? (currentLanguage === 'swedish' ? 'Gå till kassan' : 'Proceed to Checkout')
+                  : (currentLanguage === 'swedish' ? 'Logga in för att beställa' : 'Login to Order')
+                }
               </button>
               
               <button 
@@ -254,6 +298,47 @@ const Cart = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Method Modal */}
+      <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {currentLanguage === 'swedish' ? 'Välj betalningsmetod' : 'Choose Payment Method'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-4">
+            {currentLanguage === 'swedish' 
+              ? 'Hur vill du betala för din beställning?' 
+              : 'How would you like to pay for your order?'}
+          </p>
+          <div className="d-grid gap-3">
+            <Button 
+              variant="outline-primary" 
+              size="lg"
+              onClick={() => handlePaymentMethod('online')}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <i className="bi bi-credit-card me-2"></i>
+              {currentLanguage === 'swedish' ? 'Betala online' : 'Pay Online'}
+            </Button>
+            <Button 
+              variant="primary" 
+              size="lg"
+              onClick={() => handlePaymentMethod('cash')}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <i className="bi bi-cash me-2"></i>
+              {currentLanguage === 'swedish' ? 'Kontant vid leverans' : 'Cash on Delivery'}
+            </Button>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPaymentModal(false)}>
+            {currentLanguage === 'swedish' ? 'Avbryt' : 'Cancel'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

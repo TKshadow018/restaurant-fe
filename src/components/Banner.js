@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import '@/styles/theme.css';
 import '@/styles/campaign.css';
 
@@ -23,6 +24,7 @@ const Banner = ({
   title,
   subtitle,
   text,
+  duration,
   textPosition = 'center',
   overlay = true,
   isMain= false,
@@ -35,6 +37,16 @@ const Banner = ({
       duration: '#ffffff',
     },
 }) => {
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
+  
+  // Helper function to get localized text
+  const getLocalizedText = (textObj, fallback = '') => {
+    if (typeof textObj === 'string') return textObj;
+    if (!textObj) return fallback;
+    return textObj[currentLanguage] || textObj.english || textObj.swedish || fallback;
+  };
+  
   const positionClass = getPositionClass(textPosition);
 
   return (
@@ -49,20 +61,18 @@ const Banner = ({
       )}
       <div className={`banner-text position-absolute ${positionClass}`}>
         <div className="banner-badge p-4 rounded">
-          <h2 className="fw-bold mb-1 banner-title" style={{color:bannerColor.title}}>{title}</h2>
-          <h5 className="mb-2 banner-subtitle" style={{color:bannerColor.subtitle}}>{subtitle}</h5>
-          <p className="mb-0 banner-desc" style={{color:bannerColor.text}}>{text}</p>
-          {campainStartDate && campainEndDate && (
+          <h2 className="fw-bold mb-1 banner-title" style={{color:bannerColor.title}}>
+            {getLocalizedText(title)}
+          </h2>
+          <h5 className="mb-2 banner-subtitle" style={{color:bannerColor.subtitle}}>
+            {getLocalizedText(subtitle)}
+          </h5>
+          <p className="mb-0 banner-desc" style={{color:bannerColor.text}}>
+            {getLocalizedText(text)}
+          </p>
+          {duration && getLocalizedText(duration) && (
             <p className="mt-2 mb-0 banner-duration" style={{color:bannerColor.duration}}>
-              Journey begins {new Date(campainStartDate).toLocaleDateString('en-US', { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })} • Concludes {new Date(campainEndDate).toLocaleDateString('en-US', { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })}
+              {getLocalizedText(duration)}
             </p>
           )}
         </div>

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAdmin } from '@/contexts/AdminContext';
-import { useFood } from '@/contexts/FoodContext';
+import useAdminData from '../hooks/useAdminData';
 import UserManagement from '@/components/admin/UserManagement';
 import FoodManagement from '@/components/admin/FoodManagement';
 import OrderManagement from '@/components/admin/OrderManagement';
@@ -16,8 +15,18 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { users = [], orders = [], loading: adminLoading } = useAdmin();
-  const { foods = [], loading: foodLoading } = useFood();
+  const { 
+    users, 
+    orders, 
+    foods, 
+    isLoading,
+    loadAdminData 
+  } = useAdminData();
+
+  // Load admin data when component mounts
+  useEffect(() => {
+    loadAdminData();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -31,7 +40,7 @@ const AdminDashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardStats users={users} foods={foods} orders={orders} />;
+        return <DashboardStats />;
       case 'users':
         return <UserManagement />;
       case 'foods':
@@ -46,12 +55,12 @@ const AdminDashboard = () => {
         return <CampaignManagement />;
         
       default:
-        return <DashboardStats users={users} foods={foods} orders={orders} />;
+        return <DashboardStats />;
     }
   };
 
   // Show loading spinner while data is being fetched
-  if (adminLoading || foodLoading) {
+  if (isLoading) {
     return <Loading message="Loading admin dashboard..." height="100vh" />;
   }
 
@@ -79,8 +88,8 @@ const AdminDashboard = () => {
       <div className="container-fluid">
         <div className="row">
           {/* Sidebar */}
-          <nav className="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse">
-            <div className="position-sticky pt-3">
+          <nav className="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse" style={{ height: 'calc(100vh - 56px)', overflowY: 'auto', position: 'sticky', top: '56px' }}>
+            <div className="pt-3">
               <ul className="nav flex-column">
                 <li className="nav-item">
                   <button

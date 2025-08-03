@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getAnalytics } from 'firebase/analytics'; // <-- Add this line
+import { getStorage } from 'firebase/storage';
+import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
   // apiKey: "AIzaSyB0mdIjNyCOWqZo3H6coKSh0WCx8kRr9GE",
@@ -27,7 +28,10 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app);
+export const db = getFirestore(app, 'shah');
+
+// Initialize Firebase Storage and get a reference to the service
+export const storage = getStorage(app);
 
 // Initialize Analytics and get a reference to the service
 export const analytics = getAnalytics(app); 

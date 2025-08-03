@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'; // Add useRef
 import { useFood } from '@/contexts/FoodContext';
+import useAdminData from '../../hooks/useAdminData';
 import FoodModal from '@/components/admin/FoodModal';
 import CategoryModal from '@/components/admin/CategoryModal'; // New import
 import { 
@@ -15,7 +16,20 @@ import {
 import { db } from '@/firebase/config';
 
 const FoodManagement = () => {
-  const { foods, deleteFood, updateFood, setFoods } = useFood();
+  const { foods: contextFoods, deleteFood, updateFood, setFoods } = useFood();
+  const { 
+    foods: reduxFoods, 
+    foodsLoading, 
+    foodsError,
+    loadAdminData,
+    updateFoodAvailabilityLocal,
+    addFoodLocal,
+    updateFoodLocal,
+    removeFoodLocal
+  } = useAdminData();
+  
+  // Use Redux foods if available, otherwise fall back to context
+  const foods = reduxFoods.length > 0 ? reduxFoods : contextFoods;
   const [showModal, setShowModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false); // New state
   const [editingFood, setEditingFood] = useState(null);
@@ -27,6 +41,11 @@ const FoodManagement = () => {
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false); // State for bulk upload
   const fileInputRef = useRef(null); // Ref for the hidden file input
+
+  // Load admin data from Redux
+  useEffect(() => {
+    loadAdminData();
+  }, []);
 
   // Load categories from Firebase
   useEffect(() => {
@@ -143,10 +162,15 @@ const FoodManagement = () => {
     if (window.confirm('Are you sure you want to delete this food item?')) {
       try {
         await deleteDoc(doc(db, 'foods', foodId));
-        // The real-time listener will update the UI automatically
+        
+        // Update Redux store locally for immediate UI feedback
+        removeFoodLocal(foodId);
+        
       } catch (err) {
         console.error('Error deleting food:', err);
         setError('Failed to delete food item');
+        // If deletion failed, we might want to reload to ensure consistency
+        loadAdminData(true);
       }
     }
   };
@@ -166,10 +190,15 @@ const FoodManagement = () => {
       await updateDoc(doc(db, 'foods', food.id), {
         available: !food.available
       });
-      // The real-time listener will update the UI automatically
+      
+      // Update Redux store locally for immediate UI feedback
+      updateFoodAvailabilityLocal(food.id, !food.available);
+      
     } catch (err) {
       console.error('Error updating availability:', err);
       setError('Failed to update availability');
+      // If Firebase update failed, revert the Redux change
+      updateFoodAvailabilityLocal(food.id, food.available);
     }
   };
 
@@ -177,18 +206,39 @@ const FoodManagement = () => {
     try {
       if (editingFood) {
         // Update existing food
-        await updateDoc(doc(db, 'foods', editingFood.id), {
+        const updatedData = {
           ...foodData,
           updatedAt: new Date()
+        };
+        
+        await updateDoc(doc(db, 'foods', editingFood.id), updatedData);
+        
+        // Update Redux store locally for immediate UI feedback
+        updateFoodLocal({
+          id: editingFood.id,
+          ...updatedData,
+          updatedAt: new Date().toISOString()
         });
+        
       } else {
         // Add new food
-        await addDoc(collection(db, 'foods'), {
+        const newFoodData = {
           ...foodData,
           createdAt: new Date(),
           updatedAt: new Date()
+        };
+        
+        const docRef = await addDoc(collection(db, 'foods'), newFoodData);
+        
+        // Update Redux store locally for immediate UI feedback
+        addFoodLocal({
+          id: docRef.id,
+          ...newFoodData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
       }
+      
       setShowModal(false);
       setEditingFood(null);
       setError(null);
@@ -285,6 +335,10 @@ const FoodManagement = () => {
         });
 
         await batch.commit();
+        
+        // For bulk operations, refresh the entire food list
+        loadAdminData(true); // Force refresh for bulk operations
+        
         alert(`${uploadedCount} items uploaded successfully! The list will now refresh.`);
 
       } catch (err) {

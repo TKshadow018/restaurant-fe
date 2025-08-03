@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import useAdminData from '../../hooks/useAdminData';
 
-const DashboardStats = ({ users, foods, orders }) => {
-  const activeUsers = users.filter(user => user.isActive).length;
-  const availableFoods = foods.filter(food => food.available).length;
-  const pendingOrders = orders.filter(order => order.status === 'pending').length;
-  const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+const DashboardStats = () => {
+  const { 
+    users, 
+    foods, 
+    orders, 
+    stats, 
+    isLoading, 
+    loadAdminData,
+    isDataLoaded 
+  } = useAdminData();
+
+  useEffect(() => {
+    if (!isDataLoaded) {
+      loadAdminData();
+    }
+  }, []);
+
+  if (isLoading && !isDataLoaded) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -17,8 +39,8 @@ const DashboardStats = ({ users, foods, orders }) => {
             <div className="card-body text-center">
               <div className="display-6 text-primary mb-3">👥</div>
               <h5 className="card-title">Active Users</h5>
-              <p className="display-6 fw-bold text-primary mb-0">{activeUsers}</p>
-              <small className="text-muted">Total: {users.length}</small>
+              <p className="display-6 fw-bold text-primary mb-0">{stats.activeUsers}</p>
+              <small className="text-muted">Total: {stats.totalUsers}</small>
             </div>
           </div>
         </div>
@@ -28,8 +50,8 @@ const DashboardStats = ({ users, foods, orders }) => {
             <div className="card-body text-center">
               <div className="display-6 text-success mb-3">🍽️</div>
               <h5 className="card-title">Available Foods</h5>
-              <p className="display-6 fw-bold text-success mb-0">{availableFoods}</p>
-              <small className="text-muted">Total: {foods.length}</small>
+              <p className="display-6 fw-bold text-success mb-0">{stats.availableFoods}</p>
+              <small className="text-muted">Total: {stats.totalFoods}</small>
             </div>
           </div>
         </div>
@@ -39,8 +61,8 @@ const DashboardStats = ({ users, foods, orders }) => {
             <div className="card-body text-center">
               <div className="display-6 text-warning mb-3">📦</div>
               <h5 className="card-title">Pending Orders</h5>
-              <p className="display-6 fw-bold text-warning mb-0">{pendingOrders}</p>
-              <small className="text-muted">Total: {orders.length}</small>
+              <p className="display-6 fw-bold text-warning mb-0">{stats.pendingOrders}</p>
+              <small className="text-muted">Total: {stats.totalOrders}</small>
             </div>
           </div>
         </div>
@@ -49,9 +71,9 @@ const DashboardStats = ({ users, foods, orders }) => {
           <div className="card border-0 shadow-sm h-100">
             <div className="card-body text-center">
               <div className="display-6 text-info mb-3">💰</div>
-              <h5 className="card-title">Total Revenue</h5>
-              {/* <p className="display-6 fw-bold text-info mb-0">${totalRevenue.toFixed(2)}</p> */}
-              <small className="text-muted">All time</small>
+              <h5 className="card-title">Total Income (All Time)</h5>
+              <p className="display-6 fw-bold text-info mb-0">${(Number(stats.totalRevenue) || 0).toFixed(2)}</p>
+              <small className="text-muted">Potential Income ${(Number(stats.potentialIncome) || 0).toFixed(2)}</small>
             </div>
           </div>
         </div>

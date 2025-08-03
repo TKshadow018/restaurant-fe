@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
-import { useAdmin } from '@/contexts/AdminContext';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loading from '@/components/Loading';
+import useAdminData from '../../hooks/useAdminData';
 
 const UserManagement = () => {
-  const { users, loading, error, updateUserStatus, updateUserRole, deleteUser } = useAdmin();
+  const { 
+    users, 
+    usersLoading, 
+    usersError, 
+    updateUserStatus, 
+    updateUserRole,
+    deleteUser,
+    loadAdminData 
+  } = useAdminData();
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+
+  useEffect(() => {
+    loadAdminData();
+  }, []);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
@@ -54,7 +66,9 @@ const UserManagement = () => {
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
-    return date.toLocaleDateString('en-US', {
+    // Handle both ISO strings and Date objects
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -63,15 +77,15 @@ const UserManagement = () => {
     });
   };
 
-  if (loading) {
+  if (usersLoading) {
     return <Loading message="Loading users..." height="60vh" />;
   }
 
-  if (error) {
+  if (usersError) {
     return (
       <div className="alert alert-danger" role="alert">
         <h4 className="alert-heading">Error!</h4>
-        <p>{error}</p>
+        <p>{usersError}</p>
       </div>
     );
   }

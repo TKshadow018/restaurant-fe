@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { isUserAdmin } from '@/utils/adminUtils';
 
-
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',

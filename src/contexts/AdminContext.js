@@ -6,7 +6,8 @@ import {
   updateDoc, 
   deleteDoc, 
   query, 
-  orderBy 
+  orderBy,
+  serverTimestamp 
 } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { isUserAdmin } from '@/utils/adminUtils';
@@ -98,7 +99,7 @@ export const AdminProvider = ({ children }) => {
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
         isActive,
-        updatedAt: new Date()
+        updatedAt: serverTimestamp()
       });
     } catch (error) {
       console.error('Error updating user status:', error);
@@ -112,7 +113,7 @@ export const AdminProvider = ({ children }) => {
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
         role,
-        updatedAt: new Date()
+        updatedAt: serverTimestamp()
       });
     } catch (error) {
       console.error('Error updating user role:', error);
@@ -131,6 +132,20 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  // Update order status
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      const orderRef = doc(db, 'orders', orderId);
+      await updateDoc(orderRef, {
+        status,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      throw error;
+    }
+  };
+
   const value = {
     users,
     orders,
@@ -138,7 +153,8 @@ export const AdminProvider = ({ children }) => {
     error,
     updateUserStatus,
     updateUserRole,
-    deleteUser
+    deleteUser,
+    updateOrderStatus
   };
 
   return (
