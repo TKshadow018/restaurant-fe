@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
+import { useOrder } from '@/contexts/OrderContext';
 import { useTranslation } from 'react-i18next';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { db } from "@/firebase/config";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, query, where, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 import { useAuth } from '@/contexts/AuthContext'; // Adjust path if needed
 import '@/styles/theme.css';
 
 const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart();
-  const { i18n } = useTranslation();
+  const { refreshOrderStatus } = useOrder();
+  const { t, i18n } = useTranslation();
   const { currentUser } = useAuth(); // Fix: use currentUser instead of user
   const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
 
   // Debug user state
   console.log("Auth currentUser state:", currentUser);
@@ -42,6 +48,241 @@ const Cart = () => {
   const handleContinueShopping = () => {
     navigate('/?page=menu');
   };
+
+  // Coupon validation function
+  const validateCoupon = async (code) => {
+    setCouponLoading(true);
+    setCouponError('');
+
+    try {
+      // Query campaigns with the coupon code
+      const campaignQuery = query(
+        collection(db, "campaigns"),
+        where("couponCode", "==", code.toUpperCase())
+      );
+      
+      const querySnapshot = await getDocs(campaignQuery);
+      
+      if (querySnapshot.empty) {
+        setCouponError(currentLanguage === 'swedish' 
+          ? 'Ogiltig kupongkod' 
+          : 'Invalid coupon code');
+        return false;
+      }
+
+      const campaignDoc = querySnapshot.docs[0];
+      const campaign = { id: campaignDoc.id, ...campaignDoc.data() };
+
+      // Check if campaign is active
+      const now = new Date();
+      const startDate = campaign.campainStartDate ? new Date(campaign.campainStartDate) : null;
+      const endDate = campaign.campainEndDate ? new Date(campaign.campainEndDate) : null;
+
+      const isActive = (!startDate || startDate <= now) && (!endDate || endDate >= now);
+
+      if (!isActive) {
+        setCouponError(currentLanguage === 'swedish' 
+          ? 'Denna kupong har gått ut eller är inte aktiv än' 
+          : 'This coupon has expired or is not active yet');
+        return false;
+      }
+
+      // Check minimum order amount
+      const currentTotal = parseFloat(totalPrice);
+      const minimumOrder = campaign.minimumOrderAmount || 0;
+      
+      if (currentTotal < minimumOrder) {
+        setCouponError(currentLanguage === 'swedish' 
+          ? `Minsta beställningsvärde är ${minimumOrder} SEK för denna kupong` 
+          : `Minimum order value is ${minimumOrder} SEK for this coupon`);
+        return false;
+      }
+
+      // Check if any cart items are eligible for discount (only for item-specific discounts)
+      if (campaign.eligibleDishes && campaign.eligibleDishes.length > 0) {
+        const eligibleItems = cartItems.filter(item => 
+          campaign.eligibleDishes.includes(item.id)
+        );
+
+        if (eligibleItems.length === 0) {
+          setCouponError(currentLanguage === 'swedish' 
+            ? 'Denna kupong är inte giltig för artiklar i din varukorg' 
+            : 'This coupon is not valid for items in your cart');
+          return false;
+        }
+      }
+
+      // Check user usage limits
+      if (currentUser && campaign.maxUsagesPerUser > 0) {
+        const usageQuery = query(
+          collection(db, "couponUsage"),
+          where("userId", "==", currentUser.uid),
+          where("couponCode", "==", code.toUpperCase())
+        );
+        
+        const usageSnapshot = await getDocs(usageQuery);
+        let currentUsage = 0;
+        
+        usageSnapshot.forEach(doc => {
+          currentUsage += doc.data().usageCount || 1;
+        });
+
+        if (currentUsage >= campaign.maxUsagesPerUser) {
+          setCouponError(currentLanguage === 'swedish' 
+            ? `Du har redan använt denna kupong maximalt antal gånger (${campaign.maxUsagesPerUser})` 
+            : `You have already used this coupon the maximum number of times (${campaign.maxUsagesPerUser})`);
+          return false;
+        }
+      }
+
+      setAppliedCoupon(campaign);
+      return true;
+    } catch (error) {
+      console.error('Error validating coupon:', error);
+      setCouponError(currentLanguage === 'swedish' 
+        ? 'Fel vid validering av kupong' 
+        : 'Error validating coupon');
+      return false;
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError(currentLanguage === 'swedish' 
+        ? 'Vänligen ange en kupongkod' 
+        : 'Please enter a coupon code');
+      return;
+    }
+
+    const isValid = await validateCoupon(couponCode.trim());
+    if (isValid) {
+      setCouponCode('');
+      setCouponError('');
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError('');
+  };
+
+  // Calculate discounted price for an item
+  const getDiscountedPrice = (item) => {
+    if (!appliedCoupon) {
+      return {
+        originalPrice: parseFloat(item.selectedPrice),
+        discountedPrice: parseFloat(item.selectedPrice),
+        discount: 0
+      };
+    }
+
+    const originalPrice = parseFloat(item.selectedPrice);
+    
+    // For item-specific coupons, check if this item is eligible
+    if (appliedCoupon.eligibleDishes && appliedCoupon.eligibleDishes.length > 0) {
+      if (!appliedCoupon.eligibleDishes.includes(item.id)) {
+        return {
+          originalPrice,
+          discountedPrice: originalPrice,
+          discount: 0
+        };
+      }
+    }
+
+    // Apply discount based on type
+    let discountAmount = 0;
+    
+    if (appliedCoupon.discountType === 'fixed') {
+      // For fixed amount, distribute across eligible items proportionally
+      const eligibleItems = cartItems.filter(cartItem => 
+        !appliedCoupon.eligibleDishes || 
+        appliedCoupon.eligibleDishes.length === 0 || 
+        appliedCoupon.eligibleDishes.includes(cartItem.id)
+      );
+      
+      const totalEligibleValue = eligibleItems.reduce((sum, cartItem) => 
+        sum + (parseFloat(cartItem.selectedPrice) * cartItem.quantity), 0
+      );
+      
+      const itemValueProportion = (originalPrice * item.quantity) / totalEligibleValue;
+      const totalFixedDiscount = Math.min(
+        appliedCoupon.discountFixedAmount || 0, 
+        totalEligibleValue
+      );
+      
+      discountAmount = (totalFixedDiscount * itemValueProportion) / item.quantity;
+    } else {
+      // Percentage discount
+      const discountPercentage = appliedCoupon.discountPercentage || 0;
+      discountAmount = originalPrice * (discountPercentage / 100);
+    }
+
+    const discountedPrice = Math.max(0, originalPrice - discountAmount);
+
+    return {
+      originalPrice,
+      discountedPrice,
+      discount: discountAmount
+    };
+  };
+
+  // Calculate total with discounts
+  const calculateTotalWithDiscounts = () => {
+    let total = 0;
+    let totalDiscount = 0;
+
+    cartItems.forEach(item => {
+      const { discountedPrice, discount } = getDiscountedPrice(item);
+      total += discountedPrice * item.quantity;
+      totalDiscount += discount * item.quantity;
+    });
+
+    return {
+      total: total.toFixed(2),
+      totalDiscount: totalDiscount.toFixed(2),
+      originalTotal: totalPrice
+    };
+  };
+
+  const totals = calculateTotalWithDiscounts();
+
+  // Effect to validate coupon when cart changes
+  useEffect(() => {
+    if (appliedCoupon && cartItems.length > 0) {
+      // Check minimum order amount
+      const currentTotal = parseFloat(totalPrice);
+      const minimumOrder = appliedCoupon.minimumOrderAmount || 0;
+      
+      if (currentTotal < minimumOrder) {
+        // Remove coupon if minimum order is not met
+        setAppliedCoupon(null);
+        setCouponCode('');
+        setCouponError(currentLanguage === 'swedish' 
+          ? `Kupong borttagen: Minsta beställningsvärde är ${minimumOrder} SEK` 
+          : `Coupon removed: Minimum order value is ${minimumOrder} SEK`);
+        return;
+      }
+
+      // Check if any cart items are still eligible for discount (only for item-specific discounts)
+      if (appliedCoupon.eligibleDishes && appliedCoupon.eligibleDishes.length > 0) {
+        const eligibleItems = cartItems.filter(item => 
+          appliedCoupon.eligibleDishes.includes(item.id)
+        );
+
+        if (eligibleItems.length === 0) {
+          // Remove coupon if no eligible items remain
+          setAppliedCoupon(null);
+          setCouponCode('');
+          setCouponError(currentLanguage === 'swedish' 
+            ? 'Kupong borttagen: Inga giltiga artiklar kvar i varukorgen' 
+            : 'Coupon removed: No eligible items left in cart');
+        }
+      }
+    }
+  }, [cartItems, totalPrice, appliedCoupon, currentLanguage]);
 
   const handleQuantityChange = (index, change) => {
     const currentQuantity = cartItems[index].quantity;
@@ -78,9 +319,30 @@ const Cart = () => {
       const userEmail = currentUser?.email || 'guest@example.com';
       const userName = currentUser?.displayName || currentUser?.email || 'Guest User';
       
+      // Calculate final totals with discounts
+      const finalTotals = calculateTotalWithDiscounts();
+      
       const orderData = {
-        items: cartItems,
-        totalPrice,
+        userId: currentUser.uid, // Add userId field for querying
+        items: cartItems.map(item => ({
+          ...item,
+          appliedDiscount: appliedCoupon && appliedCoupon.eligibleDishes?.includes(item.id) 
+            ? getDiscountedPrice(item) 
+            : null
+        })),
+        originalTotal: totalPrice,
+        finalTotal: finalTotals.total,
+        totalDiscount: finalTotals.totalDiscount,
+        appliedCoupon: appliedCoupon ? {
+          id: appliedCoupon.id,
+          code: appliedCoupon.couponCode,
+          title: appliedCoupon.title,
+          discountType: appliedCoupon.discountType,
+          discountPercentage: appliedCoupon.discountPercentage,
+          discountFixedAmount: appliedCoupon.discountFixedAmount,
+          minimumOrderAmount: appliedCoupon.minimumOrderAmount,
+          eligibleDishes: appliedCoupon.eligibleDishes
+        } : null,
         paymentMethod: 'cash_on_delivery',
         createdAt: Timestamp.now(),
         userEmail: userEmail,
@@ -91,13 +353,55 @@ const Cart = () => {
       console.log("CurrentUser :==>", currentUser);
       console.log("Order data :==>", orderData);
       
-      await addDoc(collection(db, "orders"), orderData);
+      const docRef = await addDoc(collection(db, "orders"), orderData);
+      console.log("Order saved with ID:", docRef.id);
+      
+      // Track coupon usage if a coupon was applied
+      if (appliedCoupon && currentUser) {
+        try {
+          // Check if user already has a usage record for this coupon
+          const usageQuery = query(
+            collection(db, "couponUsage"),
+            where("userId", "==", currentUser.uid),
+            where("couponCode", "==", appliedCoupon.couponCode)
+          );
+          
+          const existingUsage = await getDocs(usageQuery);
+          
+          if (!existingUsage.empty) {
+            // Update existing usage count
+            const usageDoc = existingUsage.docs[0];
+            await updateDoc(doc(db, "couponUsage", usageDoc.id), {
+              usageCount: increment(1),
+              lastUsed: Timestamp.now()
+            });
+          } else {
+            // Create new usage record
+            await addDoc(collection(db, "couponUsage"), {
+              userId: currentUser.uid,
+              couponCode: appliedCoupon.couponCode,
+              campaignId: appliedCoupon.id,
+              usageCount: 1,
+              firstUsed: Timestamp.now(),
+              lastUsed: Timestamp.now()
+            });
+          }
+        } catch (usageError) {
+          console.error('Error tracking coupon usage:', usageError);
+          // Don't fail the order if usage tracking fails
+        }
+      }
+      
       clearCart();
-      alert(currentLanguage === 'swedish' 
-        ? 'Din beställning har sparats! Vi kommer att kontakta dig snart.' 
-        : 'Your order has been saved! We will contact you soon.');
-      // Optionally navigate to a confirmation page
-      // navigate('/order-confirmation');
+      setAppliedCoupon(null);
+      setCouponCode('');
+      setCouponError('');
+      
+      // Refresh order status to show Orders tab in navbar
+      refreshOrderStatus();
+      
+      // Navigate to dashboard with orders page to show navbar and orders
+      navigate('/dashboard?page=orders');
     } catch (error) {
       alert(currentLanguage === 'swedish' 
         ? 'Det gick inte att spara beställningen.' 
@@ -144,7 +448,12 @@ const Cart = () => {
             </h1>
             <button 
               className="btn btn-outline-danger"
-              onClick={clearCart}
+              onClick={() => {
+                clearCart();
+                setAppliedCoupon(null);
+                setCouponCode('');
+                setCouponError('');
+              }}
             >
               <i className="bi bi-trash me-2"></i>
               {currentLanguage === 'swedish' ? 'Töm varukorg' : 'Clear Cart'}
@@ -176,7 +485,30 @@ const Cart = () => {
                       )}
                     </div>
                     <div className="col-md-2">
-                      <span className="h6 text-primary">{item.selectedPrice} SEK</span>
+                      {(() => {
+                        const { originalPrice, discountedPrice, discount } = getDiscountedPrice(item);
+                        const hasDiscount = discount > 0;
+                        
+                        return (
+                          <div className="text-end">
+                            {hasDiscount ? (
+                              <>
+                                <div className="text-muted text-decoration-line-through small">
+                                  {originalPrice} SEK
+                                </div>
+                                <div className="h6 text-success mb-0">
+                                  {discountedPrice.toFixed(2)} SEK
+                                </div>
+                                <small className="text-success">
+                                  -{discount.toFixed(2)} SEK
+                                </small>
+                              </>
+                            ) : (
+                              <span className="h6 text-primary">{originalPrice} SEK</span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                     <div className="col-md-3">
                       <div className="d-flex align-items-center justify-content-center">
@@ -244,9 +576,29 @@ const Cart = () => {
                   </div>
                   <div className="row mt-2">
                     <div className="col-md-12 text-end">
-                      <strong className="text-primary">
-                        {currentLanguage === 'swedish' ? 'Subtotal:' : 'Subtotal:'} {item.totalPrice} SEK
-                      </strong>
+                      {(() => {
+                        const { discountedPrice, discount } = getDiscountedPrice(item);
+                        const itemTotal = (discountedPrice * item.quantity).toFixed(2);
+                        const hasDiscount = discount > 0;
+                        
+                        return (
+                          <div>
+                            {hasDiscount && (
+                              <div className="small text-muted text-decoration-line-through mb-1">
+                                {currentLanguage === 'swedish' ? 'Ursprunglig subtotal:' : 'Original subtotal:'} {(parseFloat(item.selectedPrice) * item.quantity).toFixed(2)} SEK
+                              </div>
+                            )}
+                            <strong className={hasDiscount ? "text-success" : "text-primary"}>
+                              {currentLanguage === 'swedish' ? 'Subtotal:' : 'Subtotal:'} {itemTotal} SEK
+                              {hasDiscount && (
+                                <small className="ms-2 text-success">
+                                  ({currentLanguage === 'swedish' ? 'Du sparar' : 'You save'} {(discount * item.quantity).toFixed(2)} SEK)
+                                </small>
+                              )}
+                            </strong>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -271,10 +623,103 @@ const Cart = () => {
                 <span>{currentLanguage === 'swedish' ? 'Totalt antal:' : 'Total Quantity:'}</span>
                 <span>{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
               </div>
+              
+              {/* Coupon Section */}
+              <div className="mb-4">
+                <h6 className="mb-3">
+                  {currentLanguage === 'swedish' ? 'Kupongkod' : 'Coupon Code'}
+                </h6>
+                
+                {appliedCoupon ? (
+                  <Alert variant="success" className="p-3">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <i className="bi bi-check-circle me-2"></i>
+                        <strong>{appliedCoupon.couponCode}</strong>
+                        <div className="small text-success">
+                          {currentLanguage === 'swedish' 
+                            ? `Kupong tillämpad: ${appliedCoupon.title?.swedish || appliedCoupon.title?.english || 'Discount'}` 
+                            : `Coupon applied: ${appliedCoupon.title?.english || appliedCoupon.title?.swedish || 'Discount'}`}
+                        </div>
+                        <div className="small text-muted">
+                          {appliedCoupon.discountType === 'percentage' 
+                            ? `${appliedCoupon.discountPercentage}% ${currentLanguage === 'swedish' ? 'rabatt' : 'discount'}`
+                            : `${appliedCoupon.discountFixedAmount} SEK ${currentLanguage === 'swedish' ? 'rabatt' : 'discount'}`}
+                          {appliedCoupon.minimumOrderAmount > 0 && (
+                            <span className="ms-2">
+                              (Min: {appliedCoupon.minimumOrderAmount} SEK)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={handleRemoveCoupon}
+                        title={currentLanguage === 'swedish' ? 'Ta bort kupong' : 'Remove coupon'}
+                      >
+                        <i className="bi bi-x"></i>
+                      </Button>
+                    </div>
+                  </Alert>
+                ) : (
+                  <div className="input-group mb-2">
+                    <Form.Control
+                      type="text"
+                      placeholder={currentLanguage === 'swedish' ? 'Ange kupongkod' : 'Enter coupon code'}
+                      value={couponCode}
+                      onChange={(e) => {
+                        setCouponCode(e.target.value.toUpperCase());
+                        setCouponError('');
+                      }}
+                      disabled={couponLoading}
+                    />
+                    <Button 
+                      variant="outline-primary"
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                    >
+                      {couponLoading ? (
+                        <i className="bi bi-hourglass-split"></i>
+                      ) : (
+                        currentLanguage === 'swedish' ? 'Använd' : 'Apply'
+                      )}
+                    </Button>
+                  </div>
+                )}
+                
+                {couponError && (
+                  <Alert variant="danger" className="p-2 mt-2">
+                    <small>{couponError}</small>
+                  </Alert>
+                )}
+              </div>
+              
+              {/* Price Summary */}
+              {parseFloat(totals.totalDiscount) > 0 && (
+                <>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>{currentLanguage === 'swedish' ? 'Subtotal:' : 'Subtotal:'}</span>
+                    <span>{totals.originalTotal} SEK</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-3 text-success">
+                    <span>{currentLanguage === 'swedish' ? 'Kupongrabatt:' : 'Coupon Discount:'}</span>
+                    <span>-{totals.totalDiscount} SEK</span>
+                  </div>
+                </>
+              )}
+              
               <hr />
               <div className="d-flex justify-content-between mb-4">
                 <h5>{currentLanguage === 'swedish' ? 'Totalt:' : 'Total:'}</h5>
-                <h5 className="text-primary">{totalPrice} SEK</h5>
+                <h5 className={parseFloat(totals.totalDiscount) > 0 ? "text-success" : "text-primary"}>
+                  {totals.total} SEK
+                  {parseFloat(totals.totalDiscount) > 0 && (
+                    <div className="small text-muted">
+                      {currentLanguage === 'swedish' ? 'Du sparar' : 'You save'} {totals.totalDiscount} SEK
+                    </div>
+                  )}
+                </h5>
               </div>
               
               <button 

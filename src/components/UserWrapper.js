@@ -5,12 +5,14 @@ import Home from '@/components/Home';
 import Menu from '@/components/Menu';
 import Campaign from '@/components/Campaign';
 import ContactUs from '@/components/ContactUs';
+import Orders from '@/components/Orders';
 
 const COMPONENTS = {
   home: <Home />,
   menu: <Menu />,
   campaign: <Campaign />,
   about: <ContactUs />,
+  orders: <Orders />,
 };
 
 const UserWrapper = () => {
@@ -20,7 +22,7 @@ const UserWrapper = () => {
   // Check for page parameter on mount and when search params change
   useEffect(() => {
     const page = searchParams.get('page');
-    if (page && ['home', 'menu', 'campaign', 'about'].includes(page)) {
+    if (page && ['home', 'menu', 'campaign', 'about', 'orders'].includes(page)) {
       setVisible(page);
     }
   }, [searchParams]);

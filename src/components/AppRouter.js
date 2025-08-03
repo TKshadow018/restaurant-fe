@@ -21,6 +21,7 @@ import ContactUs from "@/components/ContactUs";
 import Menu from "@/components/Menu";
 import Campaign from "@/components/Campaign";
 import Cart from "@/components/Cart";
+import GoToCart from "@/components/GoToCart";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -74,6 +75,7 @@ const AppRouter = () => {
   return (
     <Router>
       <div className="app">
+        <GoToCart />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<UserWrapper />} />

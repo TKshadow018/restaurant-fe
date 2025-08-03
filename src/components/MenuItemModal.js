@@ -75,7 +75,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedVolume, setSelectedVolume] = useState(null);
   const { addToCart } = useCart();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language === "sv" ? "swedish" : "english";
 
   // Helper function to get localized content
@@ -171,22 +171,6 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
     addToCart(cartItem);
     setQuantity(1);
 
-    // Show success message with visual feedback
-    const button = document.querySelector(".btn-primary");
-    if (button) {
-      const originalText = button.textContent;
-      button.textContent =
-        currentLanguage === "swedish" ? "Tillagd!" : "Added!";
-      button.classList.add("btn-success");
-      button.classList.remove("btn-primary");
-
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.classList.add("btn-primary");
-        button.classList.remove("btn-success");
-      }, 1500);
-    }
-
     // Reset to first available volume for next time
     if (availableVolumes.length > 0) {
       setSelectedVolume(availableVolumes[0].volume);
@@ -202,7 +186,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
       tabIndex="-1"
       style={{ backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(5px)" }}
     >
-      <div className="modal-dialog modal-lg modal-dialog-centered">
+      <div className="modal-dialog modal-lg modal-dialog-centered mx-2 mx-md-auto">
         <div className="modal-content modal-content-custom border-0 shadow-lg" style={{ borderRadius: "20px", overflow: "hidden" }}>
           <div className="modal-header border-0 position-relative" style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -225,14 +209,24 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
           <div className="modal-body p-0">
             <div className="row g-0">
               {/* Image Section */}
-              <div className="col-md-6" style={{ height: "400px" }}>
+              <div className="col-md-6">
                 <div className="position-relative" style={{ height: "100%" }}>
                   <img
                     src={item.image}
-                    className="img-fluid w-100"
+                    className="img-fluid w-100 d-none d-md-block"
                     alt={getLocalizedText(item.name)}
                     style={{ 
-                      height: "400px", 
+                      height: "300px", 
+                      objectFit: "cover",
+                      filter: "brightness(1.1) contrast(1.1)"
+                    }}
+                  />
+                  <img
+                    src={item.image}
+                    className="img-fluid w-100 d-md-none"
+                    alt={getLocalizedText(item.name)}
+                    style={{ 
+                      height: "200px", 
                       objectFit: "cover",
                       filter: "brightness(1.1) contrast(1.1)"
                     }}
@@ -268,9 +262,9 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
               </div>
 
               {/* Details Section */}
-              <div className="col-md-6" style={{ height: "400px" }}>
-                <div className="p-4" style={{ background: "linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%)" }}>
-                  <div className="mb-4">
+              <div className="col-md-6">
+                <div className="p-2 p-md-4" style={{ background: "linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%)" }}>
+                  <div className="mb-2 mb-md-4">
                     <span className="text-white border-0 px-4 py-2 rounded-pill shadow-sm fw-bold" style={{
                       background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                       fontSize: "0.9rem"
@@ -279,8 +273,8 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                     </span>
                   </div>
                   {/* Price Section */}
-                  <div className="mb-4">
-                    <div className="d-flex align-items-center gap-3 mb-3">
+                  <div className="mb-2 mb-md-4">
+                    <div className="d-flex align-items-center gap-2 gap-md-3 mb-2 mb-md-3 flex-wrap">
                       {item.originalPrice && item.originalPrice > itemPrice && (
                         <div className="text-muted text-decoration-line-through fs-4 fw-bold" style={{
                           background: "rgba(255,0,0,0.1)",
@@ -291,7 +285,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                           {item.originalPrice} SEK
                         </div>
                       )}
-                      <div className="text-white fs-3 fw-bold px-4 py-2 rounded-pill shadow-sm" style={{
+                      <div className="text-white fs-4 fs-md-3 fw-bold px-2 px-md-4 py-1 py-md-2 rounded-pill shadow-sm" style={{
                         background: "linear-gradient(135deg, #28a745 0%, #20c997 100%)"
                       }}>
                         {itemPrice} SEK
@@ -303,7 +297,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                         border: "2px solid rgba(40,167,69,0.3) !important"
                       }}>
                         <i className="bi bi-tag-fill me-2"></i>
-                        <strong>You save{" "}
+                        <strong>{t('menu.modal.youSave', 'You save')}{" "}
                         {(
                           (item.originalPrice || itemPrice) - itemPrice
                         ).toFixed(2)}{" "}
@@ -313,10 +307,10 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                   </div>
                   {/* Size/Volume Selector */}
                   {availableVolumes.length > 1 && (
-                    <div className="mb-4">
-                      <h6 className="fw-bold mb-3" style={{ color: "#667eea" }}>
+                    <div className="mb-2 mb-md-4">
+                      <h6 className="fw-bold mb-2 mb-md-3 fs-6" style={{ color: "#667eea" }}>
                         <i className="bi bi-rulers me-2"></i>
-                        {currentLanguage === "swedish" ? "Storlek:" : "Size:"}
+                        {t('menu.modal.size', 'Size:')}
                       </h6>
                       <div className="btn-group w-100 shadow-sm" role="group" style={{ borderRadius: "15px", overflow: "hidden" }}>
                         {availableVolumes.map((volumeOption) => (
@@ -341,11 +335,11 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                               setSelectedVolume(volumeOption.volume)
                             }
                           >
-                            <div className="d-flex flex-column align-items-center py-2">
-                              <span className="fw-bold fs-6">
+                            <div className="d-flex flex-column align-items-center py-1 py-md-2">
+                              <span className="fw-bold fs-6 small">
                                 {formatVolumeName(volumeOption.volume)}
                               </span>
-                              <small className={selectedVolume === volumeOption.volume ? "text-white-50" : "text-muted"}>
+                              <small className={selectedVolume === volumeOption.volume ? "text-white-50" : "text-muted"} style={{ fontSize: "0.7rem" }}>
                                 {volumeOption.price} SEK
                               </small>
                             </div>
@@ -356,10 +350,10 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                   )}
                   {/* Ingredients/Features (if available) */}
                   {item.ingredients && item.ingredients.length > 0 && (
-                    <div className="mb-4">
+                    <div className="mb-2 mb-md-4 d-none d-md-block">
                       <h6 className="fw-bold mb-3" style={{ color: "#667eea" }}>
                         <i className="bi bi-list-ul me-2"></i>
-                        Ingredients:
+                        {t('menu.modal.ingredients', 'Ingredients:')}
                       </h6>
                       <div className="d-flex flex-wrap gap-2">
                         {item.ingredients.map((ingredient, index) => (
@@ -380,10 +374,10 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                   )}
                   {/* Nutritional Info (if available) */}
                   {item.nutrition && (
-                    <div className="mb-4">
+                    <div className="mb-2 mb-md-4 d-none d-md-block">
                       <h6 className="fw-bold mb-3" style={{ color: "#667eea" }}>
                         <i className="bi bi-heart-pulse me-2"></i>
-                        Nutritional Info:
+                        {t('menu.modal.nutritionalInfo', 'Nutritional Info:')}
                       </h6>
                       <div className="row g-3">
                         {item.nutrition.calories && (
@@ -392,7 +386,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                               background: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
                             }}>
                               <div className="fw-bold text-dark fs-5">{item.nutrition.calories}</div>
-                              <small className="text-muted">Calories</small>
+                              <small className="text-muted">{t('menu.modal.calories', 'Calories')}</small>
                             </div>
                           </div>
                         )}
@@ -402,7 +396,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                               background: "linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)"
                             }}>
                               <div className="fw-bold text-dark fs-5">{item.nutrition.protein}g</div>
-                              <small className="text-muted">Protein</small>
+                              <small className="text-muted">{t('menu.modal.protein', 'Protein')}</small>
                             </div>
                           </div>
                         )}
@@ -411,20 +405,20 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                   )}
 
                   {item.available && (
-                    <div className="mb-4">
-                      <h6 className="fw-bold mb-3" style={{ color: "#667eea" }}>
+                    <div className="mb-2 mb-md-4">
+                      <h6 className="fw-bold mb-2 mb-md-3 fs-6" style={{ color: "#667eea" }}>
                         <i className="bi bi-123 me-2"></i>
-                        {currentLanguage === "swedish" ? "Antal:" : "Quantity:"}
+                        {t('menu.modal.quantity', 'Quantity:')}
                       </h6>
-                      <div className="d-flex align-items-center justify-content-center gap-4 p-1 rounded-4 shadow-sm" style={{
+                      <div className="d-flex align-items-center justify-content-center gap-2 gap-md-4 p-1 rounded-4 shadow-sm" style={{
                         background: "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)",
                         border: "2px solid rgba(102,126,234,0.2)"
                       }}>
                         <button
                           className="btn text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                           style={{ 
-                            width: "50px", 
-                            height: "50px",
+                            width: "40px", 
+                            height: "40px",
                             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                             border: "none",
                             transition: "all 0.3s ease"
@@ -434,10 +428,10 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                           onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
                           onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
                         >
-                          <i className="bi bi-dash fw-bold fs-4"></i>
+                          <i className="bi bi-dash fw-bold fs-5"></i>
                         </button>
-                        <div className="text-center px-4">
-                          <div className="fw-bold display-5 mb-1" style={{
+                        <div className="text-center px-2 px-md-4">
+                          <div className="fw-bold fs-4 fs-md-3 mb-1" style={{
                             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
@@ -449,8 +443,8 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                         <button
                           className="btn text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                           style={{ 
-                            width: "50px", 
-                            height: "50px",
+                            width: "40px", 
+                            height: "40px",
                             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                             border: "none",
                             transition: "all 0.3s ease"
@@ -459,7 +453,7 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                           onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
                           onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
                         >
-                          <i className="bi bi-plus fw-bold fs-4"></i>
+                          <i className="bi bi-plus fw-bold fs-5"></i>
                         </button>
                       </div>
                     </div>
@@ -469,28 +463,29 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="border-0 p-4 m-3 rounded-4 shadow-sm" style={{
+          <div className="border-0 p-2 p-md-4 m-2 m-md-3 rounded-4 shadow-sm" style={{
             background: "linear-gradient(135deg, #f8f9ff 0%, #e8f4f8 100%)",
             border: "2px dashed rgba(102,126,234,0.3) !important"
           }}>
-            <div className="d-flex align-items-start gap-3">
-              <i className="bi bi-info-circle-fill fs-4" style={{ color: "#667eea" }}></i>
-              <p className="text-muted mb-0 fw-medium" style={{ lineHeight: "1.7", fontSize: "1rem" }}>
+            <div className="d-flex align-items-start gap-2 gap-md-3">
+              <i className="bi bi-info-circle-fill fs-5 fs-md-4" style={{ color: "#667eea" }}></i>
+              <p className="text-muted mb-0 fw-medium" style={{ lineHeight: "1.7", fontSize: "0.9rem" }}>
                 {getLocalizedText(item.description, "No description available")}
               </p>
             </div>
           </div>
 
           {/* Modal Footer */}
-          <div className="modal-footer border-0 pt-0 pb-4 px-4">
-            <div className="w-100 d-flex gap-3">
+          <div className="modal-footer border-0 pt-0 pb-2 pb-md-4 px-2 px-md-4">
+            <div className="w-100 d-flex gap-2 gap-md-3 flex-column flex-md-row">
               <button
                 type="button"
-                className="btn btn-outline-secondary border-2 px-4 py-3 rounded-pill fw-bold"
+                className="btn btn-outline-secondary border-2 px-3 px-md-4 py-2 py-md-3 rounded-pill fw-bold"
                 onClick={onClose}
                 style={{
                   borderColor: "#6c757d",
-                  transition: "all 0.3s ease"
+                  transition: "all 0.3s ease",
+                  fontSize: "0.9rem"
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.background = "#6c757d";
@@ -501,40 +496,48 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
                   e.target.style.color = "#6c757d";
                 }}
               >
-                <i className="bi bi-x-lg me-2"></i>
-                Close
+                <i className="bi bi-x-lg me-1 me-md-2"></i>
+                <span className="d-none d-md-inline">{t('menu.modal.close', 'Close')}</span>
+                <span className="d-md-none">Close</span>
               </button>
               {item.available ? (
                 <button
                   type="button"
-                  className="btn text-white flex-grow-1 border-0 px-4 py-3 rounded-pill fw-bold shadow-lg"
+                  className="btn text-white flex-grow-1 border-0 px-3 px-md-4 py-2 py-md-3 rounded-pill fw-bold shadow-lg"
                   onClick={handleAddToCart}
                   style={{
                     background: "linear-gradient(135deg, #28a745 0%, #20c997 100%)",
-                    fontSize: "1.1rem",
+                    fontSize: "0.9rem",
                     transition: "all 0.3s ease"
                   }}
                   onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
                   onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
                 >
-                  <i className="bi bi-cart-plus me-2"></i>
-                  Add to Cart{" "}
-                  {availableVolumes.length > 1
-                    ? `(${formatVolumeName(selectedVolume)})`
-                    : ""}{" "}
-                  - <span className="fw-bold fs-5">{totalPrice} SEK</span>
+                  <i className="bi bi-cart-plus me-1 me-md-2"></i>
+                  <span className="d-none d-md-inline">
+                    {t('menu.modal.addToCart', 'Add to Cart')}{" "}
+                    {availableVolumes.length > 1
+                      ? `(${formatVolumeName(selectedVolume)})`
+                      : ""}{" "}
+                    - <span className="fw-bold fs-5">{totalPrice} SEK</span>
+                  </span>
+                  <span className="d-md-none">
+                    Add - <span className="fw-bold">{totalPrice} SEK</span>
+                  </span>
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="btn btn-secondary flex-grow-1 border-0 px-4 py-3 rounded-pill fw-bold"
+                  className="btn btn-secondary flex-grow-1 border-0 px-3 px-md-4 py-2 py-md-3 rounded-pill fw-bold"
                   disabled
                   style={{
-                    background: "linear-gradient(135deg, #6c757d 0%, #495057 100%)"
+                    background: "linear-gradient(135deg, #6c757d 0%, #495057 100%)",
+                    fontSize: "0.9rem"
                   }}
                 >
-                  <i className="bi bi-exclamation-triangle me-2"></i>
-                  Currently Unavailable
+                  <i className="bi bi-exclamation-triangle me-1 me-md-2"></i>
+                  <span className="d-none d-md-inline">{t('menu.modal.currentlyUnavailable', 'Currently Unavailable')}</span>
+                  <span className="d-md-none">Unavailable</span>
                 </button>
               )}
             </div>

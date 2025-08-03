@@ -4,6 +4,7 @@
     "menu": "Meny",
     "campaign": "Kampanj",
     "about": "Om Oss",
+    "orders": "Mina Beställningar",
     "cart": "Varukorg",
     "adminPanel": "Admin Panel",
     "signIn": "Logga In",
@@ -27,6 +28,85 @@
         "title": "Mysig Atmosfär",
         "description": "Njut av din måltid i vår varma, välkomnande miljö perfekt för alla tillfällen."
       }
+    }
+  },
+  "menu": {
+    "title": "MENY",
+    "searchPlaceholder": "Sök menyobjekt...",
+    "loading": "Laddar menyobjekt...",
+    "noItems": "Inga menyobjekt hittades",
+    "noItemsHint": "Försök justera dina sök- eller filteralternativ.",
+    "noDescription": "Ingen beskrivning tillgänglig",
+    "clickToView": "Klicka för att visa detaljer",
+    "discount": "RABATT",
+    "sale": "REA",
+    "filters": {
+      "all": "Tillgänglighet",
+      "allCategories": "Alla Matkategorier",
+      "available": "Tillgänglig",
+      "unavailable": "Ej Tillgänglig"
+    },
+    "status": {
+      "available": "Tillgänglig",
+      "unavailable": "Ej Tillgänglig"
+    },
+    "modal": {
+      "size": "Storlek:",
+      "quantity": "Antal:",
+      "addToCart": "Lägg till i Varukorg",
+      "added": "Tillagd!",
+      "currentlyUnavailable": "För Närvarande Ej Tillgänglig",
+      "close": "Stäng",
+      "ingredients": "Ingredienser:",
+      "nutritionalInfo": "Näringsinformation:",
+      "youSave": "Du sparar",
+      "calories": "Kalorier",
+      "protein": "Protein"
+    }
+  },
+  "common": {
+    "close": "Stäng"
+  },
+  "cart": {
+    "title": "Din varukorg",
+    "empty": "Din varukorg är tom",
+    "emptyHint": "Lägg till några läckra rätter från vår meny!",
+    "continueShopping": "Fortsätt handla",
+    "clearCart": "Töm varukorg",
+    "items": "Artiklar:",
+    "totalQuantity": "Totalt antal:",
+    "subtotal": "Subtotal:",
+    "originalSubtotal": "Ursprunglig subtotal:",
+    "youSave": "Du sparar",
+    "total": "Totalt:",
+    "orderSummary": "Ordersammanfattning",
+    "proceedToCheckout": "Gå till kassan",
+    "loginToOrder": "Logga in för att beställa",
+    "coupon": {
+      "title": "Kupongkod",
+      "placeholder": "Ange kupongkod",
+      "apply": "Använd",
+      "remove": "Ta bort kupong",
+      "applied": "Kupong tillämpad:",
+      "discount": "Kupongrabatt:",
+      "invalid": "Ogiltig kupongkod",
+      "expired": "Denna kupong har gått ut eller är inte aktiv än",
+      "notEligible": "Denna kupong är inte giltig för artiklar i din varukorg",
+      "minimumOrder": "Minsta beställningsvärde är {amount} SEK för denna kupong",
+      "maxUsages": "Du har redan använt denna kupong maximalt antal gånger ({max})",
+      "validationError": "Fel vid validering av kupong",
+      "enterCode": "Vänligen ange en kupongkod"
+    },
+    "checkout": {
+      "loginRequired": "Du måste logga in för att slutföra din beställning.",
+      "paymentMethod": "Välj betalningsmetod",
+      "paymentQuestion": "Hur vill du betala för din beställning?",
+      "payOnline": "Betala online",
+      "cashOnDelivery": "Kontant vid leverans",
+      "onlineNotAvailable": "Online betalning är inte tillgänglig just nu. Vänligen välj kontant vid leverans.",
+      "orderSaved": "Din beställning har sparats! Vi kommer att kontakta dig snart.",
+      "orderFailed": "Det gick inte att spara beställningen.",
+      "cancel": "Avbryt"
     }
   },
   "contact": {

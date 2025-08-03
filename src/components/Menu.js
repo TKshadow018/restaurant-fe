@@ -91,10 +91,12 @@ const Menu = () => {
     setSelectedItem(null);
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="px-5 my-5">
-        <h1 className="text-center mb-4 text-primary">MENU</h1>
+        <h1 className="text-center mb-4 text-primary">{t('menu.title', 'MENU')}</h1>
         {error && (
           <div
             className="alert alert-danger alert-dismissible fade show"
@@ -105,23 +107,23 @@ const Menu = () => {
               type="button"
               className="btn-close"
               onClick={handleErrorDismiss}
-              aria-label="Close"
+              aria-label={t('common.close', 'Close')}
             ></button>
           </div>
         )}
 
         {/* Search and Filters */}
         <div className="row mb-4">
-          <div className="col-md-4">
+          <div className="col-md-4 p-2">
             <input
               type="text"
               className="form-control"
-              placeholder="Search menu items..."
+              placeholder={t('menu.searchPlaceholder', 'Search menu items...')}
               value={searchTerm}
               onChange={handleSearchChange}
             />
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 p-2">
             <select
               className="form-select"
               value={filterCategory}
@@ -132,35 +134,35 @@ const Menu = () => {
                   key={category}
                   value={category === "All" ? "all" : category}
                 >
-                  {category}
+                  {category === "All" ? t('menu.filters.allCategories', 'All') : category}
                 </option>
               ))}
             </select>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 p-2">
             <select
               className="form-select"
               value={filterAvailability}
               onChange={handleAvailabilityChange}
             >
-              <option value="all">All</option>
-              <option value="available">Available</option>
-              <option value="unavailable">Unavailable</option>
+              <option value="all">{t('menu.filters.all', 'All')}</option>
+              <option value="available">{t('menu.filters.available', 'Available')}</option>
+              <option value="unavailable">{t('menu.filters.unavailable', 'Unavailable')}</option>
             </select>
           </div>
         </div>
 
         {/* Menu Items */}
         {loading ? (
-          <Loading message="Loading menu items..." height="500px" />
+          <Loading message={t('menu.loading', 'Loading menu items...')} height="500px" />
         ) : (
           <div className="row g-4">
             {filteredMenuItems.length === 0 ? (
               <div className="col-12">
                 <div className="text-center py-5">
-                  <h5 className="text-muted">No menu items found</h5>
+                  <h5 className="text-muted">{t('menu.noItems', 'No menu items found')}</h5>
                   <p className="text-muted">
-                    Try adjusting your search or filter options.
+                    {t('menu.noItemsHint', 'Try adjusting your search or filter options.')}
                   </p>
                 </div>
               </div>
@@ -191,7 +193,7 @@ const Menu = () => {
                           style={{ bottom: "15px", right: "10px" }}
                         >
                           <span className="badge bg-danger text-white px-4 py-3 rounded-pill shadow-lg fs-6">
-                            {item.discount.value}% OFF
+                            {item.discount.value}% {t('menu.discount', 'OFF')}
                           </span>
                         </div>
                       )}
@@ -203,7 +205,7 @@ const Menu = () => {
                           >
                             <span className="badge bg-danger text-white px-3 py-2 rounded-pill shadow-lg">
                               <i className="bi bi-tag-fill me-1"></i>
-                              SALE
+                              {t('menu.sale', 'SALE')}
                             </span>
                           </div>
                         )}
@@ -216,10 +218,10 @@ const Menu = () => {
                             item.available ? "bg-success" : "bg-secondary"
                           }`}
                         >
-                          {item.available ? "Available" : "Unavailable"}
+                          {item.available ? t('menu.status.available', 'Available') : t('menu.status.unavailable', 'Unavailable')}
                         </span>
                       </div>
-                      <p className="card-text text-muted">{getLocalizedText(item.description, 'No description available')}</p>
+                      <p className="card-text text-muted">{getLocalizedText(item.description, t('menu.noDescription', 'No description available'))}</p>
                       <div className="mt-auto">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <div className="d-flex align-items-center gap-2">
@@ -238,7 +240,7 @@ const Menu = () => {
                         <div className="text-center">
                           <small className="text-muted">
                             <i className="bi bi-eye me-1"></i>
-                            Click to view details
+                            {t('menu.clickToView', 'Click to view details')}
                           </small>
                         </div>
                       </div>

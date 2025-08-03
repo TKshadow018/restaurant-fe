@@ -300,6 +300,25 @@ const CampaignManagement = () => {
                           <strong>Coupon:</strong> <span className="badge bg-success">{banner.couponCode}</span>
                         </small>
                       )}
+                      {banner.discountType && banner.couponCode && (
+                        <small className="text-muted d-block">
+                          <strong>Discount:</strong> {
+                            banner.discountType === 'percentage' 
+                              ? `${banner.discountPercentage || 0}%`
+                              : `${banner.discountFixedAmount || 0} SEK`
+                          }
+                        </small>
+                      )}
+                      {banner.minimumOrderAmount > 0 && (
+                        <small className="text-muted d-block">
+                          <strong>Min Order:</strong> {banner.minimumOrderAmount} SEK
+                        </small>
+                      )}
+                      {banner.maxUsagesPerUser && (
+                        <small className="text-muted d-block">
+                          <strong>Max Uses:</strong> {banner.maxUsagesPerUser} per user
+                        </small>
+                      )}
                     </div>
 
                     <div className="mt-auto">

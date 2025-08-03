@@ -26,6 +26,11 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
     campainStartDate: '',
     campainEndDate: '',
     couponCode: '',
+    discountType: 'percentage', // 'percentage' or 'fixed'
+    discountPercentage: 20,
+    discountFixedAmount: 50,
+    maxUsagesPerUser: 1,
+    minimumOrderAmount: 0,
     bannerColor: {
       title: '#ffcc00',
       subtitle: '#ff9900',
@@ -61,6 +66,11 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         campainStartDate: campaign.campainStartDate || '',
         campainEndDate: campaign.campainEndDate || '',
         couponCode: campaign.couponCode || '',
+        discountType: campaign.discountType || 'percentage',
+        discountPercentage: campaign.discountPercentage || 20,
+        discountFixedAmount: campaign.discountFixedAmount || 50,
+        maxUsagesPerUser: campaign.maxUsagesPerUser || 1,
+        minimumOrderAmount: campaign.minimumOrderAmount || 0,
         bannerColor: campaign.bannerColor || {
           title: '#ffcc00',
           subtitle: '#ff9900',
@@ -91,6 +101,11 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         campainStartDate: '',
         campainEndDate: '',
         couponCode: '',
+        discountType: 'percentage',
+        discountPercentage: 20,
+        discountFixedAmount: 50,
+        maxUsagesPerUser: 1,
+        minimumOrderAmount: 0,
         bannerColor: {
           title: '#ffcc00',
           subtitle: '#ff9900',
@@ -179,6 +194,11 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
           campainStartDate: '',
           campainEndDate: '',
           couponCode: '',
+          discountType: 'percentage',
+          discountPercentage: 20,
+          discountFixedAmount: 50,
+          maxUsagesPerUser: 1,
+          minimumOrderAmount: 0,
           bannerColor: {
             title: '#ffcc00',
             subtitle: '#ff9900',
@@ -389,7 +409,7 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
 
           {/* Campaign Details Row 1 */}
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-4">
               <Form.Group className="mb-3">
                 <Form.Label>Coupon Code</Form.Label>
                 <Form.Control
@@ -402,6 +422,89 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
                 />
                 <Form.Text className="text-muted">
                   Optional: Enter a coupon code for this campaign
+                </Form.Text>
+              </Form.Group>
+            </div>
+            <div className="col-md-4">
+              <Form.Group className="mb-3">
+                <Form.Label>Discount Type</Form.Label>
+                <Form.Select
+                  name="discountType"
+                  value={formData.discountType}
+                  onChange={handleChange}
+                >
+                  <option value="percentage">Percentage Discount</option>
+                  <option value="fixed">Fixed Amount Discount</option>
+                </Form.Select>
+              </Form.Group>
+            </div>
+            <div className="col-md-4">
+              {formData.discountType === 'percentage' ? (
+                <Form.Group className="mb-3">
+                  <Form.Label>Discount Percentage</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="discountPercentage"
+                    value={formData.discountPercentage}
+                    onChange={handleChange}
+                    min="1"
+                    max="100"
+                    placeholder="20"
+                  />
+                  <Form.Text className="text-muted">
+                    Discount % for eligible items
+                  </Form.Text>
+                </Form.Group>
+              ) : (
+                <Form.Group className="mb-3">
+                  <Form.Label>Fixed Discount Amount (SEK)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="discountFixedAmount"
+                    value={formData.discountFixedAmount}
+                    onChange={handleChange}
+                    min="1"
+                    placeholder="50"
+                  />
+                  <Form.Text className="text-muted">
+                    Fixed amount discount in SEK
+                  </Form.Text>
+                </Form.Group>
+              )}
+            </div>
+          </div>
+
+          {/* Campaign Details Row 2 */}
+          <div className="row">
+            <div className="col-md-3">
+              <Form.Group className="mb-3">
+                <Form.Label>Max Uses Per User</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="maxUsagesPerUser"
+                  value={formData.maxUsagesPerUser}
+                  onChange={handleChange}
+                  min="1"
+                  placeholder="1"
+                />
+                <Form.Text className="text-muted">
+                  How many times each user can use this coupon
+                </Form.Text>
+              </Form.Group>
+            </div>
+            <div className="col-md-3">
+              <Form.Group className="mb-3">
+                <Form.Label>Minimum Order (SEK)</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="minimumOrderAmount"
+                  value={formData.minimumOrderAmount}
+                  onChange={handleChange}
+                  min="0"
+                  placeholder="0"
+                />
+                <Form.Text className="text-muted">
+                  Minimum order value to use coupon (0 = no minimum)
                 </Form.Text>
               </Form.Group>
             </div>

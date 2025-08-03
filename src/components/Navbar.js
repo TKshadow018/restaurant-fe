@@ -1,5 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { useOrder } from '@/contexts/OrderContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -10,6 +11,7 @@ import '@/styles/navbar.css';
 const Navbar = ({ onNavigate }) => {
   const { currentUser, logout } = useAuth();
   const { cartItems, totalPrice } = useCart();
+  const { hasOrders } = useOrder();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -92,6 +94,21 @@ const Navbar = ({ onNavigate }) => {
                 {t('navbar.campaign')}
               </button>
             </li>
+            {/* Conditionally show Orders tab if user is logged in and has orders */}
+            {currentUser && hasOrders && (
+              <li className="nav-item">
+                <button
+                  className="btn btn-link nav-link border-0 fs-5 fw-bold"
+                  onClick={() => handleNavigation('orders')}
+                  style={{ 
+                    color: '#ffc107',
+                    textShadow: '0 0 8px rgba(255, 193, 7, 0.6)' 
+                  }}
+                >
+                  {t('navbar.orders')}
+                </button>
+              </li>
+            )}
             <li className="nav-item">
               <button
                 className="btn btn-link text-white nav-link border-0 fs-5 fw-bold"

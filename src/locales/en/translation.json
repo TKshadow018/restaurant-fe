@@ -4,6 +4,7 @@
     "menu": "Menu",
     "campaign": "Campaign",
     "about": "About Us",
+    "orders": "My Orders",
     "cart": "Cart",
     "adminPanel": "Admin Panel",
     "signIn": "Sign In",
@@ -27,6 +28,85 @@
         "title": "Cozy Atmosphere",
         "description": "Enjoy your meal in our warm, welcoming environment perfect for any occasion."
       }
+    }
+  },
+  "menu": {
+    "title": "MENU",
+    "searchPlaceholder": "Search menu items...",
+    "loading": "Loading menu items...",
+    "noItems": "No menu items found",
+    "noItemsHint": "Try adjusting your search or filter options.",
+    "noDescription": "No description available",
+    "clickToView": "Click to view details",
+    "discount": "OFF",
+    "sale": "SALE",
+    "filters": {
+      "all": "Availability",
+      "allCategories": "All Food Categories",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "status": {
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "modal": {
+      "size": "Size:",
+      "quantity": "Quantity:",
+      "addToCart": "Add to Cart",
+      "added": "Added!",
+      "currentlyUnavailable": "Currently Unavailable",
+      "close": "Close",
+      "ingredients": "Ingredients:",
+      "nutritionalInfo": "Nutritional Info:",
+      "youSave": "You save",
+      "calories": "Calories",
+      "protein": "Protein"
+    }
+  },
+  "common": {
+    "close": "Close"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "emptyHint": "Add some delicious items from our menu!",
+    "continueShopping": "Continue Shopping",
+    "clearCart": "Clear Cart",
+    "items": "Items:",
+    "totalQuantity": "Total Quantity:",
+    "subtotal": "Subtotal:",
+    "originalSubtotal": "Original subtotal:",
+    "youSave": "You save",
+    "total": "Total:",
+    "orderSummary": "Order Summary",
+    "proceedToCheckout": "Proceed to Checkout",
+    "loginToOrder": "Login to Order",
+    "coupon": {
+      "title": "Coupon Code",
+      "placeholder": "Enter coupon code",
+      "apply": "Apply",
+      "remove": "Remove coupon",
+      "applied": "Coupon applied:",
+      "discount": "Coupon Discount:",
+      "invalid": "Invalid coupon code",
+      "expired": "This coupon has expired or is not active yet",
+      "notEligible": "This coupon is not valid for items in your cart",
+      "minimumOrder": "Minimum order value is {amount} SEK for this coupon",
+      "maxUsages": "You have already used this coupon the maximum number of times ({max})",
+      "validationError": "Error validating coupon",
+      "enterCode": "Please enter a coupon code"
+    },
+    "checkout": {
+      "loginRequired": "You must be logged in to complete your order.",
+      "paymentMethod": "Choose Payment Method",
+      "paymentQuestion": "How would you like to pay for your order?",
+      "payOnline": "Pay Online",
+      "cashOnDelivery": "Cash on Delivery",
+      "onlineNotAvailable": "Online payment is not available right now. Please choose cash on delivery.",
+      "orderSaved": "Your order has been saved! We will contact you soon.",
+      "orderFailed": "Failed to save order.",
+      "cancel": "Cancel"
     }
   },
   "contact": {
