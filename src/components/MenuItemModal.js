@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useCart } from "@/contexts/CartContext";
+import '../styles/MenuItemModal.css';
 
 // Add custom styles for animations
 const modalStyles = `
@@ -182,16 +183,12 @@ const MenuItemModal = ({ item, isOpen, onClose }) => {
 
   return (
     <div
-      className="modal fade show d-block"
+      className="modal fade show d-block menu-item-modal-backdrop"
       tabIndex="-1"
-      style={{ backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(5px)" }}
     >
       <div className="modal-dialog modal-lg modal-dialog-centered mx-2 mx-md-auto">
-        <div className="modal-content modal-content-custom border-0 shadow-lg" style={{ borderRadius: "20px", overflow: "hidden" }}>
-          <div className="modal-header border-0 position-relative" style={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            color: "white"
-          }}>
+        <div className="modal-content menu-item-modal-content border-0 shadow-lg">
+          <div className="modal-header menu-item-modal-header border-0 position-relative">
             <h5 className="modal-title fw-bold fs-4 text-white">
               {getLocalizedText(item.name)}
             </h5>

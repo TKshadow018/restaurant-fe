@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#e74c3c" stroke="#c0392b" stroke-width="8"/>
+  
+  <!-- Fork -->
+  <g fill="#ffffff">
+    <!-- Fork handle -->
+    <rect x="180" y="220" width="8" height="120" rx="4"/>
+    <!-- Fork prongs -->
+    <rect x="170" y="160" width="4" height="70" rx="2"/>
+    <rect x="178" y="160" width="4" height="70" rx="2"/>
+    <rect x="186" y="160" width="4" height="70" rx="2"/>
+    <rect x="194" y="160" width="4" height="70" rx="2"/>
+  </g>
+  
+  <!-- Knife -->
+  <g fill="#ffffff">
+    <!-- Knife handle -->
+    <rect x="280" y="220" width="8" height="120" rx="4"/>
+    <!-- Knife blade -->
+    <path d="M276 160 L292 160 L288 220 L280 220 Z"/>
+  </g>
+  
+  <!-- Plate -->
+  <ellipse cx="256" cy="350" rx="60" ry="20" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  
+  <!-- Chef hat accent -->
+  <g fill="#ffffff">
+    <ellipse cx="256" cy="120" rx="25" ry="15"/>
+    <rect x="235" y="120" width="42" height="25" rx="5"/>
+  </g>
+</svg>

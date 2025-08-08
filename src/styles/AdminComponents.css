@@ -1,0 +1,77 @@
+/* Admin Components Styles */
+
+/* OrderManagement.css */
+.order-management-loading {
+  min-height: 300px;
+}
+
+.order-table-id-column {
+  width: 120px;
+}
+
+.order-table-user-column {
+  width: 180px;
+}
+
+.order-table-items-column {
+  width: 200px;
+}
+
+.order-table-service-column {
+  width: 200px;
+}
+
+/* UserManagement.css */
+.user-table-email-column {
+  width: 250px;
+}
+
+.user-table-role-column {
+  width: 150px;
+}
+
+/* CampaignManagement.css */
+.campaign-loading-container {
+  height: 400px;
+}
+
+.campaign-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* ContactManagement.css */
+.contact-loading-container {
+  height: 400px;
+}
+
+.contact-message-text {
+  font-size: 14px;
+  font-family: inherit;
+}
+
+/* DashboardStats.css */
+.dashboard-loading-container {
+  min-height: 300px;
+}
+
+/* FoodModal.css */
+.food-modal-preview-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* UserFeedbackManagement.css */
+.feedback-modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* CampaignModal.css */
+.campaign-modal-color-input {
+  text-transform: uppercase;
+}
+
+.campaign-modal-description {
+  min-height: 120px;
+}

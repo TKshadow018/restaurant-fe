@@ -1,0 +1,282 @@
+/* Profile Completion Modal Styles */
+.profile-completion-modal .modal-content {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.profile-completion-modal .modal-dialog {
+  max-width: 700px;
+}
+
+.profile-completion-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  border: none;
+}
+
+.profile-completion-header .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+.profile-completion-header .btn-close:hover {
+  opacity: 1;
+}
+
+.profile-completion-body {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.profile-completion-modal .modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 2px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.profile-section-title {
+  color: #667eea;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.profile-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.profile-form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.profile-form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.profile-form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.profile-form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.profile-address-validation {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.profile-address-validated {
+  background: #d4edda;
+  border-color: #28a745;
+  border-style: solid;
+}
+
+.profile-validation-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.profile-validation-button {
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.profile-validation-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-submit-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.profile-submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.profile-submit-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.profile-success-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #28a745;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.profile-error-alert {
+  border-radius: 8px;
+  border: none;
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1rem 1.5rem;
+}
+
+.profile-loading-overlay {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border-radius: 15px;
+}
+
+.profile-loading-content {
+  color: #667eea;
+  font-weight: 500;
+}
+
+/* Address Map Modal Styles */
+.address-map-modal .modal-content {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.address-map-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+}
+
+.address-map-modal .modal-title {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.address-map-modal .btn-close {
+  filter: invert(1);
+}
+
+.address-search-bar {
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.address-search-bar .form-control {
+  border: none;
+  background: transparent;
+  padding: 0.75rem 1rem;
+}
+
+.address-search-bar .btn {
+  border: none;
+  padding: 0.75rem 1rem;
+}
+
+.map-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.selected-address-display {
+  background: #e8f4fd;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+}
+
+.selected-address-display h6 {
+  color: #007bff;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.selected-address-details div {
+  margin-bottom: 0.25rem;
+}
+
+.map-instructions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-completion-body {
+    padding: 1.5rem;
+  }
+  
+  .profile-validation-buttons {
+    flex-direction: column;
+  }
+  
+  .profile-validation-button {
+    justify-content: center;
+  }
+  
+  .address-map-modal .modal-body {
+    padding: 1rem;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .profile-completion-container {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  }
+  
+  .profile-completion-card {
+    background: #343a40;
+    color: #f8f9fa;
+  }
+  
+  .profile-form-control {
+    background: #495057;
+    border-color: #6c757d;
+    color: #f8f9fa;
+  }
+  
+  .profile-form-control:focus {
+    background: #495057;
+    border-color: #667eea;
+    color: #f8f9fa;
+  }
+  
+  .profile-address-validation {
+    background: #495057;
+    border-color: #6c757d;
+  }
+}

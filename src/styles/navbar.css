@@ -8,3 +8,45 @@
   font-size: 1rem;
   font-family: Arial, sans-serif;
 }
+
+/* Additional Navbar Component Styles */
+
+.navbar-logo {
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.1);
+}
+
+.navbar-user-dropdown {
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.navbar-guest-buttons {
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.navbar-theme-selector {
+  min-width: 120px;
+}
+
+@media (max-width: 768px) {
+  .navbar-user-dropdown {
+    min-width: 100px;
+    max-width: 130px;
+  }
+  
+  .navbar-guest-buttons {
+    min-width: 100px;
+    max-width: 130px;
+  }
+  
+  .navbar-theme-selector {
+    min-width: 100px;
+  }
+}

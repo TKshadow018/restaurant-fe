@@ -1,0 +1,231 @@
+/* Menu Item Modal Styles */
+
+.menu-item-modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(5px);
+}
+
+.menu-item-modal-content {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.menu-item-modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  min-height: 300px;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.modal-food-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-food-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+  padding: 30px;
+  border-radius: 0 0 20px 20px;
+}
+
+.modal-food-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-price-badge {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  border-radius: 25px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content-section {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+}
+
+.modal-category-badge {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  display: inline-block;
+}
+
+.modal-original-price {
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.modal-current-price {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal-discount-badge {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+}
+
+.modal-section-title {
+  color: #667eea;
+}
+
+.modal-volume-group {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.modal-volume-option {
+  flex: 1;
+  border: none;
+  padding: 15px 10px;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-right: 1px solid #dee2e6;
+}
+
+.modal-volume-option:last-child {
+  border-right: none;
+}
+
+.modal-volume-option.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.modal-volume-small-text {
+  font-size: 0.7rem;
+}
+
+.modal-addon-checkbox {
+  transform: scale(1.3);
+  margin-right: 10px;
+  accent-color: #667eea;
+}
+
+.modal-nutrition-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.modal-nutrition-card:hover {
+  transform: translateY(-5px);
+}
+
+.modal-quantity-controls {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border: 2px solid #667eea;
+  border-radius: 20px;
+}
+
+.modal-quantity-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.modal-quantity-display {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+  min-width: 60px;
+  text-align: center;
+  margin: 0 20px;
+}
+
+.modal-description-section {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border: 1px solid #e3e8ff;
+}
+
+.modal-description-icon {
+  color: #667eea;
+}
+
+.modal-description-text {
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+.modal-action-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 15px 30px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.modal-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+.modal-cancel-btn {
+  background: transparent;
+  border: 2px solid #6c757d;
+  color: #6c757d;
+  border-radius: 25px;
+  padding: 15px 30px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.modal-cancel-btn:hover {
+  background: #6c757d;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modal-food-title {
+    font-size: 1.5rem;
+  }
+  
+  .modal-quantity-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  .modal-quantity-display {
+    margin: 0 10px;
+  }
+}

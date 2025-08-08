@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Icon Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon-preview { margin: 20px 0; }
+        .instructions { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .size-demo { display: inline-block; margin: 10px; text-align: center; }
+        canvas { border: 1px solid #ddd; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Restaurant Favicon Generator</h1>
+    
+    <div class="instructions">
+        <h3>Instructions to create favicon files:</h3>
+        <ol>
+            <li>Open the <strong>dining.png</strong> file in any vector graphics editor (Inkscape, Adobe Illustrator, or online tools like <a href="https://www.photopea.com/" target="_blank">Photopea</a>)</li>
+            <li>Export/Save as PNG files with these sizes:
+                <ul>
+                    <li><strong>dining.png</strong> - 32x32px (use online converter to create .ico from PNG)</li>
+                    <li><strong>restaurant-icon-16.png</strong> - 16x16px</li>
+                    <li><strong>restaurant-icon-32.png</strong> - 32x32px</li>
+                    <li><strong>restaurant-icon-180.png</strong> - 180x180px (Apple touch icon)</li>
+                    <li><strong>restaurant-icon-192.png</strong> - 192x192px (Android)</li>
+                    <li><strong>restaurant-icon-512.png</strong> - 512x512px (Large displays)</li>
+                </ul>
+            </li>
+            <li>Replace the existing files in the <code>/public</code> folder</li>
+            <li>Alternative: Use online favicon generators like <a href="https://realfavicongenerator.net/" target="_blank">RealFaviconGenerator</a></li>
+        </ol>
+    </div>
+
+    <div class="icon-preview">
+        <h3>Preview of Restaurant Icon:</h3>
+        <div class="size-demo">
+            <div>16x16</div>
+            <img src="dining.png" width="16" height="16" style="border: 1px solid #ddd;">
+        </div>
+        <div class="size-demo">
+            <div>32x32</div>
+            <img src="dining.png" width="32" height="32" style="border: 1px solid #ddd;">
+        </div>
+        <div class="size-demo">
+            <div>48x48</div>
+            <img src="dining.png" width="48" height="48" style="border: 1px solid #ddd;">
+        </div>
+        <div class="size-demo">
+            <div>64x64</div>
+            <img src="dining.png" width="64" height="64" style="border: 1px solid #ddd;">
+        </div>
+        <div class="size-demo">
+            <div>128x128</div>
+            <img src="dining.png" width="128" height="128" style="border: 1px solid #ddd;">
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>Alternative: Use Emoji-based Favicon</h3>
+        <p>For a quick solution, you can use emoji-based favicons by adding this to your HTML head:</p>
+        <pre>&lt;link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;🍽️&lt;/text&gt;&lt;/svg&gt;" /&gt;</pre>
+        <p>Or try these restaurant emojis: 🍽️ 🍴 🍕 🍔 🥘 🍳 👨‍🍳</p>
+    </div>
+
+</body>
+</html>

@@ -32,6 +32,9 @@
   },
   "menu": {
     "title": "MENY",
+    "searchLabel": "Sök Meny",
+    "categoryLabel": "Matkategori",
+    "availabilityLabel": "Tillgänglighetsstatus", 
     "searchPlaceholder": "Sök menyobjekt...",
     "loading": "Laddar menyobjekt...",
     "noItems": "Inga menyobjekt hittades",
@@ -45,6 +48,14 @@
       "allCategories": "Alla Matkategorier",
       "available": "Tillgänglig",
       "unavailable": "Ej Tillgänglig"
+    },
+    "pagination": {
+      "showing": "Visar",
+      "of": "av",
+      "items": "artiklar",
+      "page": "Sida",
+      "previous": "Föregående",
+      "next": "Nästa"
     },
     "status": {
       "available": "Tillgänglig",
@@ -65,7 +76,12 @@
     }
   },
   "common": {
-    "close": "Stäng"
+    "close": "Stäng",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "loading": "Laddar...",
+    "error": "Fel",
+    "success": "Framgång"
   },
   "cart": {
     "title": "Din varukorg",
@@ -153,5 +169,157 @@
       "saturday": "Lördag: 12:00 - 23:00",
       "sunday": "Söndag: 12:00 - 21:00"
     }
+  },
+  "notifications": {
+    "title": "Notifieringar",
+    "enable": "Aktivera notifieringar",
+    "enablePrompt": "Aktivera notifieringar för att hålla dig uppdaterad",
+    "clearAll": "Rensa alla",
+    "empty": "Inga notifieringar än",
+    "showingRecent": "Visar 10 senaste notifieringarna",
+    "voiceEnabled": "Röstnotifieringar aktiverade",
+    "voiceDisabled": "Röstnotifieringar inaktiverade",
+    "testVoice": "Testa röstnotifiering",
+    "clickToView": "Klicka för att se detaljer",
+    "orderReceived": {
+      "title": "Beställning mottagen!",
+      "message": "Din beställning på {{total}} SEK har tagits emot. Vi förbereder din mat!"
+    },
+    "newOrder": {
+      "title": "Ny beställning!",
+      "message": "{{customer}} gjorde en beställning på {{total}} SEK"
+    }
+  },
+  "volume": {
+    "small": "Liten",
+    "medium": "Mellan",
+    "large": "Stor",
+    "normal": "Normal"
+  },
+  "service": {
+    "dineIn": "Äta på plats",
+    "takeout": "Avhämtning",
+    "homeDelivery": "Hemleverans",
+    "selectService": "Välj servicetype",
+    "question": "Hur vill du ta emot din beställning?",
+    "paymentMethod": "Välj betalningsmetod",
+    "paymentQuestion": "Hur vill du betala för din beställning?",
+    "payOnline": "Betala online",
+    "cashOnDelivery": "Kontant vid leverans",
+    "proceed": "Fortsätt"
+  },
+  "orders": {
+    "title": "Dina beställningar",
+    "orderDetails": "Beställningsdetaljer",
+    "order": "Beställning",
+    "orderStatus": "Beställningsstatus",
+    "orderedItems": "Beställda artiklar:",
+    "noOrders": "Inga beställningar",
+    "noOrdersHint": "Du har inte gjort några beställningar än. Bläddra i vår meny för att komma igång!",
+    "payment": "Betalning:",
+    "size": "Storlek:",
+    "quantity": "Antal:",
+    "items": "artikel(ar)",
+    "originalTotal": "Ursprunglig total:",
+    "youSaved": "Du sparade:",
+    "total": "Total:",
+    "discountApplied": "Rabatt tillämpad",
+    "discount": "rabatt",
+    "status": {
+      "pending": "Väntande",
+      "preparing": "Förbereder",
+      "ready": "Redo",
+      "completed": "Slutförd",
+      "cancelled": "Avbruten",
+      "received": "Mottagen"
+    },
+    "serviceType": {
+      "dineIn": "Äta på plats",
+      "takeout": "Avhämtning",
+      "homeDelivery": "Hemleverans"
+    },
+    "errors": {
+      "fetchFailed": "Misslyckades att hämta beställningar. Försök igen.",
+      "fetchError": "Fel vid laddning av beställningar. Vänligen uppdatera sidan.",
+      "notFound": "Beställningar hittades inte.",
+      "loginRequired": "Du måste logga in för att se dina beställningar",
+      "pleaseLogin": "Vänligen logga in för att se dina beställningar."
+    }
+  },
+  "profile": {
+    "completeTitle": "Slutför din profil",
+    "completeSubtitle": "Vänligen fyll i den nödvändiga informationen",
+    "personalInfo": "Personlig information",
+    "addressInfo": "Adressinformation",
+    "firstName": "Förnamn",
+    "firstNamePlaceholder": "Ange ditt förnamn",
+    "lastName": "Efternamn",
+    "lastNamePlaceholder": "Ange ditt efternamn",
+    "dateOfBirth": "Födelsedatum",
+    "gender": "Kön",
+    "selectGender": "Välj kön",
+    "male": "Man",
+    "female": "Kvinna",
+    "other": "Annat",
+    "preferNotToSay": "Vill inte uppge",
+    "phoneNumber": "Telefonnummer",
+    "phoneHelp": "Svenskt telefonnummerformat",
+    "street": "Gatunamn",
+    "streetPlaceholder": "t.ex. Kungsgatan",
+    "houseNumber": "Husnummer",
+    "postalCode": "Postnummer",
+    "city": "Stad",
+    "cityPlaceholder": "t.ex. Stockholm",
+    "region": "Region/Län",
+    "regionPlaceholder": "t.ex. Stockholms län",
+    "validateAddress": "Validera adress",
+    "validating": "Validerar...",
+    "pickFromMap": "Välj från karta",
+    "enterAddress": "Ange adress",
+    "addressDetails": "Adressuppgifter",
+    "postalCodeFormat": "Format: 123 45",
+    "saveAddress": "Spara adress",
+    "addressValidated": "Adress validerad framgångsrikt",
+    "completeProfile": "Slutför profil",
+    "skipForNow": "Hoppa över för tillfället",
+    "skipping": "Hoppar över...",
+    "saving": "Sparar profil...",
+    "success": "Profil slutförd framgångsrikt!",
+    "errors": {
+      "incompleteAddress": "Vänligen fyll i alla adressfält",
+      "invalidAddress": "Ogiltig svensk adress",
+      "validationFailed": "Adressvalidering misslyckades. Försök igen.",
+      "firstNameRequired": "Förnamn krävs",
+      "lastNameRequired": "Efternamn krävs",
+      "dobRequired": "Födelsedatum krävs",
+      "invalidAge": "Vänligen ange en giltig ålder (13-120 år)",
+      "genderRequired": "Kön krävs",
+      "phoneRequired": "Telefonnummer krävs",
+      "invalidPhone": "Vänligen ange ett giltigt svenskt telefonnummer",
+      "addressNotValidated": "Vänligen validera din adress",
+      "saveFailed": "Misslyckades att spara profil. Försök igen."
+    }
+  },
+  "map": {
+    "selectAddress": "Välj adress från karta",
+    "searchPlaceholder": "Sök efter en adress i Sverige...",
+    "currentLocation": "Använd nuvarande plats",
+    "loading": "Laddar karta...",
+    "selectedAddress": "Vald adress:",
+    "instructions": "Klicka på kartan eller dra markören för att välja din adress",
+    "selectThisAddress": "Välj denna adress",
+    "initError": "Misslyckades att initiera karta. Försök igen.",
+    "geocodeError": "Misslyckades att hämta adress för vald plats",
+    "searchError": "Adress hittades inte. Försök med en annan sökning.",
+    "geolocationNotSupported": "Geolokalisering stöds inte av denna webbläsare",
+    "geolocationError": "Misslyckades att få din nuvarande plats",
+    "error": "Kartfel",
+    "apiKeyHelp": "För att använda kartfunktionen, lägg till din Google Maps API-nyckel i .env-filen som REACT_APP_GOOGLE_MAPS_API_KEY",
+    "retry": "Försök igen",
+    "manualEntry": "Ange adress manuellt",
+    "useManualAddress": "Använd denna adress",
+    "fillAllFields": "Vänligen fyll i alla obligatoriska fält",
+    "invalidPostalCode": "Vänligen ange ett giltigt svenskt postnummer (t.ex. 123 45)",
+    "manualAddressError": "Fel vid bearbetning av adress. Försök igen."
   }
 }

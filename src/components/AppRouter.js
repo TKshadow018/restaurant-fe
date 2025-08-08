@@ -22,6 +22,7 @@ import Menu from "@/components/Menu";
 import Campaign from "@/components/Campaign";
 import Cart from "@/components/Cart";
 import GoToCart from "@/components/GoToCart";
+import EnhancedNotificationToast from "@/components/EnhancedNotificationToast";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -76,6 +77,7 @@ const AppRouter = () => {
     <Router>
       <div className="app">
         <GoToCart />
+        <EnhancedNotificationToast />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<UserWrapper />} />

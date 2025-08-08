@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider, db } from '@/firebase/config';
 import { doc, setDoc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { getUserProfile, createInitialUserProfile, isProfileComplete } from '@/services/userService';
 
 const AuthContext = createContext();
 
@@ -19,6 +20,8 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileComplete, setProfileComplete] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const signup = (email, password) => {
@@ -40,8 +43,10 @@ export const AuthProvider = ({ children }) => {
       };
 
       if (!userDoc.exists()) {
-        // New user
+        // New user - create initial profile
+        const initialProfile = createInitialUserProfile(user);
         await setDoc(userRef, {
+          ...initialProfile,
           ...userData,
           createdAt: serverTimestamp(),
           isActive: true,
@@ -51,8 +56,39 @@ export const AuthProvider = ({ children }) => {
         // Existing user - just update login time
         await updateDoc(userRef, userData);
       }
+      
+      // Fetch and update user profile state
+      await loadUserProfile(user.uid);
     } catch (error) {
       console.error('Error saving user to Firestore:', error);
+    }
+  };
+
+  // Load user profile data
+  const loadUserProfile = async (userId) => {
+    try {
+      const profile = await getUserProfile(userId);
+      if (profile.success && profile.data) {
+        setUserProfile(profile.data);
+        setProfileComplete(isProfileComplete(profile.data));
+      } else {
+        setUserProfile(null);
+        setProfileComplete(false);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      setUserProfile(null);
+      setProfileComplete(false);
+    }
+  };
+
+  // Update user profile in context
+  const updateUserProfile = async (profileData) => {
+    try {
+      setUserProfile(profileData);
+      setProfileComplete(isProfileComplete(profileData));
+    } catch (error) {
+      console.error('Error updating user profile in context:', error);
     }
   };
 
@@ -87,30 +123,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    setUserProfile(null);
+    setProfileComplete(false);
     return signOut(auth);
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-      setLoading(false);
       
-      // Save/update user data when they sign in
       if (user) {
-        saveUserToFirestore(user);
-      }
-      
-      // Optional: Clean up any existing localStorage entries
-      if (!user) {
+        // Save/update user data and load profile
+        await saveUserToFirestore(user);
+      } else {
+        // Clear profile data when user logs out
+        setUserProfile(null);
+        setProfileComplete(false);
         localStorage.removeItem('user');
       }
+      
+      setLoading(false);
     });
 
     // Handle redirect result when page loads
-    getRedirectResult(auth).then((result) => {
+    getRedirectResult(auth).then(async (result) => {
       if (result) {
         console.log('Redirect sign-in successful:', result);
-        saveUserToFirestore(result.user);
+        await saveUserToFirestore(result.user);
       }
     }).catch((error) => {
       console.error('Redirect result error:', error);
@@ -121,10 +160,14 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    userProfile,
+    profileComplete,
     signup,
     login,
     signInWithGoogle,
-    logout
+    logout,
+    updateUserProfile,
+    loadUserProfile
   };
 
   return (

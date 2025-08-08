@@ -1,0 +1,73 @@
+/* Notification Components Styles */
+
+/* NotificationBell.css */
+.notification-bell-btn {
+  box-shadow: none !important;
+  color: white;
+}
+
+.notification-bell-icon {
+  font-size: 2rem;
+}
+
+.notification-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* NotificationToast.css */
+.notification-toast-container {
+  z-index: 9999;
+}
+
+.notification-toast-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+.notification-toast-icon {
+  font-size: 1.2em;
+}
+
+.notification-toast-timestamp {
+  font-size: 0.9rem;
+}
+
+/* EnhancedNotificationToast.css */
+.enhanced-toast-container {
+  z-index: 9999;
+}
+
+.enhanced-toast-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+.enhanced-toast-icon {
+  font-size: 1.2em;
+}
+
+.enhanced-toast-message {
+  font-size: 0.9rem;
+}
+
+.enhanced-toast-details {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.enhanced-toast-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+}

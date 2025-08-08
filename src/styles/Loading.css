@@ -1,0 +1,13 @@
+/* Loading Component Styles */
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-spinner {
+  width: 5rem;
+  height: 5rem;
+  border-width: 0.5rem;
+}

@@ -32,6 +32,9 @@
   },
   "menu": {
     "title": "MENU",
+    "searchLabel": "Search Menu",
+    "categoryLabel": "Food Category", 
+    "availabilityLabel": "Availability Status",
     "searchPlaceholder": "Search menu items...",
     "loading": "Loading menu items...",
     "noItems": "No menu items found",
@@ -45,6 +48,14 @@
       "allCategories": "All Food Categories",
       "available": "Available",
       "unavailable": "Unavailable"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "items": "items",
+      "page": "Page",
+      "previous": "Previous",
+      "next": "Next"
     },
     "status": {
       "available": "Available",
@@ -65,7 +76,12 @@
     }
   },
   "common": {
-    "close": "Close"
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
   },
   "cart": {
     "title": "Your Cart",
@@ -153,5 +169,157 @@
       "saturday": "Saturday: 12:00 PM - 11:00 PM",
       "sunday": "Sunday: 12:00 PM - 9:00 PM"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "enable": "Enable Notifications",
+    "enablePrompt": "Enable notifications to stay updated",
+    "clearAll": "Clear All",
+    "empty": "No notifications yet",
+    "showingRecent": "Showing 10 most recent notifications",
+    "voiceEnabled": "Voice notifications enabled",
+    "voiceDisabled": "Voice notifications disabled",
+    "testVoice": "Test voice notification",
+    "clickToView": "Click to view details",
+    "orderReceived": {
+      "title": "Order Received!",
+      "message": "Your order of {{total}} SEK has been received. We're preparing your food!"
+    },
+    "newOrder": {
+      "title": "New Order Alert!",
+      "message": "{{customer}} placed an order worth {{total}} SEK"
+    }
+  },
+  "volume": {
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "normal": "Normal"
+  },
+  "service": {
+    "dineIn": "Dine In",
+    "takeout": "Takeout", 
+    "homeDelivery": "Home Delivery",
+    "selectService": "Select Service Type",
+    "question": "How would you like to receive your order?",
+    "paymentMethod": "Choose Payment Method",
+    "paymentQuestion": "How would you like to pay for your order?",
+    "payOnline": "Pay Online",
+    "cashOnDelivery": "Cash on Delivery",
+    "proceed": "Proceed"
+  },
+  "orders": {
+    "title": "Your Orders",
+    "orderDetails": "Order Details",
+    "order": "Order",
+    "orderStatus": "Order Status",
+    "orderedItems": "Ordered Items",
+    "noOrders": "No Orders Yet",
+    "noOrdersHint": "You haven't placed any orders yet. Browse our menu to get started!",
+    "payment": "Payment:",
+    "size": "Size:",
+    "quantity": "Quantity:",
+    "items": "item(s)",
+    "originalTotal": "Original total:",
+    "youSaved": "You saved:",
+    "total": "Total:",
+    "discountApplied": "Discount applied",
+    "discount": "discount",
+    "status": {
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "received": "Received"
+    },
+    "serviceType": {
+      "dineIn": "Dine In",
+      "takeout": "Takeout",
+      "homeDelivery": "Home Delivery"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch orders. Please try again.",
+      "fetchError": "Error loading orders. Please refresh the page.",
+      "notFound": "Orders not found.",
+      "loginRequired": "You must be logged in to view your orders.",
+      "pleaseLogin": "Please log in to view your orders."
+    }
+  },
+  "profile": {
+    "completeTitle": "Complete Your Profile",
+    "completeSubtitle": "Please fill in the required information",
+    "personalInfo": "Personal Information",
+    "addressInfo": "Address Information",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter your first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter your last name",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "selectGender": "Select gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "preferNotToSay": "Prefer not to say",
+    "phoneNumber": "Phone Number",
+    "phoneHelp": "Swedish phone number format",
+    "street": "Street Name",
+    "streetPlaceholder": "e.g., Kungsgatan",
+    "houseNumber": "House Number",
+    "postalCode": "Postal Code",
+    "city": "City",
+    "cityPlaceholder": "e.g., Stockholm",
+    "region": "Region/County",
+    "regionPlaceholder": "e.g., Stockholm County",
+    "validateAddress": "Validate Address",
+    "validating": "Validating...",
+    "pickFromMap": "Pick from Map",
+    "enterAddress": "Enter Address",
+    "addressDetails": "Address Details",
+    "postalCodeFormat": "Format: 123 45",
+    "saveAddress": "Save Address",
+    "addressValidated": "Address validated successfully",
+    "completeProfile": "Complete Profile",
+    "skipForNow": "Skip for now",
+    "skipping": "Skipping...",
+    "saving": "Saving Profile...",
+    "success": "Profile completed successfully!",
+    "errors": {
+      "incompleteAddress": "Please fill in all address fields",
+      "invalidAddress": "Invalid Swedish address",
+      "validationFailed": "Address validation failed. Please try again.",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "dobRequired": "Date of birth is required",
+      "invalidAge": "Please enter a valid age (13-120 years)",
+      "genderRequired": "Gender is required",
+      "phoneRequired": "Phone number is required",
+      "invalidPhone": "Please enter a valid Swedish phone number",
+      "addressNotValidated": "Please validate your address",
+      "saveFailed": "Failed to save profile. Please try again."
+    }
+  },
+  "map": {
+    "selectAddress": "Select Address from Map",
+    "searchPlaceholder": "Search for an address in Sweden...",
+    "currentLocation": "Use current location",
+    "loading": "Loading map...",
+    "selectedAddress": "Selected Address:",
+    "instructions": "Click on the map or drag the marker to select your address",
+    "selectThisAddress": "Select This Address",
+    "initError": "Failed to initialize map. Please try again.",
+    "geocodeError": "Failed to get address for selected location",
+    "searchError": "Address not found. Please try a different search.",
+    "geolocationNotSupported": "Geolocation is not supported by this browser",
+    "geolocationError": "Failed to get your current location",
+    "error": "Map Error",
+    "apiKeyHelp": "To use the map feature, add your Google Maps API key to the .env file as REACT_APP_GOOGLE_MAPS_API_KEY",
+    "retry": "Retry",
+    "manualEntry": "Enter Address Manually",
+    "useManualAddress": "Use This Address",
+    "fillAllFields": "Please fill in all required fields",
+    "invalidPostalCode": "Please enter a valid Swedish postal code (e.g., 123 45)",
+    "manualAddressError": "Error processing address. Please try again."
   }
 }

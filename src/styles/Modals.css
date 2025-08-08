@@ -1,0 +1,11 @@
+/* Modal Components Styles */
+
+/* FeedbackModal.css */
+.feedback-modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* General modal overlay styles */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}

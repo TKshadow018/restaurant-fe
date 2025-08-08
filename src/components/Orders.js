@@ -42,9 +42,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       if (!currentUser) {
-        setError(currentLanguage === 'swedish' 
-          ? 'Du måste logga in för att se dina beställningar' 
-          : 'You must be logged in to view your orders');
+        setError(t('orders.errors.loginRequired'));
         setLoading(false);
         return;
       }
@@ -95,9 +93,7 @@ const Orders = () => {
         }
       } catch (err) {
         console.error('Error fetching orders:', err);
-        setError(currentLanguage === 'swedish' 
-          ? 'Fel vid hämtning av beställningar' 
-          : 'Error fetching orders');
+        setError(t('orders.errors.fetchError'));
       } finally {
         setLoading(false);
       }
@@ -118,14 +114,26 @@ const Orders = () => {
   };
 
   const getStatusText = (status) => {
-    const statusTranslations = {
-      pending: currentLanguage === 'swedish' ? 'Väntande' : 'Pending',
-      preparing: currentLanguage === 'swedish' ? 'Förbereder' : 'Preparing',
-      ready: currentLanguage === 'swedish' ? 'Redo' : 'Ready',
-      completed: currentLanguage === 'swedish' ? 'Slutförd' : 'Completed',
-      cancelled: currentLanguage === 'swedish' ? 'Avbruten' : 'Cancelled'
+    return t(`orders.status.${status}`, status);
+  };
+
+  const getServiceTypeText = (serviceType) => {
+    const serviceTypeMap = {
+      dine_in: 'dineIn',
+      takeout: 'takeout',
+      home_delivery: 'homeDelivery'
     };
-    return statusTranslations[status] || status;
+    const mappedType = serviceTypeMap[serviceType] || serviceType;
+    return t(`orders.serviceType.${mappedType}`, serviceType);
+  };
+
+  const getServiceTypeIcon = (serviceType) => {
+    const serviceIcons = {
+      dine_in: 'bi-shop',
+      takeout: 'bi-bag',
+      home_delivery: 'bi-truck'
+    };
+    return serviceIcons[serviceType] || 'bi-question-circle';
   };
 
   const formatDateTime = (dateTime) => {
@@ -148,7 +156,7 @@ const Orders = () => {
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
           <Spinner animation="border" role="status">
             <span className="visually-hidden">
-              {currentLanguage === 'swedish' ? 'Laddar...' : 'Loading...'}
+              {t('common.loading')}
             </span>
           </Spinner>
         </div>
@@ -164,9 +172,7 @@ const Orders = () => {
           <h4>{error}</h4>
           {!currentUser && (
             <p className="mb-0">
-              {currentLanguage === 'swedish' 
-                ? 'Vänligen logga in för att se dina beställningar.' 
-                : 'Please log in to view your orders.'}
+              {t('orders.errors.pleaseLogin')}
             </p>
           )}
         </Alert>
@@ -180,12 +186,10 @@ const Orders = () => {
         <div className="text-center py-5">
           <i className="bi bi-receipt display-1 text-muted mb-4"></i>
           <h2 className="text-muted mb-3">
-            {currentLanguage === 'swedish' ? 'Inga beställningar' : 'No Orders Yet'}
+            {t('orders.noOrders')}
           </h2>
           <p className="text-muted">
-            {currentLanguage === 'swedish' 
-              ? 'Du har inte gjort några beställningar än.' 
-              : 'You haven\'t made any orders yet.'}
+            {t('orders.noOrdersHint')}
           </p>
         </div>
       </div>
@@ -199,7 +203,7 @@ const Orders = () => {
         <div className="col-lg-4">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 className="h3 text-primary">
-              {currentLanguage === 'swedish' ? 'Dina beställningar' : 'Your Orders'}
+              {t('orders.title')}
             </h1>
             <Badge variant="primary" className="fs-6">
               {orders.length}
@@ -218,7 +222,7 @@ const Orders = () => {
                   <div className="d-flex justify-content-between align-items-start">
                     <div className="flex-grow-1">
                       <h6 className="mb-1 fw-semibold">
-                        {currentLanguage === 'swedish' ? 'Beställning' : 'Order'} #{order.id.slice(-6)}
+                        {t('orders.order')} #{order.id.slice(-6)}
                       </h6>
                       <small className="text-muted d-block">
                         {formatDateTime(order.createdAt)}
@@ -227,8 +231,14 @@ const Orders = () => {
                         <Badge bg={getStatusColor(order.status)} className="me-2">
                           {getStatusText(order.status)}
                         </Badge>
+                        {order.serviceType && (
+                          <Badge bg="info" className="me-2">
+                            <i className={`${getServiceTypeIcon(order.serviceType)} me-1`}></i>
+                            {getServiceTypeText(order.serviceType)}
+                          </Badge>
+                        )}
                         <small className="text-muted">
-                          {order.items.length} {currentLanguage === 'swedish' ? 'artikel(ar)' : 'item(s)'}
+                          {order.items.length} {t('orders.items')}
                         </small>
                       </div>
                     </div>
@@ -253,7 +263,7 @@ const Orders = () => {
         <div className="col-lg-8" id="order-details-section">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 className="h3 text-primary">
-              {currentLanguage === 'swedish' ? 'Beställningsdetaljer' : 'Order Details'}
+              {t('orders.orderDetails')}
             </h1>
             <Badge bg={getStatusColor(selectedOrder.status)} className="fs-6">
               {getStatusText(selectedOrder.status)}
@@ -265,15 +275,18 @@ const Orders = () => {
               <div className="row">
                 <div className="col-md-6">
                   <h5 className="mb-1">
-                    {currentLanguage === 'swedish' ? 'Beställning' : 'Order'} #{selectedOrder.id}
+                    {t('orders.order')} #{selectedOrder.id}
                   </h5>
                   <small className="text-muted">
                     {formatDateTime(selectedOrder.createdAt)}
                   </small>
                 </div>
                 <div className="col-md-6 text-md-end">
+                  <div className="text-muted small mb-1">
+                    {t('orders.payment')} {selectedOrder.paymentMethod?.replace('_', ' ') || 'N/A'}
+                  </div>
                   <div className="text-muted small">
-                    {currentLanguage === 'swedish' ? 'Betalning:' : 'Payment:'} {selectedOrder.paymentMethod?.replace('_', ' ') || 'N/A'}
+                    {getServiceTypeIcon(selectedOrder.serviceType)} {getServiceTypeText(selectedOrder.serviceType)}
                   </div>
                 </div>
               </div>
@@ -281,7 +294,7 @@ const Orders = () => {
             
             <Card.Body>
               <h6 className="text-muted mb-3">
-                {currentLanguage === 'swedish' ? 'Beställda artiklar:' : 'Ordered Items:'}
+                {t('orders.orderedItems')}
               </h6>
               
               {selectedOrder.items.map((item, index) => (
@@ -291,15 +304,15 @@ const Orders = () => {
                     <small className="text-muted">
                       {item.selectedVolume && (
                         <span>
-                          {currentLanguage === 'swedish' ? 'Storlek:' : 'Size:'} {item.selectedVolume} • 
+                          {t('orders.size')} {item.selectedVolume} • 
                         </span>
                       )}
-                      {currentLanguage === 'swedish' ? 'Antal:' : 'Quantity:'} {item.quantity}
+                      {t('orders.quantity')} {item.quantity}
                     </small>
                     {item.appliedDiscount && (
                       <div className="small text-success">
                         <i className="bi bi-tag me-1"></i>
-                        {currentLanguage === 'swedish' ? 'Rabatt tillämpad' : 'Discount applied'}
+                        {t('orders.discountApplied')}
                       </div>
                     )}
                   </div>
@@ -325,8 +338,8 @@ const Orders = () => {
                       </strong>
                       <div className="small">
                         {selectedOrder.appliedCoupon.discountType === 'percentage' 
-                          ? `${selectedOrder.appliedCoupon.discountPercentage}% ${currentLanguage === 'swedish' ? 'rabatt' : 'discount'}`
-                          : `${selectedOrder.appliedCoupon.discountFixedAmount} SEK ${currentLanguage === 'swedish' ? 'rabatt' : 'discount'}`}
+                          ? `${selectedOrder.appliedCoupon.discountPercentage}% ${t('orders.discount')}`
+                          : `${selectedOrder.appliedCoupon.discountFixedAmount} SEK ${t('orders.discount')}`}
                       </div>
                     </div>
                     <div className="text-success fw-semibold">
@@ -342,17 +355,17 @@ const Orders = () => {
                   <div>
                     {parseFloat(selectedOrder.totalDiscount || 0) > 0 && (
                       <div className="small text-muted">
-                        {currentLanguage === 'swedish' ? 'Ursprunglig total:' : 'Original total:'} {selectedOrder.originalTotal} SEK
+                        {t('orders.originalTotal')} {selectedOrder.originalTotal} SEK
                       </div>
                     )}
                     <h5 className="mb-0">
-                      {currentLanguage === 'swedish' ? 'Total:' : 'Total:'}
+                      {t('orders.total')}
                     </h5>
                   </div>
                   <div className="text-end">
                     {parseFloat(selectedOrder.totalDiscount || 0) > 0 && (
                       <div className="small text-success">
-                        {currentLanguage === 'swedish' ? 'Du sparade:' : 'You saved:'} {selectedOrder.totalDiscount} SEK
+                        {t('orders.youSaved')} {selectedOrder.totalDiscount} SEK
                       </div>
                     )}
                     <h5 className="mb-0 text-primary">
@@ -368,7 +381,7 @@ const Orders = () => {
           <Card className="border-0 shadow-sm mt-4">
             <Card.Body>
               <h6 className="mb-3">
-                {currentLanguage === 'swedish' ? 'Beställningsstatus' : 'Order Status'}
+                {t('orders.orderStatus')}
               </h6>
               <div className="row text-center">
                 <div className="col">
@@ -376,7 +389,7 @@ const Orders = () => {
                     <i className="bi bi-clock-history display-6"></i>
                   </div>
                   <small className={selectedOrder.status === 'pending' ? 'fw-bold' : 'text-muted'}>
-                    {currentLanguage === 'swedish' ? 'Mottagen' : 'Received'}
+                    {t('orders.status.received')}
                   </small>
                 </div>
                 <div className="col">
@@ -384,7 +397,7 @@ const Orders = () => {
                     <i className="bi bi-gear display-6"></i>
                   </div>
                   <small className={['preparing'].includes(selectedOrder.status) ? 'fw-bold' : 'text-muted'}>
-                    {currentLanguage === 'swedish' ? 'Förbereder' : 'Preparing'}
+                    {t('orders.status.preparing')}
                   </small>
                 </div>
                 <div className="col">
@@ -392,7 +405,7 @@ const Orders = () => {
                     <i className="bi bi-check-circle display-6"></i>
                   </div>
                   <small className={['ready'].includes(selectedOrder.status) ? 'fw-bold' : 'text-muted'}>
-                    {currentLanguage === 'swedish' ? 'Redo' : 'Ready'}
+                    {t('orders.status.ready')}
                   </small>
                 </div>
                 <div className="col">
@@ -400,7 +413,7 @@ const Orders = () => {
                     <i className="bi bi-check-circle-fill display-6"></i>
                   </div>
                   <small className={['completed'].includes(selectedOrder.status) ? 'fw-bold' : 'text-muted'}>
-                    {currentLanguage === 'swedish' ? 'Slutförd' : 'Completed'}
+                    {t('orders.status.completed')}
                   </small>
                 </div>
               </div>

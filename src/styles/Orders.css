@@ -1,0 +1,12 @@
+/* Orders Component Styles */
+
+.orders-loading-container {
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.orders-expandable-row {
+  cursor: pointer;
+}

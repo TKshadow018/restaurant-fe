@@ -4,6 +4,7 @@ import { useOrder } from '@/contexts/OrderContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import NotificationBell from '@/components/NotificationBell';
 import { isUserAdmin } from '@/utils/adminUtils';
 import '@/styles/theme.css';
 import '@/styles/navbar.css';
@@ -120,6 +121,9 @@ const Navbar = ({ onNavigate }) => {
           </ul>
           
           <div className="navbar-nav ms-auto d-flex align-items-left gap-2">
+            {/* Notification Bell - Only for logged in users */}
+            {currentUser && <NotificationBell />}
+            
             {/* Cart Button */}
             <button
               className="btn btn-outline-light position-relative fs-5 fw-bold"

@@ -2,21 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useOrder } from '@/contexts/OrderContext';
+import { useNotification } from '@/contexts/NotificationContext';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { db } from "@/firebase/config";
 import { collection, addDoc, Timestamp, query, where, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 import { useAuth } from '@/contexts/AuthContext'; // Adjust path if needed
 import '@/styles/theme.css';
+import '../styles/Cart.css';
 
 const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart();
   const { refreshOrderStatus } = useOrder();
+  const { notifyOrderReceived, notifyNewOrder } = useNotification();
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth(); // Fix: use currentUser instead of user
   const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [selectedService, setSelectedService] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
@@ -300,6 +305,12 @@ const Cart = () => {
       return;
     }
     
+    setShowServiceModal(true);
+  };
+
+  const handleServiceSelection = (serviceType) => {
+    setSelectedService(serviceType);
+    setShowServiceModal(false);
     setShowPaymentModal(true);
   };
 
@@ -313,7 +324,7 @@ const Cart = () => {
       return;
     }
 
-    // Cash on delivery - proceed with order
+    // Proceed with order
     try {
       // Get user email with proper fallback
       const userEmail = currentUser?.email || 'guest@example.com';
@@ -343,7 +354,8 @@ const Cart = () => {
           minimumOrderAmount: appliedCoupon.minimumOrderAmount,
           eligibleDishes: appliedCoupon.eligibleDishes
         } : null,
-        paymentMethod: 'cash_on_delivery',
+        serviceType: selectedService, // Add service type (dine_in or home_delivery)
+        paymentMethod: paymentMethod === 'cash' ? 'cash_on_delivery' : paymentMethod,
         createdAt: Timestamp.now(),
         userEmail: userEmail,
         userName: userName,
@@ -355,6 +367,19 @@ const Cart = () => {
       
       const docRef = await addDoc(collection(db, "orders"), orderData);
       console.log("Order saved with ID:", docRef.id);
+      
+      // Create order object with ID for notifications
+      const savedOrder = {
+        id: docRef.id,
+        ...orderData
+      };
+      
+      // Send notifications
+      // Customer notification (to the user who placed the order)
+      notifyOrderReceived(savedOrder, currentLanguage);
+      
+      // Admin notifications will be handled automatically by the real-time listener
+      // No need to manually send them since admins are listening to the orders collection
       
       // Track coupon usage if a coupon was applied
       if (appliedCoupon && currentUser) {
@@ -396,6 +421,7 @@ const Cart = () => {
       setAppliedCoupon(null);
       setCouponCode('');
       setCouponError('');
+      setSelectedService('');
       
       // Refresh order status to show Orders tab in navbar
       refreshOrderStatus();
@@ -403,9 +429,18 @@ const Cart = () => {
       // Navigate to dashboard with orders page to show navbar and orders
       navigate('/dashboard?page=orders');
     } catch (error) {
-      alert(currentLanguage === 'swedish' 
-        ? 'Det gick inte att spara beställningen.' 
-        : 'Failed to save order.');
+      const errorMessage = selectedService === 'dine_in' 
+        ? (currentLanguage === 'swedish' 
+          ? 'Det gick inte att spara beställningen för restaurangen.' 
+          : 'Failed to save restaurant order.')
+        : selectedService === 'takeout'
+        ? (currentLanguage === 'swedish' 
+          ? 'Det gick inte att spara avhämtningsbeställningen.' 
+          : 'Failed to save takeout order.')
+        : (currentLanguage === 'swedish' 
+          ? 'Det gick inte att spara leveransbeställningen.' 
+          : 'Failed to save delivery order.');
+      alert(errorMessage);
       console.error("Error saving order:", error);
     }
   };
@@ -469,8 +504,7 @@ const Cart = () => {
                       <img 
                         src={item.image} 
                         alt={getLocalizedText(item.name)}
-                        className="img-fluid rounded"
-                        style={{ height: '80px', width: '80px', objectFit: 'cover' }}
+                        className="cart-item-image img-fluid rounded"
                       />
                     </div>
                     <div className="col-md-4">
@@ -512,7 +546,7 @@ const Cart = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="d-flex align-items-center justify-content-center">
-                        <div className="input-group" style={{ maxWidth: '140px' }}>
+                        <div className="input-group cart-quantity-group">
                           <button
                             className="btn btn-outline-primary"
                             type="button"
@@ -744,6 +778,83 @@ const Cart = () => {
         </div>
       </div>
 
+      {/* Service Type Selection Modal */}
+      <Modal show={showServiceModal} onHide={() => setShowServiceModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {currentLanguage === 'swedish' ? 'Välj servicealternativ' : 'Choose Service Option'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-4">
+            {currentLanguage === 'swedish' 
+              ? 'Hur vill du få din beställning?' 
+              : 'How would you like to receive your order?'}
+          </p>
+          <div className="d-grid gap-3">
+            <Button 
+              variant="outline-primary" 
+              size="lg"
+              onClick={() => handleServiceSelection('dine_in')}
+              className="d-flex align-items-center justify-content-center p-3"
+            >
+              <i className="bi bi-shop me-3" style={{ fontSize: '1.5rem' }}></i>
+              <div className="text-start">
+                <div className="fw-bold">
+                  {currentLanguage === 'swedish' ? 'Äta på plats' : 'Dine In'}
+                </div>
+                <small className="text-muted">
+                  {currentLanguage === 'swedish' 
+                    ? 'Ät din måltid på restaurangen' 
+                    : 'Enjoy your meal at the restaurant'}
+                </small>
+              </div>
+            </Button>
+            <Button 
+              variant="outline-success" 
+              size="lg"
+              onClick={() => handleServiceSelection('takeout')}
+              className="d-flex align-items-center justify-content-center p-3"
+            >
+              <i className="bi bi-bag me-3" style={{ fontSize: '1.5rem' }}></i>
+              <div className="text-start">
+                <div className="fw-bold">
+                  {currentLanguage === 'swedish' ? 'Avhämtning' : 'Takeout'}
+                </div>
+                <small className="text-muted">
+                  {currentLanguage === 'swedish' 
+                    ? 'Hämta din beställning på restaurangen' 
+                    : 'Pick up your order from the restaurant'}
+                </small>
+              </div>
+            </Button>
+            <Button 
+              variant="primary" 
+              size="lg"
+              onClick={() => handleServiceSelection('home_delivery')}
+              className="d-flex align-items-center justify-content-center p-3"
+            >
+              <i className="bi bi-truck me-3" style={{ fontSize: '1.5rem' }}></i>
+              <div className="text-start">
+                <div className="fw-bold">
+                  {currentLanguage === 'swedish' ? 'Hemleverans' : 'Home Delivery'}
+                </div>
+                <small className="text-white-50">
+                  {currentLanguage === 'swedish' 
+                    ? 'Vi levererar till din dörr' 
+                    : 'We deliver to your door'}
+                </small>
+              </div>
+            </Button>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowServiceModal(false)}>
+            {currentLanguage === 'swedish' ? 'Avbryt' : 'Cancel'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* Payment Method Modal */}
       <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
         <Modal.Header closeButton>
@@ -752,6 +863,23 @@ const Cart = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {selectedService && (
+            <Alert variant="info" className="mb-3">
+              <i className={`bi ${
+                selectedService === 'dine_in' ? 'bi-shop' : 
+                selectedService === 'takeout' ? 'bi-bag' : 
+                'bi-truck'
+              } me-2`}></i>
+              <strong>
+                {selectedService === 'dine_in' 
+                  ? (currentLanguage === 'swedish' ? 'Äta på plats' : 'Dine In')
+                  : selectedService === 'takeout'
+                  ? (currentLanguage === 'swedish' ? 'Avhämtning' : 'Takeout')
+                  : (currentLanguage === 'swedish' ? 'Hemleverans' : 'Home Delivery')
+                }
+              </strong>
+            </Alert>
+          )}
           <p className="mb-4">
             {currentLanguage === 'swedish' 
               ? 'Hur vill du betala för din beställning?' 
@@ -774,12 +902,30 @@ const Cart = () => {
               className="d-flex align-items-center justify-content-center"
             >
               <i className="bi bi-cash me-2"></i>
-              {currentLanguage === 'swedish' ? 'Kontant vid leverans' : 'Cash on Delivery'}
+              {selectedService === 'dine_in' 
+                ? (currentLanguage === 'swedish' ? 'Betala på plats' : 'Pay at Restaurant')
+                : selectedService === 'takeout'
+                ? (currentLanguage === 'swedish' ? 'Betala vid avhämtning' : 'Pay on Pickup')
+                : (currentLanguage === 'swedish' ? 'Kontant vid leverans' : 'Cash on Delivery')
+              }
             </Button>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowPaymentModal(false)}>
+          <Button 
+            variant="outline-secondary" 
+            onClick={() => {
+              setShowPaymentModal(false);
+              setShowServiceModal(true);
+            }}
+          >
+            <i className="bi bi-arrow-left me-2"></i>
+            {currentLanguage === 'swedish' ? 'Tillbaka' : 'Back'}
+          </Button>
+          <Button variant="secondary" onClick={() => {
+            setShowPaymentModal(false);
+            setSelectedService('');
+          }}>
             {currentLanguage === 'swedish' ? 'Avbryt' : 'Cancel'}
           </Button>
         </Modal.Footer>

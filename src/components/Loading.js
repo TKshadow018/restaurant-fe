@@ -1,14 +1,14 @@
 import React from "react";
 import '@/styles/theme.css';
+import '../styles/Loading.css';
 
 const Loading = ({ message = "Loading...", height = "400px" }) => {
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ height }}>
+    <div className="loading-container" style={{ height }}>
       <div className="text-center w-100">
         <div className="d-flex justify-content-center align-items-center mb-3">
           <div 
-            className="spinner-border text-primary" 
-            style={{ width: '5rem', height: '5rem', borderWidth: ".5rem" }}
+            className="loading-spinner spinner-border text-primary"
           ></div>
         </div>
         <h3 className="text-primary">{message}</h3>

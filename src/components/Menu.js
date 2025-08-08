@@ -35,6 +35,10 @@ const Menu = () => {
   // Modal state
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   useEffect(() => {
     // Only fetch if menuItems don't exist in Redux store
@@ -42,6 +46,11 @@ const Menu = () => {
       dispatch(fetchMenuItems());
     }
   }, [dispatch, menuItems.length]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterCategory, filterAvailability]);
 
   const handleErrorDismiss = () => {
     dispatch(clearError());
@@ -91,12 +100,84 @@ const Menu = () => {
     setSelectedItem(null);
   };
 
+  // Pagination logic
+  const totalItems = filteredMenuItems.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredMenuItems.slice(startIndex, endIndex);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of menu section
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total pages is small
+      for (let i = 1; i <= totalPages; i++) {
+        buttons.push(
+          <button
+            key={i}
+            className={`btn ${currentPage === i ? 'btn-primary' : 'btn-outline-primary'} mx-1`}
+            onClick={() => handlePageChange(i)}
+          >
+            {i}
+          </button>
+        );
+      }
+    } else {
+      // Show pagination with ellipsis for large number of pages
+      const startPage = Math.max(1, currentPage - 2);
+      const endPage = Math.min(totalPages, currentPage + 2);
+
+      if (startPage > 1) {
+        buttons.push(
+          <button key={1} className="btn btn-outline-primary mx-1" onClick={() => handlePageChange(1)}>
+            1
+          </button>
+        );
+        if (startPage > 2) {
+          buttons.push(<span key="ellipsis1" className="mx-2">...</span>);
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        buttons.push(
+          <button
+            key={i}
+            className={`btn ${currentPage === i ? 'btn-primary' : 'btn-outline-primary'} mx-1`}
+            onClick={() => handlePageChange(i)}
+          >
+            {i}
+          </button>
+        );
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          buttons.push(<span key="ellipsis2" className="mx-2">...</span>);
+        }
+        buttons.push(
+          <button key={totalPages} className="btn btn-outline-primary mx-1" onClick={() => handlePageChange(totalPages)}>
+            {totalPages}
+          </button>
+        );
+      }
+    }
+
+    return buttons;
+  };
+
   const { t } = useTranslation();
 
   return (
     <>
-      <div className="px-5 my-5">
-        <h1 className="text-center mb-4 text-primary">{t('menu.title', 'MENU')}</h1>
+      <div className="px-5 my-4">
         {error && (
           <div
             className="alert alert-danger alert-dismissible fade show"
@@ -115,6 +196,10 @@ const Menu = () => {
         {/* Search and Filters */}
         <div className="row mb-4">
           <div className="col-md-4 p-2">
+            <label className="form-label text-muted small mb-1">
+              <i className="bi bi-search me-1"></i>
+              {t('menu.searchLabel', 'Search Menu')}
+            </label>
             <input
               type="text"
               className="form-control"
@@ -124,6 +209,10 @@ const Menu = () => {
             />
           </div>
           <div className="col-md-4 p-2">
+            <label className="form-label text-muted small mb-1">
+              <i className="bi bi-grid-3x3-gap me-1"></i>
+              {t('menu.categoryLabel', 'Food Category')}
+            </label>
             <select
               className="form-select"
               value={filterCategory}
@@ -140,6 +229,10 @@ const Menu = () => {
             </select>
           </div>
           <div className="col-md-4 p-2">
+            <label className="form-label text-muted small mb-1">
+              <i className="bi bi-check-circle me-1"></i>
+              {t('menu.availabilityLabel', 'Availability Status')}
+            </label>
             <select
               className="form-select"
               value={filterAvailability}
@@ -156,18 +249,31 @@ const Menu = () => {
         {loading ? (
           <Loading message={t('menu.loading', 'Loading menu items...')} height="500px" />
         ) : (
-          <div className="row g-4">
-            {filteredMenuItems.length === 0 ? (
-              <div className="col-12">
-                <div className="text-center py-5">
-                  <h5 className="text-muted">{t('menu.noItems', 'No menu items found')}</h5>
+          <>
+            {/* Results count */}
+            {filteredMenuItems.length > 0 && (
+              <div className="row mb-3">
+                <div className="col-12">
                   <p className="text-muted">
-                    {t('menu.noItemsHint', 'Try adjusting your search or filter options.')}
+                    {t('menu.pagination.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('menu.pagination.of')} {totalItems} {t('menu.pagination.items')}
+                    {currentPage > 1 && ` (${t('menu.pagination.page')} ${currentPage} ${t('menu.pagination.of')} ${totalPages})`}
                   </p>
                 </div>
               </div>
-            ) : (
-              filteredMenuItems.map((item) => (
+            )}
+            
+            <div className="row g-4">
+              {filteredMenuItems.length === 0 ? (
+                <div className="col-12">
+                  <div className="text-center py-5">
+                    <h5 className="text-muted">{t('menu.noItems', 'No menu items found')}</h5>
+                    <p className="text-muted">
+                      {t('menu.noItemsHint', 'Try adjusting your search or filter options.')}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                currentItems.map((item) => (
                 <div key={item.id} className="col-md-6 col-lg-4">
                   <div
                     className="card h-100 border-0 shadow-lg"
@@ -249,7 +355,42 @@ const Menu = () => {
                 </div>
               ))
             )}
-          </div>
+            </div>
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="row mt-4">
+                <div className="col-12">
+                  <div className="d-flex justify-content-center align-items-center">
+                    <nav aria-label="Menu pagination">
+                      <div className="d-flex align-items-center">
+                        {/* Previous button */}
+                        <button
+                          className="btn btn-outline-primary me-2"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                        >
+                          <i className="bi bi-chevron-left"></i> {t('menu.pagination.previous')}
+                        </button>
+                        
+                        {/* Page numbers */}
+                        {renderPaginationButtons()}
+                        
+                        {/* Next button */}
+                        <button
+                          className="btn btn-outline-primary ms-2"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                        >
+                          {t('menu.pagination.next')} <i className="bi bi-chevron-right"></i>
+                        </button>
+                      </div>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

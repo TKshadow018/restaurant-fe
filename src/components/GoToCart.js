@@ -4,6 +4,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useTranslation } from 'react-i18next';
 import { Button, Badge } from 'react-bootstrap';
 import '@/styles/theme.css';
+import '../styles/GoToCart.css';
 
 const GoToCart = () => {
   const navigate = useNavigate();
@@ -18,12 +19,12 @@ const GoToCart = () => {
     navigate('/cart');
   };
 
-  // Check if on dashboard page or if URL has 'page' parameter
+  // Check if on dashboard page or if URL has 'page' parameter on dashboard
   const isDashboard = location.pathname === '/dashboard';
   const hasPageParam = new URLSearchParams(location.search).has('page');
   
-  // Show button if on dashboard OR if URL has 'page' parameter
-  const shouldShow = isDashboard || hasPageParam;
+  // Show button only if on dashboard (with or without page parameters)
+  const shouldShow = isDashboard;
 
   // Don't show the button if cart is empty OR if not on allowed pages
   if (totalItems === 0 || !shouldShow) {
@@ -31,42 +32,20 @@ const GoToCart = () => {
   }
 
   return (
-    <div 
-      className="position-fixed bottom-0 end-0 p-3"
-      style={{ zIndex: 1050 }}
+    <div
+      className="goto-cart-container"
     >
       <Button
         variant="primary"
         size="lg"
         onClick={handleGoToCart}
-        className="position-relative shadow-lg p-3"
-        style={{
-          background: 'linear-gradient(135deg, #007bff 0%, #0056b3 100%)',
-          border: 'none',
-          animation: 'pulse 2s infinite',
-          width: '60px',
-          height: '60px'
-        }}
+        className="goto-cart-button position-relative shadow-lg"
       >
         <i className="bi bi-cart3 fs-4"></i>
         <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
           {totalItems}
         </span>
       </Button>
-      
-      <style jsx>{`
-        @keyframes pulse {
-          0% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.05);
-          }
-          100% {
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 };

@@ -12,6 +12,7 @@ const OrderManagement = () => {
   } = useAdminData();
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterDate, setFilterDate] = useState('all');
+  const [filterServiceType, setFilterServiceType] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -22,10 +23,11 @@ const OrderManagement = () => {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [filterStatus, filterDate]);
+  }, [filterStatus, filterDate, filterServiceType]);
 
   const filteredOrders = orders.filter(order => {
     const statusMatch = filterStatus === 'all' || order.status === filterStatus;
+    const serviceTypeMatch = filterServiceType === 'all' || order.serviceType === filterServiceType;
     
     let dateMatch = true;
     if (filterDate !== 'all') {
@@ -67,7 +69,7 @@ const OrderManagement = () => {
       }
     }
     
-    return statusMatch && dateMatch;
+    return statusMatch && dateMatch && serviceTypeMatch;
   });
 
   // Pagination calculations
@@ -104,6 +106,57 @@ const OrderManagement = () => {
     if (typeof textObj === 'string') return textObj;
     if (!textObj) return fallback;
     return textObj.english || textObj.swedish || fallback;
+  };
+
+  const getServiceTypeText = (serviceType) => {
+    const serviceTypes = {
+      dine_in: 'Dine In',
+      takeout: 'Takeout',
+      home_delivery: 'Home Delivery'
+    };
+    return serviceTypes[serviceType] || serviceType || 'N/A';
+  };
+
+  const getServiceTypeIcon = (serviceType) => {
+    const serviceIcons = {
+      dine_in: 'bi-shop',
+      takeout: 'bi-bag',
+      home_delivery: 'bi-truck'
+    };
+    return serviceIcons[serviceType] || 'bi-question-circle';
+  };
+
+  const getServiceTypeBadgeColor = (serviceType) => {
+    const colors = {
+      dine_in: 'bg-success',
+      takeout: 'bg-warning text-dark',
+      home_delivery: 'bg-info'
+    };
+    return colors[serviceType] || 'bg-secondary';
+  };
+
+  const formatPaymentMethod = (paymentMethod) => {
+    if (!paymentMethod) return 'N/A';
+    return paymentMethod.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  const formatTotalPrice = (order) => {
+    // Try different possible field names for total price
+    const total = order.finalTotal || order.totalPrice || order.total || order.grandTotal;
+    
+    if (total === null || total === undefined || total === '') {
+      return 'N/A';
+    }
+    
+    // Convert to number if it's a string
+    const numericTotal = typeof total === 'string' ? parseFloat(total) : total;
+    
+    // Check if it's a valid number
+    if (isNaN(numericTotal)) {
+      return 'N/A';
+    }
+    
+    return `${numericTotal.toFixed(2)} SEK`;
   };
 
   const formatDateTime = (dateTime) => {
@@ -168,6 +221,17 @@ const OrderManagement = () => {
           </select>
           <select
             className="form-select"
+            value={filterServiceType}
+            onChange={(e) => setFilterServiceType(e.target.value)}
+            style={{ width: '180px' }}
+          >
+            <option value="all">All Service Types</option>
+            <option value="dine_in">Dine In</option>
+            <option value="takeout">Takeout</option>
+            <option value="home_delivery">Home Delivery</option>
+          </select>
+          <select
+            className="form-select"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
             style={{ width: '200px' }}
@@ -213,8 +277,10 @@ const OrderManagement = () => {
                 <tr>
                   <th>Order ID</th>
                   <th>Customer</th>
+                  <th>Service Type</th>
                   <th>Items</th>
                   <th>Total</th>
+                  <th>Payment Method</th>
                   <th>Date & Time</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -234,6 +300,12 @@ const OrderManagement = () => {
                           </div>
                         </td>
                         <td>
+                          <span className={`badge ${getServiceTypeBadgeColor(order.serviceType)}`}>
+                            <i className={`${getServiceTypeIcon(order.serviceType)} me-1`}></i>
+                            {getServiceTypeText(order.serviceType)}
+                          </span>
+                        </td>
+                        <td>
                           <div>
                             {order.items.map((item, index) => (
                               <div key={index} className="small">
@@ -242,16 +314,12 @@ const OrderManagement = () => {
                             ))}
                           </div>
                         </td>
-                        <td className="fw-semibold">{order.totalPrice} SEK</td>
+                        <td className="fw-semibold">{formatTotalPrice(order)}</td>
                         <td>
-                          <div>
-                            <div className="fw-semibold">{formatDateTime(order.createdAt)}</div>
-                            {order.paymentMethod && (
-                              <small className="text-muted">
-                                Payment: {order.paymentMethod.replace('_', ' ')}
-                              </small>
-                            )}
-                          </div>
+                          <div className="fw-semibold">{formatPaymentMethod(order.paymentMethod)}</div>
+                        </td>
+                        <td>
+                          <div className="fw-semibold">{formatDateTime(order.createdAt)}</div>
                         </td>
                         <td>
                           <span className={`badge ${getStatusColor(order.status)}`}>
@@ -276,7 +344,7 @@ const OrderManagement = () => {
                   })
                 ) : (
                   <tr>
-                    <td colSpan="7" className="text-center py-4">
+                    <td colSpan="9" className="text-center py-4">
                       <div className="text-muted">
                         <i className="bi bi-inbox display-4 d-block mb-2"></i>
                         {filteredOrders.length === 0 

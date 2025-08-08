@@ -38,12 +38,12 @@ const Home = () => {
             <div className="container text-center">
               <div className="row justify-content-center">
                 <div className="col-lg-12 hero-card px-4 py-4 rounded shadow-lg">
-                  <h1 className="display-4 fw-bold mb-4 hero-title">
+                  <h1 className="display-4 fw-bold mb-4 hero-title beige-color">
                     {t("home.welcomeTitle", {
                       title: process.env.REACT_APP_APP_TITLE,
                     })}
                   </h1>
-                  <h4 className="h4 mb-4 hero-subtitle">
+                  <h4 className="h4 mb-4 hero-subtitle beige-color">
                     {t("home.subtitle")}
                   </h4>
                   {!currentUser && (

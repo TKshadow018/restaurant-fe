@@ -42,6 +42,10 @@
   background-clip: text;
 }
 
+.beige-color{
+  color: lemonchiffon !important;
+}
+
 .hero-subtitle {
   animation: fadeInUp 1.5s ease-out 0.6s both;
 }
