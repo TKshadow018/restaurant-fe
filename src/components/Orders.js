@@ -87,9 +87,7 @@ const Orders = () => {
           setError(null);
         } else {
           console.log('No orders found for user:', currentUser.uid);
-          setError(currentLanguage === 'swedish' 
-            ? 'Inga beställningar hittades' 
-            : 'No orders found');
+          setError(t('orders.errors.notFound'));
         }
       } catch (err) {
         console.error('Error fetching orders:', err);
@@ -140,13 +138,13 @@ const Orders = () => {
     if (!dateTime) return 'N/A';
     
     const date = dateTime instanceof Date ? dateTime : new Date(dateTime);
-    return new Intl.DateTimeFormat(currentLanguage === 'swedish' ? 'sv-SE' : 'en-US', {
+    return new Intl.DateTimeFormat(i18n.language === 'sv' ? 'sv-SE' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: currentLanguage !== 'swedish'
+      hour12: i18n.language !== 'sv'
     }).format(date);
   };
 

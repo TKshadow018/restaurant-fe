@@ -1,0 +1,31 @@
+/* Banner Component Styles */
+
+.banner-coupon-code {
+  letter-spacing: 1px;
+  font-weight: bold;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+.banner-minimum-order {
+  font-weight: bold;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
+/* Dynamic color styles - use CSS custom properties for dynamic colors */
+.banner-title-dynamic {
+  color: var(--banner-title-color, #ffffff);
+}
+
+.banner-subtitle-dynamic {
+  color: var(--banner-subtitle-color, #ffffff);
+}
+
+.banner-text-dynamic {
+  color: var(--banner-text-color, #ffffff);
+}
+
+.banner-duration-dynamic {
+  color: var(--banner-duration-color, #ffffff);
+}

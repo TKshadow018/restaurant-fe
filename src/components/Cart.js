@@ -10,6 +10,7 @@ import { collection, addDoc, Timestamp, query, where, getDocs, doc, updateDoc, i
 import { useAuth } from '@/contexts/AuthContext'; // Adjust path if needed
 import '@/styles/theme.css';
 import '../styles/Cart.css';
+import '../styles/Delivery.css';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -17,11 +18,21 @@ const Cart = () => {
   const { refreshOrderStatus } = useOrder();
   const { notifyOrderReceived, notifyNewOrder } = useNotification();
   const { t, i18n } = useTranslation();
-  const { currentUser } = useAuth(); // Fix: use currentUser instead of user
+  const { currentUser, userProfile } = useAuth(); // Fix: get both currentUser and userProfile
   const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedService, setSelectedService] = useState('');
+  const [deliveryAddress, setDeliveryAddress] = useState({
+    street: '',
+    houseNumber: '',
+    postalCode: '',
+    city: '',
+    region: '',
+    phoneNumber: ''
+  });
+  const [useProfileAddress, setUseProfileAddress] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
@@ -29,8 +40,31 @@ const Cart = () => {
 
   // Debug user state
   console.log("Auth currentUser state:", currentUser);
-  console.log("CurrentUser type:", typeof currentUser);
-  console.log("CurrentUser keys:", currentUser ? Object.keys(currentUser) : 'No currentUser object');
+  console.log("Auth userProfile state:", userProfile);
+  console.log("UserProfile type:", typeof userProfile);
+  console.log("UserProfile keys:", userProfile ? Object.keys(userProfile) : 'No userProfile object');
+  
+  // Debug address fields specifically
+  if (userProfile) {
+    console.log("Full userProfile object:", userProfile);
+    console.log("Address fields debug from userProfile:", {
+      street: userProfile.street,
+      houseNumber: userProfile.houseNumber,
+      postalCode: userProfile.postalCode,
+      city: userProfile.city,
+      region: userProfile.region,
+      address: userProfile.address // Check if address is nested
+    });
+    
+    // Also check if it's stored under a different property name
+    console.log("All userProfile properties:", Object.keys(userProfile));
+    console.log("Looking for address-like properties:", Object.keys(userProfile).filter(key => 
+      key.toLowerCase().includes('address') || 
+      key.toLowerCase().includes('street') || 
+      key.toLowerCase().includes('city') ||
+      key.toLowerCase().includes('postal')
+    ));
+  }
 
   // Helper function to get localized text
   const getLocalizedText = (textObj, fallback = 'Unnamed Item') => {
@@ -41,13 +75,7 @@ const Cart = () => {
 
   // Helper function to format volume display names
   const formatVolumeName = (volume) => {
-    const volumeNames = {
-      small: currentLanguage === 'swedish' ? 'Liten' : 'Small',
-      medium: currentLanguage === 'swedish' ? 'Mellan' : 'Medium', 
-      large: currentLanguage === 'swedish' ? 'Stor' : 'Large',
-      normal: currentLanguage === 'swedish' ? 'Normal' : 'Normal'
-    };
-    return volumeNames[volume] || volume;
+    return t(`volume.${volume}`, volume);
   };
 
   const handleContinueShopping = () => {
@@ -69,9 +97,7 @@ const Cart = () => {
       const querySnapshot = await getDocs(campaignQuery);
       
       if (querySnapshot.empty) {
-        setCouponError(currentLanguage === 'swedish' 
-          ? 'Ogiltig kupongkod' 
-          : 'Invalid coupon code');
+        setCouponError(t('cart.coupon.invalid'));
         return false;
       }
 
@@ -86,9 +112,7 @@ const Cart = () => {
       const isActive = (!startDate || startDate <= now) && (!endDate || endDate >= now);
 
       if (!isActive) {
-        setCouponError(currentLanguage === 'swedish' 
-          ? 'Denna kupong har gått ut eller är inte aktiv än' 
-          : 'This coupon has expired or is not active yet');
+        setCouponError(t('cart.coupon.expired'));
         return false;
       }
 
@@ -97,9 +121,7 @@ const Cart = () => {
       const minimumOrder = campaign.minimumOrderAmount || 0;
       
       if (currentTotal < minimumOrder) {
-        setCouponError(currentLanguage === 'swedish' 
-          ? `Minsta beställningsvärde är ${minimumOrder} SEK för denna kupong` 
-          : `Minimum order value is ${minimumOrder} SEK for this coupon`);
+        setCouponError(t('cart.coupon.minimumOrder', { amount: minimumOrder }));
         return false;
       }
 
@@ -110,9 +132,7 @@ const Cart = () => {
         );
 
         if (eligibleItems.length === 0) {
-          setCouponError(currentLanguage === 'swedish' 
-            ? 'Denna kupong är inte giltig för artiklar i din varukorg' 
-            : 'This coupon is not valid for items in your cart');
+          setCouponError(t('cart.coupon.notEligible'));
           return false;
         }
       }
@@ -133,9 +153,7 @@ const Cart = () => {
         });
 
         if (currentUsage >= campaign.maxUsagesPerUser) {
-          setCouponError(currentLanguage === 'swedish' 
-            ? `Du har redan använt denna kupong maximalt antal gånger (${campaign.maxUsagesPerUser})` 
-            : `You have already used this coupon the maximum number of times (${campaign.maxUsagesPerUser})`);
+          setCouponError(t('cart.coupon.maxUsages', { max: campaign.maxUsagesPerUser }));
           return false;
         }
       }
@@ -144,9 +162,7 @@ const Cart = () => {
       return true;
     } catch (error) {
       console.error('Error validating coupon:', error);
-      setCouponError(currentLanguage === 'swedish' 
-        ? 'Fel vid validering av kupong' 
-        : 'Error validating coupon');
+      setCouponError(t('cart.coupon.validationError'));
       return false;
     } finally {
       setCouponLoading(false);
@@ -155,9 +171,7 @@ const Cart = () => {
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
-      setCouponError(currentLanguage === 'swedish' 
-        ? 'Vänligen ange en kupongkod' 
-        : 'Please enter a coupon code');
+      setCouponError(t('cart.coupon.enterCode'));
       return;
     }
 
@@ -265,9 +279,7 @@ const Cart = () => {
         // Remove coupon if minimum order is not met
         setAppliedCoupon(null);
         setCouponCode('');
-        setCouponError(currentLanguage === 'swedish' 
-          ? `Kupong borttagen: Minsta beställningsvärde är ${minimumOrder} SEK` 
-          : `Coupon removed: Minimum order value is ${minimumOrder} SEK`);
+        setCouponError(t('cart.coupon.removedMinimum', { amount: minimumOrder }));
         return;
       }
 
@@ -281,9 +293,7 @@ const Cart = () => {
           // Remove coupon if no eligible items remain
           setAppliedCoupon(null);
           setCouponCode('');
-          setCouponError(currentLanguage === 'swedish' 
-            ? 'Kupong borttagen: Inga giltiga artiklar kvar i varukorgen' 
-            : 'Coupon removed: No eligible items left in cart');
+          setCouponError(t('cart.coupon.removedNoEligible'));
         }
       }
     }
@@ -298,9 +308,7 @@ const Cart = () => {
   const handleCheckout = async () => {
     // Check if user is logged in
     if (!currentUser) {
-      alert(currentLanguage === 'swedish' 
-        ? 'Du måste logga in för att slutföra din beställning.' 
-        : 'You must be logged in to complete your order.');
+      alert(t('cart.checkout.loginRequired'));
       navigate('/login'); // Redirect to login page
       return;
     }
@@ -311,16 +319,88 @@ const Cart = () => {
   const handleServiceSelection = (serviceType) => {
     setSelectedService(serviceType);
     setShowServiceModal(false);
+    
+    // If home delivery is selected, show address modal (keep existing states)
+    if (serviceType === 'home_delivery') {
+      setShowAddressModal(true);
+    } else {
+      // For dine-in and takeout, go directly to payment
+      setShowPaymentModal(true);
+    }
+  };
+
+  const handleAddressFieldChange = (field, value) => {
+    // If user starts typing in custom address, deselect profile address
+    if (useProfileAddress) {
+      setUseProfileAddress(false);
+    }
+    
+    setDeliveryAddress(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const isAddressComplete = () => {
+    // If user chose to use profile address, that's always complete
+    if (useProfileAddress) return true;
+    
+    // Otherwise check if custom address is complete
+    return deliveryAddress.street.trim() && 
+           deliveryAddress.houseNumber.trim() && 
+           deliveryAddress.postalCode.trim() && 
+           deliveryAddress.city.trim() &&
+           deliveryAddress.phoneNumber.trim();
+  };
+
+  const handleAddressConfirm = () => {
+    setShowAddressModal(false);
     setShowPaymentModal(true);
+  };
+
+  const handleUseProfileAddress = () => {
+    // Check if profile address is complete - handle nested address structure
+    const street = userProfile?.address?.street || userProfile?.street || '';
+    const houseNumber = userProfile?.address?.houseNumber || userProfile?.houseNumber || '';
+    const postalCode = userProfile?.address?.postalCode || userProfile?.postalCode || '';
+    const city = userProfile?.address?.city || userProfile?.city || '';
+    
+    console.log("Address validation debug:", {
+      street,
+      houseNumber,
+      postalCode,
+      city,
+      addressObject: userProfile?.address,
+      flatStructure: {
+        street: userProfile?.street,
+        houseNumber: userProfile?.houseNumber,
+        postalCode: userProfile?.postalCode,
+        city: userProfile?.city
+      }
+    });
+    
+    if (!street || !houseNumber || !postalCode || !city) {
+      alert(t('delivery.incompleteProfileAddress', 'Please complete your address information in your profile first.'));
+      return;
+    }
+    
+    setUseProfileAddress(true);
+    // Clear custom address when profile address is selected
+    setDeliveryAddress({
+      street: '',
+      houseNumber: '',
+      postalCode: '',
+      city: '',
+      region: '',
+      phoneNumber: ''
+    });
   };
 
   const handlePaymentMethod = async (paymentMethod) => {
     setShowPaymentModal(false);
     
     if (paymentMethod === 'online') {
-      alert(currentLanguage === 'swedish' 
-        ? 'Online betalning är inte tillgänglig just nu. Vänligen välj kontant vid leverans.' 
-        : 'Online payment is not available right now. Please choose cash on delivery.');
+      alert(t('cart.checkout.onlineNotAvailable'));
       return;
     }
 
@@ -354,8 +434,19 @@ const Cart = () => {
           minimumOrderAmount: appliedCoupon.minimumOrderAmount,
           eligibleDishes: appliedCoupon.eligibleDishes
         } : null,
-        serviceType: selectedService, // Add service type (dine_in or home_delivery)
+        serviceType: selectedService, // Add service type (dine_in, takeout, or home_delivery)
         paymentMethod: paymentMethod === 'cash' ? 'cash_on_delivery' : paymentMethod,
+        deliveryAddress: selectedService === 'home_delivery' ? {
+          useProfileAddress: useProfileAddress,
+          customAddress: useProfileAddress ? null : deliveryAddress,
+          userProfileAddress: useProfileAddress ? {
+            street: userProfile?.street || userProfile?.address?.street || '',
+            houseNumber: userProfile?.houseNumber || userProfile?.address?.houseNumber || '',
+            postalCode: userProfile?.postalCode || userProfile?.address?.postalCode || '',
+            city: userProfile?.city || userProfile?.address?.city || '',
+            region: userProfile?.region || userProfile?.address?.region || ''
+          } : null
+        } : null,
         createdAt: Timestamp.now(),
         userEmail: userEmail,
         userName: userName,
@@ -422,6 +513,15 @@ const Cart = () => {
       setCouponCode('');
       setCouponError('');
       setSelectedService('');
+      setDeliveryAddress({
+        street: '',
+        houseNumber: '',
+        postalCode: '',
+        city: '',
+        region: '',
+        phoneNumber: ''
+      });
+      setUseProfileAddress(false);
       
       // Refresh order status to show Orders tab in navbar
       refreshOrderStatus();
@@ -430,16 +530,10 @@ const Cart = () => {
       navigate('/dashboard?page=orders');
     } catch (error) {
       const errorMessage = selectedService === 'dine_in' 
-        ? (currentLanguage === 'swedish' 
-          ? 'Det gick inte att spara beställningen för restaurangen.' 
-          : 'Failed to save restaurant order.')
+        ? t('cart.checkout.orderFailedDineIn')
         : selectedService === 'takeout'
-        ? (currentLanguage === 'swedish' 
-          ? 'Det gick inte att spara avhämtningsbeställningen.' 
-          : 'Failed to save takeout order.')
-        : (currentLanguage === 'swedish' 
-          ? 'Det gick inte att spara leveransbeställningen.' 
-          : 'Failed to save delivery order.');
+        ? t('cart.checkout.orderFailedTakeout')
+        : t('cart.checkout.orderFailedDelivery');
       alert(errorMessage);
       console.error("Error saving order:", error);
     }
@@ -453,18 +547,16 @@ const Cart = () => {
             <div className="text-center py-5">
               <i className="bi bi-cart-x display-1 text-muted mb-4"></i>
               <h2 className="text-muted mb-3">
-                {currentLanguage === 'swedish' ? 'Din varukorg är tom' : 'Your cart is empty'}
+                {t('cart.empty')}
               </h2>
               <p className="text-muted mb-4">
-                {currentLanguage === 'swedish' 
-                  ? 'Lägg till några läckra rätter från vår meny!' 
-                  : 'Add some delicious items from our menu!'}
+                {t('cart.emptyHint')}
               </p>
               <button 
                 className="btn btn-primary btn-lg"
                 onClick={handleContinueShopping}
               >
-                {currentLanguage === 'swedish' ? 'Fortsätt handla' : 'Continue Shopping'}
+                {t('cart.continueShopping')}
               </button>
             </div>
           </div>
@@ -479,7 +571,7 @@ const Cart = () => {
         <div className="col-lg-8">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 className="h2 text-primary">
-              {currentLanguage === 'swedish' ? 'Din varukorg' : 'Your Cart'}
+              {t('cart.title')}
             </h1>
             <button 
               className="btn btn-outline-danger"
@@ -491,7 +583,7 @@ const Cart = () => {
               }}
             >
               <i className="bi bi-trash me-2"></i>
-              {currentLanguage === 'swedish' ? 'Töm varukorg' : 'Clear Cart'}
+              {t('cart.clearCart')}
             </button>
           </div>
 
@@ -514,7 +606,7 @@ const Cart = () => {
                       </p>
                       {item.selectedVolume && item.selectedVolume !== 'normal' && (
                         <small className="text-primary">
-                          {currentLanguage === 'swedish' ? 'Storlek:' : 'Size:'} {formatVolumeName(item.selectedVolume)}
+                          {t('menu.modal.size')} {formatVolumeName(item.selectedVolume)}
                         </small>
                       )}
                     </div>
@@ -602,7 +694,7 @@ const Cart = () => {
                       <button
                         className="btn btn-outline-danger btn-sm"
                         onClick={() => removeFromCart(index)}
-                        title={currentLanguage === 'swedish' ? 'Ta bort' : 'Remove'}
+                        title={t('common.close')}
                       >
                         <i className="bi bi-trash"></i>
                       </button>
@@ -619,14 +711,14 @@ const Cart = () => {
                           <div>
                             {hasDiscount && (
                               <div className="small text-muted text-decoration-line-through mb-1">
-                                {currentLanguage === 'swedish' ? 'Ursprunglig subtotal:' : 'Original subtotal:'} {(parseFloat(item.selectedPrice) * item.quantity).toFixed(2)} SEK
+                                {t('cart.originalSubtotal')} {(parseFloat(item.selectedPrice) * item.quantity).toFixed(2)} SEK
                               </div>
                             )}
                             <strong className={hasDiscount ? "text-success" : "text-primary"}>
-                              {currentLanguage === 'swedish' ? 'Subtotal:' : 'Subtotal:'} {itemTotal} SEK
+                              {t('cart.subtotal')} {itemTotal} SEK
                               {hasDiscount && (
                                 <small className="ms-2 text-success">
-                                  ({currentLanguage === 'swedish' ? 'Du sparar' : 'You save'} {(discount * item.quantity).toFixed(2)} SEK)
+                                  ({t('cart.youSave')} {(discount * item.quantity).toFixed(2)} SEK)
                                 </small>
                               )}
                             </strong>
@@ -645,23 +737,23 @@ const Cart = () => {
           <div className="card border-0 shadow-sm sticky-top" style={{ top: '20px' }}>
             <div className="card-header bg-primary text-white">
               <h5 className="mb-0">
-                {currentLanguage === 'swedish' ? 'Ordersammanfattning' : 'Order Summary'}
+                {t('cart.orderSummary')}
               </h5>
             </div>
             <div className="card-body">
               <div className="d-flex justify-content-between mb-3">
-                <span>{currentLanguage === 'swedish' ? 'Artiklar:' : 'Items:'}</span>
+                <span>{t('cart.items')}</span>
                 <span>{cartItems.length}</span>
               </div>
               <div className="d-flex justify-content-between mb-3">
-                <span>{currentLanguage === 'swedish' ? 'Totalt antal:' : 'Total Quantity:'}</span>
+                <span>{t('cart.totalQuantity')}</span>
                 <span>{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
               </div>
               
               {/* Coupon Section */}
               <div className="mb-4">
                 <h6 className="mb-3">
-                  {currentLanguage === 'swedish' ? 'Kupongkod' : 'Coupon Code'}
+                  {t('cart.coupon.title')}
                 </h6>
                 
                 {appliedCoupon ? (
@@ -671,14 +763,12 @@ const Cart = () => {
                         <i className="bi bi-check-circle me-2"></i>
                         <strong>{appliedCoupon.couponCode}</strong>
                         <div className="small text-success">
-                          {currentLanguage === 'swedish' 
-                            ? `Kupong tillämpad: ${appliedCoupon.title?.swedish || appliedCoupon.title?.english || 'Discount'}` 
-                            : `Coupon applied: ${appliedCoupon.title?.english || appliedCoupon.title?.swedish || 'Discount'}`}
+                          {t('cart.coupon.applied')} {getLocalizedText(appliedCoupon.title, 'Discount')}
                         </div>
                         <div className="small text-muted">
                           {appliedCoupon.discountType === 'percentage' 
-                            ? `${appliedCoupon.discountPercentage}% ${currentLanguage === 'swedish' ? 'rabatt' : 'discount'}`
-                            : `${appliedCoupon.discountFixedAmount} SEK ${currentLanguage === 'swedish' ? 'rabatt' : 'discount'}`}
+                            ? `${appliedCoupon.discountPercentage}% ${t('orders.discount')}`
+                            : `${appliedCoupon.discountFixedAmount} SEK ${t('orders.discount')}`}
                           {appliedCoupon.minimumOrderAmount > 0 && (
                             <span className="ms-2">
                               (Min: {appliedCoupon.minimumOrderAmount} SEK)
@@ -690,7 +780,7 @@ const Cart = () => {
                         variant="outline-danger"
                         size="sm"
                         onClick={handleRemoveCoupon}
-                        title={currentLanguage === 'swedish' ? 'Ta bort kupong' : 'Remove coupon'}
+                        title={t('cart.coupon.remove')}
                       >
                         <i className="bi bi-x"></i>
                       </Button>
@@ -700,7 +790,7 @@ const Cart = () => {
                   <div className="input-group mb-2">
                     <Form.Control
                       type="text"
-                      placeholder={currentLanguage === 'swedish' ? 'Ange kupongkod' : 'Enter coupon code'}
+                      placeholder={t('cart.coupon.placeholder')}
                       value={couponCode}
                       onChange={(e) => {
                         setCouponCode(e.target.value.toUpperCase());
@@ -716,7 +806,7 @@ const Cart = () => {
                       {couponLoading ? (
                         <i className="bi bi-hourglass-split"></i>
                       ) : (
-                        currentLanguage === 'swedish' ? 'Använd' : 'Apply'
+                        t('cart.coupon.apply')
                       )}
                     </Button>
                   </div>
@@ -733,11 +823,11 @@ const Cart = () => {
               {parseFloat(totals.totalDiscount) > 0 && (
                 <>
                   <div className="d-flex justify-content-between mb-2">
-                    <span>{currentLanguage === 'swedish' ? 'Subtotal:' : 'Subtotal:'}</span>
+                    <span>{t('cart.subtotal')}</span>
                     <span>{totals.originalTotal} SEK</span>
                   </div>
                   <div className="d-flex justify-content-between mb-3 text-success">
-                    <span>{currentLanguage === 'swedish' ? 'Kupongrabatt:' : 'Coupon Discount:'}</span>
+                    <span>{t('cart.coupon.discount')}</span>
                     <span>-{totals.totalDiscount} SEK</span>
                   </div>
                 </>
@@ -745,12 +835,12 @@ const Cart = () => {
               
               <hr />
               <div className="d-flex justify-content-between mb-4">
-                <h5>{currentLanguage === 'swedish' ? 'Totalt:' : 'Total:'}</h5>
+                <h5>{t('cart.total')}</h5>
                 <h5 className={parseFloat(totals.totalDiscount) > 0 ? "text-success" : "text-primary"}>
                   {totals.total} SEK
                   {parseFloat(totals.totalDiscount) > 0 && (
                     <div className="small text-muted">
-                      {currentLanguage === 'swedish' ? 'Du sparar' : 'You save'} {totals.totalDiscount} SEK
+                      {t('cart.youSave')} {totals.totalDiscount} SEK
                     </div>
                   )}
                 </h5>
@@ -762,8 +852,8 @@ const Cart = () => {
               >
                 <i className="bi bi-credit-card me-2"></i>
                 {currentUser 
-                  ? (currentLanguage === 'swedish' ? 'Gå till kassan' : 'Proceed to Checkout')
-                  : (currentLanguage === 'swedish' ? 'Logga in för att beställa' : 'Login to Order')
+                  ? t('cart.proceedToCheckout')
+                  : t('cart.loginToOrder')
                 }
               </button>
               
@@ -771,7 +861,7 @@ const Cart = () => {
                 className="btn btn-outline-secondary w-100 mt-2"
                 onClick={handleContinueShopping}
               >
-                {currentLanguage === 'swedish' ? 'Fortsätt handla' : 'Continue Shopping'}
+                {t('cart.continueShopping')}
               </button>
             </div>
           </div>
@@ -782,14 +872,12 @@ const Cart = () => {
       <Modal show={showServiceModal} onHide={() => setShowServiceModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {currentLanguage === 'swedish' ? 'Välj servicealternativ' : 'Choose Service Option'}
+            {t('service.selectService')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p className="mb-4">
-            {currentLanguage === 'swedish' 
-              ? 'Hur vill du få din beställning?' 
-              : 'How would you like to receive your order?'}
+            {t('service.question')}
           </p>
           <div className="d-grid gap-3">
             <Button 
@@ -801,12 +889,10 @@ const Cart = () => {
               <i className="bi bi-shop me-3" style={{ fontSize: '1.5rem' }}></i>
               <div className="text-start">
                 <div className="fw-bold">
-                  {currentLanguage === 'swedish' ? 'Äta på plats' : 'Dine In'}
+                  {t('service.dineIn')}
                 </div>
                 <small className="text-muted">
-                  {currentLanguage === 'swedish' 
-                    ? 'Ät din måltid på restaurangen' 
-                    : 'Enjoy your meal at the restaurant'}
+                  {t('service.dineInDescription', 'Enjoy your meal at the restaurant')}
                 </small>
               </div>
             </Button>
@@ -819,12 +905,10 @@ const Cart = () => {
               <i className="bi bi-bag me-3" style={{ fontSize: '1.5rem' }}></i>
               <div className="text-start">
                 <div className="fw-bold">
-                  {currentLanguage === 'swedish' ? 'Avhämtning' : 'Takeout'}
+                  {t('service.takeout')}
                 </div>
                 <small className="text-muted">
-                  {currentLanguage === 'swedish' 
-                    ? 'Hämta din beställning på restaurangen' 
-                    : 'Pick up your order from the restaurant'}
+                  {t('service.takeoutDescription', 'Pick up your order from the restaurant')}
                 </small>
               </div>
             </Button>
@@ -837,12 +921,10 @@ const Cart = () => {
               <i className="bi bi-truck me-3" style={{ fontSize: '1.5rem' }}></i>
               <div className="text-start">
                 <div className="fw-bold">
-                  {currentLanguage === 'swedish' ? 'Hemleverans' : 'Home Delivery'}
+                  {t('service.homeDelivery')}
                 </div>
                 <small className="text-white-50">
-                  {currentLanguage === 'swedish' 
-                    ? 'Vi levererar till din dörr' 
-                    : 'We deliver to your door'}
+                  {t('service.deliveryDescription', 'We deliver to your door')}
                 </small>
               </div>
             </Button>
@@ -850,7 +932,7 @@ const Cart = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowServiceModal(false)}>
-            {currentLanguage === 'swedish' ? 'Avbryt' : 'Cancel'}
+            {t('common.cancel')}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -859,7 +941,7 @@ const Cart = () => {
       <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {currentLanguage === 'swedish' ? 'Välj betalningsmetod' : 'Choose Payment Method'}
+            {t('service.paymentMethod')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -872,18 +954,16 @@ const Cart = () => {
               } me-2`}></i>
               <strong>
                 {selectedService === 'dine_in' 
-                  ? (currentLanguage === 'swedish' ? 'Äta på plats' : 'Dine In')
+                  ? t('service.dineIn')
                   : selectedService === 'takeout'
-                  ? (currentLanguage === 'swedish' ? 'Avhämtning' : 'Takeout')
-                  : (currentLanguage === 'swedish' ? 'Hemleverans' : 'Home Delivery')
+                  ? t('service.takeout')
+                  : t('service.homeDelivery')
                 }
               </strong>
             </Alert>
           )}
           <p className="mb-4">
-            {currentLanguage === 'swedish' 
-              ? 'Hur vill du betala för din beställning?' 
-              : 'How would you like to pay for your order?'}
+            {t('service.paymentQuestion')}
           </p>
           <div className="d-grid gap-3">
             <Button 
@@ -893,7 +973,7 @@ const Cart = () => {
               className="d-flex align-items-center justify-content-center"
             >
               <i className="bi bi-credit-card me-2"></i>
-              {currentLanguage === 'swedish' ? 'Betala online' : 'Pay Online'}
+              {t('service.payOnline')}
             </Button>
             <Button 
               variant="primary" 
@@ -903,10 +983,10 @@ const Cart = () => {
             >
               <i className="bi bi-cash me-2"></i>
               {selectedService === 'dine_in' 
-                ? (currentLanguage === 'swedish' ? 'Betala på plats' : 'Pay at Restaurant')
+                ? t('service.payAtRestaurant', 'Pay at Restaurant')
                 : selectedService === 'takeout'
-                ? (currentLanguage === 'swedish' ? 'Betala vid avhämtning' : 'Pay on Pickup')
-                : (currentLanguage === 'swedish' ? 'Kontant vid leverans' : 'Cash on Delivery')
+                ? t('service.payOnPickup', 'Pay on Pickup')
+                : t('service.cashOnDelivery')
               }
             </Button>
           </div>
@@ -916,17 +996,238 @@ const Cart = () => {
             variant="outline-secondary" 
             onClick={() => {
               setShowPaymentModal(false);
-              setShowServiceModal(true);
+              if (selectedService === 'home_delivery') {
+                setShowAddressModal(true);
+              } else {
+                setShowServiceModal(true);
+              }
             }}
           >
             <i className="bi bi-arrow-left me-2"></i>
-            {currentLanguage === 'swedish' ? 'Tillbaka' : 'Back'}
+            {t('common.back')}
           </Button>
           <Button variant="secondary" onClick={() => {
             setShowPaymentModal(false);
             setSelectedService('');
+            setDeliveryAddress({
+              street: '',
+              houseNumber: '',
+              postalCode: '',
+              city: '',
+              region: '',
+              phoneNumber: ''
+            });
+            setUseProfileAddress(false);
           }}>
-            {currentLanguage === 'swedish' ? 'Avbryt' : 'Cancel'}
+            {t('common.cancel')}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Address Selection Modal for Home Delivery */}
+      <Modal show={showAddressModal} onHide={() => setShowAddressModal(false)} centered dialogClassName="delivery-modal">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {t('delivery.selectAddress', 'Delivery Address')}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-4">
+            {t('delivery.addressQuestion', 'Where should we deliver your order?')}
+          </p>
+          
+          {/* Show profile address option if user is logged in */}
+          {currentUser && userProfile && (
+            <div className="mb-4">
+              <div className={`card delivery-address-card ${useProfileAddress ? 'border-primary' : ''}`}>
+                  <div className="card-body">
+                  <h6 className="card-title">
+                    <i className="bi bi-house-door me-2"></i>
+                    {t('delivery.profileAddress', 'Your Profile Address')}
+                    {useProfileAddress && (
+                      <span className="badge bg-primary ms-2">
+                        <i className="bi bi-check-circle me-1"></i>
+                        Selected
+                      </span>
+                    )}
+                  </h6>
+                  {(() => {
+                    const street = userProfile.address?.street || userProfile.street || '';
+                    const houseNumber = userProfile.address?.houseNumber || userProfile.houseNumber || '';
+                    const postalCode = userProfile.address?.postalCode || userProfile.postalCode || '';
+                    const city = userProfile.address?.city || userProfile.city || '';
+                    const region = userProfile.address?.region || userProfile.region || '';
+                    
+                    const hasCompleteAddress = street && houseNumber && postalCode && city;
+                    
+                    console.log("Address display debug:", {
+                      street,
+                      houseNumber,
+                      postalCode,
+                      city,
+                      region,
+                      hasCompleteAddress,
+                      addressObject: userProfile.address
+                    });
+                    
+                    return (
+                      <>
+                        <p className="card-text small text-muted mb-3">
+                          {hasCompleteAddress ? (
+                            <>
+                              {street} {houseNumber}<br />
+                              {postalCode} {city}
+                              {region && <><br />{region}</>}
+                            </>
+                          ) : (
+                            <span className="text-warning">
+                              <i className="bi bi-exclamation-triangle me-1"></i>
+                              {t('delivery.incompleteAddress', 'Address information is incomplete in your profile')}
+                            </span>
+                          )}
+                        </p>
+                        {!useProfileAddress ? (
+                          <Button 
+                            variant={hasCompleteAddress ? "primary" : "outline-warning"} 
+                            onClick={handleUseProfileAddress}
+                            className="w-100"
+                            disabled={!hasCompleteAddress}
+                          >
+                            <i className="bi bi-check-circle me-2"></i>
+                            {hasCompleteAddress 
+                              ? t('delivery.useThisAddress', 'Use This Address')
+                              : t('delivery.completeProfileFirst', 'Complete Profile Address First')
+                            }
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline-primary" 
+                            onClick={() => setUseProfileAddress(false)}
+                            className="w-100"
+                          >
+                            <i className="bi bi-x-circle me-2"></i>
+                            Deselect This Address
+                          </Button>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+              
+              {!useProfileAddress && (
+                <div className="delivery-or-divider">
+                  <span>{t('common.or', 'or')}</span>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Custom address form - only show when profile address is not selected */}
+          {!useProfileAddress && (
+            <div className="delivery-custom-address">
+              <h6 className="mb-3">
+                <i className="bi bi-geo-alt me-2"></i>
+                {t('delivery.customAddress', 'Enter Delivery Address')}
+              </h6>
+            
+            {/* Street and House Number Row */}
+            <div className="row mb-3">
+              <div className="col-md-8">
+                <Form.Label>{t('profile.street', 'Street Name')} *</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder={t('profile.streetPlaceholder', 'e.g., Kungsgatan')}
+                  value={deliveryAddress.street}
+                  onChange={(e) => handleAddressFieldChange('street', e.target.value)}
+                  required
+                />
+              </div>
+              <div className="col-md-4">
+                <Form.Label>{t('profile.houseNumber', 'House Number')} *</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="12A"
+                  value={deliveryAddress.houseNumber}
+                  onChange={(e) => handleAddressFieldChange('houseNumber', e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Postal Code and City Row */}
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <Form.Label>{t('profile.postalCode', 'Postal Code')} *</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="123 45"
+                  value={deliveryAddress.postalCode}
+                  onChange={(e) => handleAddressFieldChange('postalCode', e.target.value)}
+                  maxLength={6}
+                  required
+                />
+              </div>
+              <div className="col-md-6">
+                <Form.Label>{t('profile.city', 'City')} *</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder={t('profile.cityPlaceholder', 'e.g., Stockholm')}
+                  value={deliveryAddress.city}
+                  onChange={(e) => handleAddressFieldChange('city', e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Region (Optional) */}
+            <div className="mb-3">
+              <Form.Label>{t('profile.region', 'Region/County')}</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder={t('profile.regionPlaceholder', 'e.g., Stockholm County')}
+                value={deliveryAddress.region}
+                onChange={(e) => handleAddressFieldChange('region', e.target.value)}
+              />
+            </div>
+
+            {/* Phone Number */}
+            <div className="mb-3">
+              <Form.Label>{t('profile.phoneNumber', 'Phone Number')} *</Form.Label>
+              <Form.Control
+                type="tel"
+                placeholder={t('profile.phoneNumberPlaceholder', 'e.g., +46 70 123 45 67')}
+                value={deliveryAddress.phoneNumber}
+                onChange={(e) => handleAddressFieldChange('phoneNumber', e.target.value)}
+                required
+              />
+            </div>
+
+              <Form.Text className="text-muted">
+                <i className="bi bi-info-circle me-1"></i>
+                {t('delivery.requiredFieldsHint', 'Fields marked with * are required')}
+              </Form.Text>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button 
+            variant="outline-secondary" 
+            onClick={() => {
+              setShowAddressModal(false);
+              setShowServiceModal(true);
+            }}
+          >
+            <i className="bi bi-arrow-left me-2"></i>
+            {t('common.back', 'Back')}
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={handleAddressConfirm}
+            disabled={!isAddressComplete()}
+          >
+            <i className="bi bi-arrow-right me-2"></i>
+            {t('delivery.continue', 'Continue to Payment')}
           </Button>
         </Modal.Footer>
       </Modal>

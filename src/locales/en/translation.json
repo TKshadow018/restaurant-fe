@@ -81,7 +81,17 @@
     "save": "Save",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "from": "From",
+    "until": "Until",
+    "or": "or",
+    "back": "Back"
+  },
+  "campaign": {
+    "dateFrom": "From {{date}}",
+    "dateUntil": "Until {{date}}",
+    "minimumOrder": "Can be used on orders over {{amount}} SEK",
+    "canBeUsedOn": "Can be used on orders over"
   },
   "cart": {
     "title": "Your Cart",
@@ -111,7 +121,9 @@
       "minimumOrder": "Minimum order value is {amount} SEK for this coupon",
       "maxUsages": "You have already used this coupon the maximum number of times ({max})",
       "validationError": "Error validating coupon",
-      "enterCode": "Please enter a coupon code"
+      "enterCode": "Please enter a coupon code",
+      "removedMinimum": "Coupon removed: Minimum order value is {amount} SEK",
+      "removedNoEligible": "Coupon removed: No eligible items left in cart"
     },
     "checkout": {
       "loginRequired": "You must be logged in to complete your order.",
@@ -122,7 +134,10 @@
       "onlineNotAvailable": "Online payment is not available right now. Please choose cash on delivery.",
       "orderSaved": "Your order has been saved! We will contact you soon.",
       "orderFailed": "Failed to save order.",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "orderFailedDineIn": "Failed to save restaurant order.",
+      "orderFailedTakeout": "Failed to save takeout order.",
+      "orderFailedDelivery": "Failed to save delivery order."
     }
   },
   "contact": {
@@ -206,7 +221,12 @@
     "paymentQuestion": "How would you like to pay for your order?",
     "payOnline": "Pay Online",
     "cashOnDelivery": "Cash on Delivery",
-    "proceed": "Proceed"
+    "proceed": "Proceed",
+    "dineInDescription": "Enjoy your meal at the restaurant",
+    "takeoutDescription": "Pick up your order from the restaurant",
+    "deliveryDescription": "We deliver to your door",
+    "payAtRestaurant": "Pay at Restaurant",
+    "payOnPickup": "Pay on Pickup"
   },
   "orders": {
     "title": "Your Orders",
@@ -321,5 +341,14 @@
     "fillAllFields": "Please fill in all required fields",
     "invalidPostalCode": "Please enter a valid Swedish postal code (e.g., 123 45)",
     "manualAddressError": "Error processing address. Please try again."
+  },
+  "delivery": {
+    "selectAddress": "Delivery Address",
+    "addressQuestion": "Where should we deliver your order?",
+    "profileAddress": "Your Profile Address",
+    "useThisAddress": "Use This Address",
+    "customAddress": "Enter Delivery Address",
+    "continue": "Continue to Payment",
+    "requiredFieldsHint": "Fields marked with * are required"
   }
 }

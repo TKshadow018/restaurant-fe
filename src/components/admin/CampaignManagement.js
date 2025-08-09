@@ -11,6 +11,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import '../../styles/AdminComponents.css';
 
 const CampaignManagement = () => {
   // Get food list from Redux
@@ -161,7 +162,7 @@ const CampaignManagement = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
+      <div className="campaign-loading-container d-flex justify-content-center align-items-center">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -263,9 +264,8 @@ const CampaignManagement = () => {
                   <div className="position-relative">
                     <img 
                       src={banner.image} 
-                      className="card-img-top" 
+                      className="campaign-image card-img-top" 
                       alt={getDisplayTitle(banner.title)}
-                      style={{ height: '200px', objectFit: 'cover' }}
                     />
                     <div className="position-absolute top-0 end-0 m-2">
                       <span className={`badge ${status.class}`}>
@@ -295,7 +295,7 @@ const CampaignManagement = () => {
                           <strong>End:</strong> {new Date(banner.campainEndDate).toLocaleDateString()}
                         </small>
                       )}
-                      {banner.couponCode && (
+                      {banner.couponCode && !banner.hideCouponCode && (
                         <small className="text-muted d-block">
                           <strong>Coupon:</strong> <span className="badge bg-success">{banner.couponCode}</span>
                         </small>

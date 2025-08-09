@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Modal, Button } from 'react-bootstrap';
 import useAdminData from '../../hooks/useAdminData';
 
 const OrderManagement = () => {
@@ -15,6 +16,8 @@ const OrderManagement = () => {
   const [filterServiceType, setFilterServiceType] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [selectedOrderAddress, setSelectedOrderAddress] = useState(null);
 
   useEffect(() => {
     loadAdminData();
@@ -85,6 +88,16 @@ const OrderManagement = () => {
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  const handleShowAddress = (order) => {
+    setSelectedOrderAddress(order.deliveryAddress);
+    setShowAddressModal(true);
+  };
+
+  const handleCloseAddressModal = () => {
+    setShowAddressModal(false);
+    setSelectedOrderAddress(null);
   };
 
   const getUserById = (userId) => {
@@ -182,6 +195,24 @@ const OrderManagement = () => {
       minute: '2-digit',
       hour12: true
     }).format(date);
+  };
+
+  const formatAddress = (deliveryAddress) => {
+    if (!deliveryAddress) return 'No address available';
+
+    if (deliveryAddress.useProfileAddress && deliveryAddress.userProfileAddress) {
+      const addr = deliveryAddress.userProfileAddress;
+      return `${addr.street} ${addr.houseNumber}, ${addr.postalCode} ${addr.city}${addr.region ? `, ${addr.region}` : ''}`;
+    } else if (deliveryAddress.customAddress) {
+      const addr = deliveryAddress.customAddress;
+      if (typeof addr === 'string') {
+        return addr;
+      } else if (typeof addr === 'object') {
+        return `${addr.street} ${addr.houseNumber}, ${addr.postalCode} ${addr.city}${addr.region ? `, ${addr.region}` : ''}`;
+      }
+    }
+
+    return 'Address not available';
   };
 
   if (ordersLoading) {
@@ -300,10 +331,22 @@ const OrderManagement = () => {
                           </div>
                         </td>
                         <td>
-                          <span className={`badge ${getServiceTypeBadgeColor(order.serviceType)}`}>
-                            <i className={`${getServiceTypeIcon(order.serviceType)} me-1`}></i>
-                            {getServiceTypeText(order.serviceType)}
-                          </span>
+                          <div className="d-flex flex-column gap-1">
+                            <span className={`badge ${getServiceTypeBadgeColor(order.serviceType)}`}>
+                              <i className={`${getServiceTypeIcon(order.serviceType)} me-1`}></i>
+                              {getServiceTypeText(order.serviceType)}
+                            </span>
+                            {order.serviceType === 'home_delivery' && order.deliveryAddress && (
+                              <button
+                                className="btn btn-outline-info btn-sm"
+                                onClick={() => handleShowAddress(order)}
+                                style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                              >
+                                <i className="bi bi-geo-alt me-1"></i>
+                                View Address
+                              </button>
+                            )}
+                          </div>
                         </td>
                         <td>
                           <div>
@@ -451,6 +494,119 @@ const OrderManagement = () => {
           </nav>
         </div>
       )}
+
+      {/* Address Modal */}
+      <Modal show={showAddressModal} onHide={handleCloseAddressModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <i className="bi bi-geo-alt me-2"></i>
+            Delivery Address
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedOrderAddress ? (
+            <div>
+              {selectedOrderAddress.useProfileAddress ? (
+                <div>
+                  <h6 className="text-primary mb-3">
+                    <i className="bi bi-person-check me-2"></i>
+                    Customer's Profile Address
+                  </h6>
+                  {selectedOrderAddress.userProfileAddress ? (
+                    <div className="border rounded p-3 bg-light">
+                      <div className="row">
+                        <div className="col-sm-3 fw-semibold">Street:</div>
+                        <div className="col-sm-9">{selectedOrderAddress.userProfileAddress.street || 'N/A'}</div>
+                      </div>
+                      <div className="row">
+                        <div className="col-sm-3 fw-semibold">House Number:</div>
+                        <div className="col-sm-9">{selectedOrderAddress.userProfileAddress.houseNumber || 'N/A'}</div>
+                      </div>
+                      <div className="row">
+                        <div className="col-sm-3 fw-semibold">Postal Code:</div>
+                        <div className="col-sm-9">{selectedOrderAddress.userProfileAddress.postalCode || 'N/A'}</div>
+                      </div>
+                      <div className="row">
+                        <div className="col-sm-3 fw-semibold">City:</div>
+                        <div className="col-sm-9">{selectedOrderAddress.userProfileAddress.city || 'N/A'}</div>
+                      </div>
+                      {selectedOrderAddress.userProfileAddress.region && (
+                        <div className="row">
+                          <div className="col-sm-3 fw-semibold">Region:</div>
+                          <div className="col-sm-9">{selectedOrderAddress.userProfileAddress.region}</div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="alert alert-warning">
+                      Profile address data not available
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <h6 className="text-info mb-3">
+                    <i className="bi bi-geo-alt me-2"></i>
+                    Custom Delivery Address
+                  </h6>
+                  {selectedOrderAddress.customAddress ? (
+                    <div className="border rounded p-3 bg-light">
+                      {typeof selectedOrderAddress.customAddress === 'string' ? (
+                        <p className="mb-0">{selectedOrderAddress.customAddress}</p>
+                      ) : (
+                        <div>
+                          <div className="row">
+                            <div className="col-sm-3 fw-semibold">Street:</div>
+                            <div className="col-sm-9">{selectedOrderAddress.customAddress.street || 'N/A'}</div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-3 fw-semibold">House Number:</div>
+                            <div className="col-sm-9">{selectedOrderAddress.customAddress.houseNumber || 'N/A'}</div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-3 fw-semibold">Postal Code:</div>
+                            <div className="col-sm-9">{selectedOrderAddress.customAddress.postalCode || 'N/A'}</div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-3 fw-semibold">City:</div>
+                            <div className="col-sm-9">{selectedOrderAddress.customAddress.city || 'N/A'}</div>
+                          </div>
+                          {selectedOrderAddress.customAddress.region && (
+                            <div className="row">
+                              <div className="col-sm-3 fw-semibold">Region:</div>
+                              <div className="col-sm-9">{selectedOrderAddress.customAddress.region}</div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="alert alert-warning">
+                      Custom address data not available
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="mt-3">
+                <small className="text-muted">
+                  <i className="bi bi-info-circle me-1"></i>
+                  Complete formatted address: <strong>{formatAddress(selectedOrderAddress)}</strong>
+                </small>
+              </div>
+            </div>
+          ) : (
+            <div className="alert alert-danger">
+              No address information available for this order.
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseAddressModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

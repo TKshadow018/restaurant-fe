@@ -81,7 +81,17 @@
     "save": "Spara",
     "loading": "Laddar...",
     "error": "Fel",
-    "success": "Framgång"
+    "success": "Framgång",
+    "from": "Från",
+    "until": "Till",
+    "or": "eller",
+    "back": "Tillbaka"
+  },
+  "campaign": {
+    "dateFrom": "Från {{date}}",
+    "dateUntil": "Till {{date}}",
+    "minimumOrder": "Kan användas på beställningar över {{amount}} SEK",
+    "canBeUsedOn": "Kan användas på beställningar över"
   },
   "cart": {
     "title": "Din varukorg",
@@ -111,7 +121,9 @@
       "minimumOrder": "Minsta beställningsvärde är {amount} SEK för denna kupong",
       "maxUsages": "Du har redan använt denna kupong maximalt antal gånger ({max})",
       "validationError": "Fel vid validering av kupong",
-      "enterCode": "Vänligen ange en kupongkod"
+      "enterCode": "Vänligen ange en kupongkod",
+      "removedMinimum": "Kupong borttagen: Minsta beställningsvärde är {amount} SEK",
+      "removedNoEligible": "Kupong borttagen: Inga giltiga artiklar kvar i varukorgen"
     },
     "checkout": {
       "loginRequired": "Du måste logga in för att slutföra din beställning.",
@@ -122,7 +134,10 @@
       "onlineNotAvailable": "Online betalning är inte tillgänglig just nu. Vänligen välj kontant vid leverans.",
       "orderSaved": "Din beställning har sparats! Vi kommer att kontakta dig snart.",
       "orderFailed": "Det gick inte att spara beställningen.",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "orderFailedDineIn": "Det gick inte att spara beställningen för restaurangen.",
+      "orderFailedTakeout": "Det gick inte att spara avhämtningsbeställningen.",
+      "orderFailedDelivery": "Det gick inte att spara leveransbeställningen."
     }
   },
   "contact": {
@@ -206,7 +221,12 @@
     "paymentQuestion": "Hur vill du betala för din beställning?",
     "payOnline": "Betala online",
     "cashOnDelivery": "Kontant vid leverans",
-    "proceed": "Fortsätt"
+    "proceed": "Fortsätt",
+    "dineInDescription": "Ät din måltid på restaurangen",
+    "takeoutDescription": "Hämta din beställning på restaurangen", 
+    "deliveryDescription": "Vi levererar till din dörr",
+    "payAtRestaurant": "Betala på plats",
+    "payOnPickup": "Betala vid avhämtning"
   },
   "orders": {
     "title": "Dina beställningar",
@@ -321,5 +341,14 @@
     "fillAllFields": "Vänligen fyll i alla obligatoriska fält",
     "invalidPostalCode": "Vänligen ange ett giltigt svenskt postnummer (t.ex. 123 45)",
     "manualAddressError": "Fel vid bearbetning av adress. Försök igen."
+  },
+  "delivery": {
+    "selectAddress": "Leveransadress",
+    "addressQuestion": "Var ska vi leverera din beställning?",
+    "profileAddress": "Din profiladress",
+    "useThisAddress": "Använd denna adress",
+    "customAddress": "Ange leveransadress",
+    "continue": "Fortsätt till betalning",
+    "requiredFieldsHint": "Fält markerade med * är obligatoriska"
   }
 }

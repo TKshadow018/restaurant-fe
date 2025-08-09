@@ -1,0 +1,174 @@
+/* Delivery Address Modal Styles */
+.delivery-address-card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.delivery-address-card:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.delivery-address-card .card-body {
+  padding: 1rem;
+}
+
+.delivery-address-card .card-title {
+  color: #495057;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.delivery-address-card .card-text {
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.delivery-custom-address {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+}
+
+.delivery-custom-address:focus-within {
+  border-color: #0d6efd;
+  background-color: #ffffff;
+}
+
+.delivery-custom-address .form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.delivery-custom-address .form-control {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.delivery-custom-address .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.delivery-or-divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.delivery-or-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #dee2e6;
+  z-index: 1;
+}
+
+.delivery-or-divider span {
+  background-color: white;
+  padding: 0 1rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+  position: relative;
+  z-index: 2;
+}
+
+.delivery-address-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.delivery-address-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Required field indicator */
+.delivery-custom-address .form-label:has(+ .form-control[required])::after,
+.delivery-custom-address .form-label:contains("*")::after {
+  content: "";
+  color: #dc3545;
+}
+
+/* Modal specific styles */
+.modal-dialog.delivery-modal {
+  max-width: 550px;
+}
+
+.delivery-modal .modal-body {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.delivery-modal .modal-footer {
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 2rem;
+}
+
+.delivery-modal .modal-header {
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem 2rem 1rem;
+}
+
+/* Form spacing improvements */
+.delivery-custom-address .row {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.delivery-custom-address .row > .col-md-4,
+.delivery-custom-address .row > .col-md-8 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Info text styling */
+.delivery-custom-address .text-muted {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.delivery-custom-address .text-muted .bi {
+  margin-right: 0.25rem;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .delivery-modal .modal-body {
+    padding: 1.5rem;
+  }
+  
+  .delivery-modal .modal-footer {
+    padding: 1rem 1.5rem;
+  }
+
+  .delivery-modal .modal-header {
+    padding: 1.25rem 1.5rem 0.75rem;
+  }
+
+  .delivery-custom-address {
+    padding: 1rem;
+  }
+
+  .delivery-custom-address .row > .col-md-4,
+  .delivery-custom-address .row > .col-md-8 {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-dialog.delivery-modal {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+}

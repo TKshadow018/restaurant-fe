@@ -3,6 +3,7 @@ import { Modal, Form, Button, Spinner } from 'react-bootstrap';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
 import { useSelector } from 'react-redux';
+import '../../styles/AdminComponents.css';
 
 const CampaignModal = ({ show, onHide, campaign, onSave }) => {
   const foods = useSelector((state) => state.menu.menuItems);
@@ -26,6 +27,7 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
     campainStartDate: '',
     campainEndDate: '',
     couponCode: '',
+    hideCouponCode: false, // New field to hide/show coupon code
     discountType: 'percentage', // 'percentage' or 'fixed'
     discountPercentage: 20,
     discountFixedAmount: 50,
@@ -66,6 +68,7 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         campainStartDate: campaign.campainStartDate || '',
         campainEndDate: campaign.campainEndDate || '',
         couponCode: campaign.couponCode || '',
+        hideCouponCode: campaign.hideCouponCode || false,
         discountType: campaign.discountType || 'percentage',
         discountPercentage: campaign.discountPercentage || 20,
         discountFixedAmount: campaign.discountFixedAmount || 50,
@@ -101,6 +104,7 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         campainStartDate: '',
         campainEndDate: '',
         couponCode: '',
+        hideCouponCode: false,
         discountType: 'percentage',
         discountPercentage: 20,
         discountFixedAmount: 50,
@@ -306,13 +310,7 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
                   <img 
                     src={imagePreview} 
                     alt="Campaign Preview" 
-                    style={{ 
-                      maxWidth: '300px', 
-                      maxHeight: '200px', 
-                      objectFit: 'cover',
-                      border: '1px solid #ddd',
-                      borderRadius: '4px'
-                    }} 
+                    className="food-modal-preview-image"
                   />
                 </div>
               </div>
@@ -418,11 +416,19 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
                   value={formData.couponCode}
                   onChange={handleChange}
                   placeholder="e.g., SAVE20, NEWBIE15"
-                  style={{ textTransform: 'uppercase' }}
+                  className="campaign-modal-color-input"
                 />
                 <Form.Text className="text-muted">
                   Optional: Enter a coupon code for this campaign
                 </Form.Text>
+                <Form.Check
+                  type="checkbox"
+                  name="hideCouponCode"
+                  label="Hide coupon code from campaign display"
+                  checked={formData.hideCouponCode}
+                  onChange={handleChange}
+                  className="mt-2"
+                />
               </Form.Group>
             </div>
             <div className="col-md-4">
@@ -619,7 +625,7 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
               name="eligibleDishes"
               value={formData.eligibleDishes || []}
               onChange={handleChange}
-              style={{ minHeight: '120px' }}
+              className="campaign-modal-description"
             >
               {foods.map((food) => {
                 const getDisplayName = (name) => {
