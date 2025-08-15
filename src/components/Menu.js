@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { db } from "@/firebase/config";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import {
   fetchMenuItems,
   clearError,
@@ -15,6 +17,7 @@ import {
 import Loading from "@/components/Loading";
 import MenuItemModal from "@/components/MenuItemModal";
 import "@/styles/theme.css";
+import "@/styles/menu.css";
 
 const Menu = () => {
   const dispatch = useDispatch();
@@ -36,6 +39,9 @@ const Menu = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  // Auto-apply campaign state
+  const [activeAutoApplyCampaign, setActiveAutoApplyCampaign] = useState(null);
+  
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
@@ -46,6 +52,83 @@ const Menu = () => {
       dispatch(fetchMenuItems());
     }
   }, [dispatch, menuItems.length]);
+
+  // Check for active auto-apply campaigns
+  useEffect(() => {
+    const checkAutoApplyCampaigns = async () => {
+      try {
+        const now = new Date();
+        const campaignsRef = collection(db, "campaigns");
+        const q = query(
+          campaignsRef,
+          where("autoApplyOnMenu", "==", true),
+          where("hasTimeRestriction", "==", true)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const campaigns = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Find the first valid auto-apply campaign
+        for (const campaign of campaigns) {
+          if (isValidAutoApplyCampaign(campaign, now)) {
+            setActiveAutoApplyCampaign(campaign);
+            // Store in localStorage for cart to access
+            localStorage.setItem('autoApplyCampaign', JSON.stringify(campaign));
+            return;
+          }
+        }
+        
+        // No valid campaign found
+        setActiveAutoApplyCampaign(null);
+        localStorage.removeItem('autoApplyCampaign');
+      } catch (error) {
+        console.error('Error checking auto-apply campaigns:', error);
+      }
+    };
+
+    checkAutoApplyCampaigns();
+    // Check every minute for time-based campaigns
+    const interval = setInterval(checkAutoApplyCampaigns, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Helper function to validate if a campaign is currently valid
+  const isValidAutoApplyCampaign = (campaign, currentTime) => {
+    // Check date range
+    if (campaign.campainStartDate && new Date(campaign.campainStartDate) > currentTime) {
+      return false;
+    }
+    if (campaign.campainEndDate && new Date(campaign.campainEndDate) < currentTime) {
+      return false;
+    }
+
+    // Check time restrictions
+    if (campaign.hasTimeRestriction) {
+      const currentHour = currentTime.getHours();
+      const currentMinute = currentTime.getMinutes();
+      const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+      const [startHour, startMinute] = campaign.startTime.split(':').map(Number);
+      const [endHour, endMinute] = campaign.endTime.split(':').map(Number);
+      const startTimeInMinutes = startHour * 60 + startMinute;
+      const endTimeInMinutes = endHour * 60 + endMinute;
+
+      if (currentTimeInMinutes < startTimeInMinutes || currentTimeInMinutes > endTimeInMinutes) {
+        return false;
+      }
+
+      // Check day of week
+      const currentDay = currentTime.getDay();
+      if (campaign.daysOfWeek && !campaign.daysOfWeek.includes(currentDay)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -85,6 +168,45 @@ const Menu = () => {
       return `${validPrices[0].price}-${validPrices[validPrices.length - 1].price} SEK`;
     }
     return 'No price set';
+  };
+
+  // Calculate discounted price for an item if auto-apply campaign is active
+  const getDiscountedPrice = (item) => {
+    if (!activeAutoApplyCampaign || !activeAutoApplyCampaign.couponCode) {
+      return null;
+    }
+
+    // Check if item is eligible for the campaign
+    if (activeAutoApplyCampaign.eligibleDishes && 
+        activeAutoApplyCampaign.eligibleDishes.length > 0 && 
+        !activeAutoApplyCampaign.eligibleDishes.includes(item.id)) {
+      return null;
+    }
+
+    let originalPrice;
+    if (typeof item.price === 'number') {
+      originalPrice = item.price;
+    } else if (typeof item.price === 'string') {
+      originalPrice = parseFloat(item.price);
+    } else if (Array.isArray(item.price) && item.price.length > 0) {
+      const validPrices = item.price.filter(p => p.price && p.price !== '');
+      if (validPrices.length === 0) return null;
+      originalPrice = parseFloat(validPrices[0].price);
+    } else {
+      return null;
+    }
+
+    if (isNaN(originalPrice)) return null;
+
+    let discountedPrice;
+    if (activeAutoApplyCampaign.discountType === 'percentage') {
+      const discountAmount = (originalPrice * (activeAutoApplyCampaign.discountPercentage || 0)) / 100;
+      discountedPrice = originalPrice - discountAmount;
+    } else {
+      discountedPrice = originalPrice - (activeAutoApplyCampaign.discountFixedAmount || 0);
+    }
+
+    return Math.max(0, discountedPrice); // Ensure price doesn't go negative
   };
 
   // Modal handlers
@@ -177,7 +299,7 @@ const Menu = () => {
 
   return (
     <>
-      <div className="px-5 my-4">
+      <div className="px-5 mt-2 mb-3">
         {error && (
           <div
             className="alert alert-danger alert-dismissible fade show"
@@ -194,7 +316,7 @@ const Menu = () => {
         )}
 
         {/* Search and Filters */}
-        <div className="row mb-4">
+        <div className="row mb-1">
           <div className="col-md-4 p-2">
             <label className="form-label text-muted small mb-1">
               <i className="bi bi-search me-1"></i>
@@ -252,9 +374,9 @@ const Menu = () => {
           <>
             {/* Results count */}
             {filteredMenuItems.length > 0 && (
-              <div className="row mb-3">
+              <div className="row mb-1">
                 <div className="col-12">
-                  <p className="text-muted">
+                  <p className="text-muted mb-4px">
                     {t('menu.pagination.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('menu.pagination.of')} {totalItems} {t('menu.pagination.items')}
                     {currentPage > 1 && ` (${t('menu.pagination.page')} ${currentPage} ${t('menu.pagination.of')} ${totalPages})`}
                   </p>
@@ -273,7 +395,11 @@ const Menu = () => {
                   </div>
                 </div>
               ) : (
-                currentItems.map((item) => (
+                currentItems.map((item) => {
+                  const discountedPrice = getDiscountedPrice(item);
+                  const hasAutoDiscount = discountedPrice !== null;
+                  
+                  return (
                 <div key={item.id} className="col-md-6 col-lg-4">
                   <div
                     className="card h-100 border-0 shadow-lg"
@@ -293,6 +419,19 @@ const Menu = () => {
                         alt={getLocalizedText(item.name)}
                         style={{ height: "200px", objectFit: "cover" }}
                       />
+                      {/* Auto-apply campaign discount badge */}
+                      {hasAutoDiscount && (
+                        <div
+                          className="position-absolute"
+                          style={{ top: "10px", left: "10px" }}
+                        >
+                          <span className="badge bg-primary text-white px-3 py-2 rounded-pill shadow-lg">
+                            <i className="bi bi-lightning-fill me-1"></i>
+                            {t('menu.autoApplied', 'Auto Applied!')}
+                          </span>
+                        </div>
+                      )}
+                      {/* Existing discount badge */}
                       {item.discount?.enabled && item.discount?.value > 0 && (
                         <div
                           className="position-absolute"
@@ -331,15 +470,28 @@ const Menu = () => {
                       <div className="mt-auto">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <div className="d-flex align-items-center gap-2">
-                            <span className="h5 text-primary mb-0">
-                              {formatPriceDisplay(item.price)}
-                            </span>
-                            {item.originalPrice &&
-                              item.originalPrice > item.price && (
+                            {hasAutoDiscount ? (
+                              <>
+                                <span className="h5 text-success mb-0">
+                                  {discountedPrice.toFixed(2)} SEK
+                                </span>
                                 <small className="text-muted text-decoration-line-through">
-                                  {item.originalPrice} SEK
+                                  {formatPriceDisplay(item.price)}
                                 </small>
-                              )}
+                              </>
+                            ) : (
+                              <>
+                                <span className="h5 text-primary mb-0">
+                                  {formatPriceDisplay(item.price)}
+                                </span>
+                                {item.originalPrice &&
+                                  item.originalPrice > item.price && (
+                                    <small className="text-muted text-decoration-line-through">
+                                      {item.originalPrice} SEK
+                                    </small>
+                                  )}
+                              </>
+                            )}
                           </div>
                           <small className="text-muted">{item.category}</small>
                         </div>
@@ -353,7 +505,8 @@ const Menu = () => {
                     </div>
                   </div>
                 </div>
-              ))
+              );
+            })
             )}
             </div>
             

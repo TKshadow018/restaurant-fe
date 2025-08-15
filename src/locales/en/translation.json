@@ -43,6 +43,7 @@
     "clickToView": "Click to view details",
     "discount": "OFF",
     "sale": "SALE",
+    "autoApplied": "Auto Applied!",
     "filters": {
       "all": "Availability",
       "allCategories": "All Food Categories",
@@ -123,7 +124,12 @@
       "validationError": "Error validating coupon",
       "enterCode": "Please enter a coupon code",
       "removedMinimum": "Coupon removed: Minimum order value is {amount} SEK",
-      "removedNoEligible": "Coupon removed: No eligible items left in cart"
+      "removedNoEligible": "Coupon removed: No eligible items left in cart",
+      "invalidTime": "This coupon is only valid between {{startTime}} and {{endTime}}. Please try again during the valid time period.",
+      "invalidDay": "This coupon is only valid on: {{days}}. Please try again on one of the valid days.",
+      "notApplicableYet": "Not Applicable Yet",
+      "minimumNotMet": "Add {{required}} SEK more to use this coupon (Current: {{current}} SEK)",
+      "noEligibleItems": "No eligible items in cart for this coupon"
     },
     "checkout": {
       "loginRequired": "You must be logged in to complete your order.",
@@ -225,6 +231,8 @@
     "dineInDescription": "Enjoy your meal at the restaurant",
     "takeoutDescription": "Pick up your order from the restaurant",
     "deliveryDescription": "We deliver to your door",
+    "deliveryUnavailable": "No delivery available right now",
+    "deliveryUnavailableMessage": "Delivery service is currently unavailable. No delivery personnel available right now.",
     "payAtRestaurant": "Pay at Restaurant",
     "payOnPickup": "Pay on Pickup"
   },
@@ -350,5 +358,45 @@
     "customAddress": "Enter Delivery Address",
     "continue": "Continue to Payment",
     "requiredFieldsHint": "Fields marked with * are required"
+  },
+  "news": {
+    "marquee": {
+      "loading": "Loading news...",
+      "noNews": "No news available"
+    },
+    "admin": {
+      "title": "News & Announcements Management",
+      "addNew": "Add News Item",
+      "noItems": "No news items found",
+      "createFirst": "Create your first news item to display announcements in the marquee.",
+      "searchPlaceholder": "Search news items...",
+      "edit": "Edit",
+      "delete": "Delete",
+      "hide": "Hide",
+      "show": "Show",
+      "active": "Active",
+      "inactive": "Inactive",
+      "priority": "Priority",
+      "maxItems": "Maximum of 10 news items allowed",
+      "modal": {
+        "addTitle": "Add New News Item",
+        "editTitle": "Edit News Item",
+        "titleEnglish": "Title (English)",
+        "titleSwedish": "Title (Swedish)",
+        "subtitleEnglish": "Subtitle (English)",
+        "subtitleSwedish": "Subtitle (Swedish)",
+        "priorityLabel": "Priority (1-10, lower number = higher priority)",
+        "activeLabel": "Active (show in marquee)",
+        "cancel": "Cancel",
+        "add": "Add News Item",
+        "update": "Update News Item"
+      },
+      "delivery": {
+        "enabled": "Delivery ON",
+        "disabled": "Delivery OFF", 
+        "enable": "Enable Delivery",
+        "disable": "Disable Delivery"
+      }
+    }
   }
 }

@@ -4,6 +4,7 @@ import menuReducer from '@/store/slices/menuSlice';
 import CampaignReducer from '@/store/slices/campaignSlice';
 import categoryReducer from '@/store/slices/categorySlice';
 import adminReducer from '@/store/slices/adminSlice';
+import newsReducer from '@/store/slices/newsSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         campaigns: CampaignReducer,
         categories: categoryReducer,
         admin: adminReducer,
+        news: newsReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -22,7 +24,8 @@ export const store = configureStore({
                     'menu/fetchMenuItems/fulfilled',
                     'admin/fetchUsers/fulfilled',
                     'admin/fetchOrders/fulfilled',
-                    'admin/fetchFoods/fulfilled'
+                    'admin/fetchFoods/fulfilled',
+                    'news/fetchActiveNews/fulfilled'
                 ],
                 ignoredPaths: [
                     'contact.contactInfo.createdAt',
@@ -35,7 +38,9 @@ export const store = configureStore({
                     'admin.orders.items.createdAt',
                     'admin.orders.items.updatedAt',
                     'admin.foods.items.createdAt',
-                    'admin.foods.items.updatedAt'
+                    'admin.foods.items.updatedAt',
+                    'news.items.createdAt',
+                    'news.items.updatedAt'
                 ],
             },
         }),

@@ -11,6 +11,7 @@ import { fetchMenuItems } from "@/store/slices/menuSlice";
 import { fetchCampaigns } from "@/store/slices/campaignSlice";
 import { fetchContactInfo } from "@/store/slices/contactSlice";
 import { fetchCategories } from "@/store/slices/categorySlice";
+import { fetchNews } from "@/store/slices/newsSlice";
 import { isUserAdmin } from "@/utils/adminUtils";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
@@ -23,6 +24,7 @@ import Campaign from "@/components/Campaign";
 import Cart from "@/components/Cart";
 import GoToCart from "@/components/GoToCart";
 import EnhancedNotificationToast from "@/components/EnhancedNotificationToast";
+import PageWithMarquee from "@/components/PageWithMarquee";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -70,6 +72,7 @@ const AppRouter = () => {
     dispatch(fetchCampaigns());
     dispatch(fetchContactInfo());
     dispatch(fetchCategories());
+    dispatch(fetchNews());
     // dispatch other fetch actions as needed
   }, [dispatch]);
 
@@ -121,13 +124,13 @@ const AppRouter = () => {
           />
 
           {/* Contact Us Route */}
-          <Route path="/about" element={<ContactUs />} />
+          <Route path="/about" element={<PageWithMarquee><ContactUs /></PageWithMarquee>} />
 
           {/* Menu Route */}
-          <Route path="/menu" element={<Menu />} />
+          <Route path="/menu" element={<PageWithMarquee><Menu /></PageWithMarquee>} />
 
           {/* Campaign Route */}
-          <Route path="/campaign" element={<Campaign />} />
+          <Route path="/campaign" element={<PageWithMarquee><Campaign /></PageWithMarquee>} />
 
           {/* Cart Route */}
           <Route path="/cart" element={<Cart />} />

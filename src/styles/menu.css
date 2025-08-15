@@ -26,3 +26,7 @@
   border-color: var(--accent-color);
   box-shadow: var(--focus-shadow);
 }
+
+.mb-4px {
+  margin-bottom: 4px;
+}

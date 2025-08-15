@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useNotification } from '@/contexts/NotificationContext';
+import { useDelivery } from '@/contexts/DeliveryContext';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { db } from "@/firebase/config";
@@ -16,7 +17,8 @@ const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart();
   const { refreshOrderStatus } = useOrder();
-  const { notifyOrderReceived, notifyNewOrder } = useNotification();
+  const { notifyOrderReceived } = useNotification();
+  const { isDeliveryEnabled } = useDelivery();
   const { t, i18n } = useTranslation();
   const { currentUser, userProfile } = useAuth(); // Fix: get both currentUser and userProfile
   const currentLanguage = i18n.language === 'sv' ? 'swedish' : 'english';
@@ -37,6 +39,8 @@ const Cart = () => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
+  const [couponDisabled, setCouponDisabled] = useState(false); // New state for disabled coupons
+  const [couponDisabledReason, setCouponDisabledReason] = useState(''); // Reason for disabled state
 
   // Debug user state
   console.log("Auth currentUser state:", currentUser);
@@ -116,6 +120,42 @@ const Cart = () => {
         return false;
       }
 
+      // Check time restrictions if enabled
+      if (campaign.hasTimeRestriction) {
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+        const currentDay = now.getDay(); // 0=Sunday, 1=Monday, etc.
+
+        // Parse start and end times
+        const [startHour, startMin] = campaign.startTime.split(':').map(Number);
+        const [endHour, endMin] = campaign.endTime.split(':').map(Number);
+        const startTimeMinutes = startHour * 60 + startMin;
+        const endTimeMinutes = endHour * 60 + endMin;
+
+        // Check if current day is allowed
+        if (!campaign.daysOfWeek.includes(currentDay)) {
+          const daysNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const allowedDays = campaign.daysOfWeek
+            .sort((a, b) => a - b)
+            .map(d => daysNames[d])
+            .join(', ');
+          setCouponError(t('cart.coupon.invalidDay', { days: allowedDays }) || `This coupon is only valid on: ${allowedDays}`);
+          return false;
+        }
+
+        // Check if current time is within allowed range
+        const isTimeValid = (endTimeMinutes > startTimeMinutes) 
+          ? (currentTime >= startTimeMinutes && currentTime <= endTimeMinutes)
+          : (currentTime >= startTimeMinutes || currentTime <= endTimeMinutes); // Handle overnight spans
+
+        if (!isTimeValid) {
+          setCouponError(t('cart.coupon.invalidTime', { 
+            startTime: campaign.startTime, 
+            endTime: campaign.endTime 
+          }) || `This coupon is only valid between ${campaign.startTime} and ${campaign.endTime}`);
+          return false;
+        }
+      }
+
       // Check minimum order amount
       const currentTotal = parseFloat(totalPrice);
       const minimumOrder = campaign.minimumOrderAmount || 0;
@@ -169,6 +209,102 @@ const Cart = () => {
     }
   };
 
+  // Validate coupon for auto-apply (skips minimum order check)
+  const validateCouponForAutoApply = useCallback(async (code) => {
+    try {
+      // Query campaigns with the coupon code
+      const campaignQuery = query(
+        collection(db, "campaigns"),
+        where("couponCode", "==", code.toUpperCase())
+      );
+      
+      const querySnapshot = await getDocs(campaignQuery);
+      
+      if (querySnapshot.empty) {
+        return false;
+      }
+
+      const campaignDoc = querySnapshot.docs[0];
+      const campaign = { id: campaignDoc.id, ...campaignDoc.data() };
+
+      // Check if campaign is active
+      const now = new Date();
+      const startDate = campaign.campainStartDate ? new Date(campaign.campainStartDate) : null;
+      const endDate = campaign.campainEndDate ? new Date(campaign.campainEndDate) : null;
+
+      const isActive = (!startDate || startDate <= now) && (!endDate || endDate >= now);
+
+      if (!isActive) {
+        return false;
+      }
+
+      // Check time restrictions if enabled
+      if (campaign.hasTimeRestriction) {
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+        const currentDay = now.getDay(); // 0=Sunday, 1=Monday, etc.
+
+        // Parse start and end times
+        const [startHour, startMin] = campaign.startTime.split(':').map(Number);
+        const [endHour, endMin] = campaign.endTime.split(':').map(Number);
+        const startTimeMinutes = startHour * 60 + startMin;
+        const endTimeMinutes = endHour * 60 + endMin;
+
+        // Check if current day is allowed
+        if (!campaign.daysOfWeek.includes(currentDay)) {
+          return false;
+        }
+
+        // Check if current time is within allowed range
+        const isTimeValid = (endTimeMinutes > startTimeMinutes) 
+          ? (currentTime >= startTimeMinutes && currentTime <= endTimeMinutes)
+          : (currentTime >= startTimeMinutes || currentTime <= endTimeMinutes); // Handle overnight spans
+
+        if (!isTimeValid) {
+          return false;
+        }
+      }
+
+      // Skip minimum order amount check for auto-apply
+
+      // Check if any cart items are eligible for discount (only for item-specific discounts)
+      if (campaign.eligibleDishes && campaign.eligibleDishes.length > 0) {
+        const eligibleItems = cartItems.filter(item => 
+          campaign.eligibleDishes.includes(item.id)
+        );
+
+        if (eligibleItems.length === 0) {
+          return false;
+        }
+      }
+
+      // Check user usage limits
+      if (currentUser && campaign.maxUsagesPerUser > 0) {
+        const usageQuery = query(
+          collection(db, "couponUsage"),
+          where("userId", "==", currentUser.uid),
+          where("couponCode", "==", code.toUpperCase())
+        );
+        
+        const usageSnapshot = await getDocs(usageQuery);
+        let currentUsage = 0;
+        
+        usageSnapshot.forEach(doc => {
+          currentUsage += doc.data().usageCount || 1;
+        });
+
+        if (currentUsage >= campaign.maxUsagesPerUser) {
+          return false;
+        }
+      }
+
+      setAppliedCoupon(campaign);
+      return true;
+    } catch (error) {
+      console.error('Error validating coupon for auto-apply:', error);
+      return false;
+    }
+  }, [cartItems, currentUser]);
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       setCouponError(t('cart.coupon.enterCode'));
@@ -190,7 +326,7 @@ const Cart = () => {
 
   // Calculate discounted price for an item
   const getDiscountedPrice = (item) => {
-    if (!appliedCoupon) {
+    if (!appliedCoupon || couponDisabled) {
       return {
         originalPrice: parseFloat(item.selectedPrice),
         discountedPrice: parseFloat(item.selectedPrice),
@@ -276,11 +412,17 @@ const Cart = () => {
       const minimumOrder = appliedCoupon.minimumOrderAmount || 0;
       
       if (currentTotal < minimumOrder) {
-        // Remove coupon if minimum order is not met
-        setAppliedCoupon(null);
-        setCouponCode('');
-        setCouponError(t('cart.coupon.removedMinimum', { amount: minimumOrder }));
-        return;
+        // Disable coupon instead of removing it
+        setCouponDisabled(true);
+        const remaining = (minimumOrder - currentTotal).toFixed(2);
+        setCouponDisabledReason(t('cart.coupon.minimumNotMet', { 
+          current: currentTotal.toFixed(2), 
+          required: remaining 
+        }));
+        setCouponError('');
+      } else {
+        setCouponDisabled(false);
+        setCouponDisabledReason('');
       }
 
       // Check if any cart items are still eligible for discount (only for item-specific discounts)
@@ -290,14 +432,48 @@ const Cart = () => {
         );
 
         if (eligibleItems.length === 0) {
-          // Remove coupon if no eligible items remain
-          setAppliedCoupon(null);
-          setCouponCode('');
-          setCouponError(t('cart.coupon.removedNoEligible'));
+          // Disable coupon if no eligible items remain
+          setCouponDisabled(true);
+          setCouponDisabledReason(t('cart.coupon.noEligibleItems'));
+          setCouponError('');
         }
       }
+    } else if (appliedCoupon && cartItems.length === 0) {
+      // Reset states when cart is empty
+      setCouponDisabled(false);
+      setCouponDisabledReason('');
     }
-  }, [cartItems, totalPrice, appliedCoupon, currentLanguage]);
+  }, [cartItems, totalPrice, appliedCoupon, currentLanguage, t]);
+
+  // Auto-apply campaign effect
+  useEffect(() => {
+    const autoApplyCampaign = async () => {
+      // Don't auto-apply if there's already a coupon applied or no items in cart
+      if (appliedCoupon || cartItems.length === 0) {
+        return;
+      }
+
+      try {
+        const autoApplyData = localStorage.getItem('autoApplyCampaign');
+        if (!autoApplyData) {
+          return;
+        }
+
+        const campaign = JSON.parse(autoApplyData);
+        
+        // Validate the campaign is still active and valid (but skip minimum order check)
+        const isValid = await validateCouponForAutoApply(campaign.couponCode);
+        if (isValid) {
+          setCouponCode(campaign.couponCode);
+          // Don't show success message for auto-apply to avoid spam
+        }
+      } catch (error) {
+        console.error('Error auto-applying campaign:', error);
+      }
+    };
+
+    autoApplyCampaign();
+  }, [cartItems.length, appliedCoupon, validateCouponForAutoApply]); // Run when cart items change (especially from 0 to some items)
 
   const handleQuantityChange = (index, change) => {
     const currentQuantity = cartItems[index].quantity;
@@ -757,13 +933,21 @@ const Cart = () => {
                 </h6>
                 
                 {appliedCoupon ? (
-                  <Alert variant="success" className="p-3">
+                  <Alert variant={couponDisabled ? "light" : "warning"} className="p-3">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
-                        <i className="bi bi-check-circle me-2"></i>
+                        <i className={`bi ${couponDisabled ? 'bi-exclamation-triangle' : 'bi-check-circle'} me-2`}></i>
                         <strong>{appliedCoupon.couponCode}</strong>
-                        <div className="small text-success">
-                          {t('cart.coupon.applied')} {getLocalizedText(appliedCoupon.title, 'Discount')}
+                        {couponDisabled && (
+                          <span className="badge bg-warning text-dark ms-2">
+                            {t('cart.coupon.notApplicableYet', 'Not Applicable Yet')}
+                          </span>
+                        )}
+                        <div className={`small ${couponDisabled ? 'text-muted' : 'text-success'}`}>
+                          {couponDisabled 
+                            ? couponDisabledReason
+                            : `${t('cart.coupon.applied')} ${getLocalizedText(appliedCoupon.title, 'Discount')}`
+                          }
                         </div>
                         <div className="small text-muted">
                           {appliedCoupon.discountType === 'percentage' 
@@ -879,6 +1063,15 @@ const Cart = () => {
           <p className="mb-4">
             {t('service.question')}
           </p>
+          
+          {/* Show delivery unavailable alert when disabled */}
+          {!isDeliveryEnabled && (
+            <Alert variant="warning" className="mb-3">
+              <i className="bi bi-exclamation-triangle me-2"></i>
+              {t('service.deliveryUnavailableMessage', 'Delivery service is currently unavailable. No delivery personnel available right now.')}
+            </Alert>
+          )}
+          
           <div className="d-grid gap-3">
             <Button 
               variant="outline-primary" 
@@ -913,9 +1106,10 @@ const Cart = () => {
               </div>
             </Button>
             <Button 
-              variant="primary" 
+              variant={isDeliveryEnabled ? "primary" : "secondary"} 
               size="lg"
-              onClick={() => handleServiceSelection('home_delivery')}
+              onClick={() => isDeliveryEnabled && handleServiceSelection('home_delivery')}
+              disabled={!isDeliveryEnabled}
               className="d-flex align-items-center justify-content-center p-3"
             >
               <i className="bi bi-truck me-3" style={{ fontSize: '1.5rem' }}></i>
@@ -923,8 +1117,11 @@ const Cart = () => {
                 <div className="fw-bold">
                   {t('service.homeDelivery')}
                 </div>
-                <small className="text-white-50">
-                  {t('service.deliveryDescription', 'We deliver to your door')}
+                <small className={isDeliveryEnabled ? "text-white-50" : "text-muted"}>
+                  {isDeliveryEnabled 
+                    ? t('service.deliveryDescription', 'We deliver to your door')
+                    : t('service.deliveryUnavailable', 'No delivery available right now')
+                  }
                 </small>
               </div>
             </Button>

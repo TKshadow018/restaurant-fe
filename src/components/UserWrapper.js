@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
+import NewsMarquee from '@/components/NewsMarquee';
 import Home from '@/components/Home';
 import Menu from '@/components/Menu';
 import Campaign from '@/components/Campaign';
@@ -63,6 +64,7 @@ const UserWrapper = () => {
   return (
     <>
       <Navbar onNavigate={handleNavigate} />
+      <NewsMarquee />
       <ProfileCompletionGuard>
         <div>
           {COMPONENTS[visible]}

@@ -9,6 +9,8 @@ import ContactManagement from '@/components/admin/ContactManagement';
 import UserFeedbackManagement from '@/components/admin/UserFeedbackManagement';
 import DashboardStats from '@/components/admin/DashboardStats';
 import CampaignManagement from '@/components/admin/CampaignManagement';
+import NewsManagement from '@/components/admin/NewsManagement';
+import DeliveryToggle from '@/components/DeliveryToggle';
 import Loading from '@/components/Loading';
 import '../styles/AdminDashboard.css';
 
@@ -74,6 +76,8 @@ const AdminDashboard = () => {
         return <UserFeedbackManagement />;
       case 'campaigns':
         return <CampaignManagement />;
+      case 'news':
+        return <NewsManagement />;
         
       default:
         return <DashboardStats />;
@@ -104,6 +108,9 @@ const AdminDashboard = () => {
             <span className="navbar-text me-3 d-none d-sm-inline">
               Welcome, {currentUser?.displayName || currentUser?.email}
             </span>
+            <div className="me-3">
+              <DeliveryToggle />
+            </div>
             <button className="btn btn-outline-light me-2" onClick={() => navigate('/dashboard')}>
               <i className="bi bi-house d-md-none"></i>
               <span className="d-none d-md-inline">User Dashboard</span>
@@ -186,6 +193,14 @@ const AdminDashboard = () => {
                     onClick={() => handleTabChange('campaigns')}
                   >
                     🏳️ Campaigns
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link text-start w-100 ${activeTab === 'news' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('news')}
+                  >
+                    📰 News & Notices
                   </button>
                 </li>
               </ul>

@@ -43,6 +43,7 @@
     "clickToView": "Klicka för att visa detaljer",
     "discount": "RABATT",
     "sale": "REA",
+    "autoApplied": "Auto Tillämpas!",
     "filters": {
       "all": "Tillgänglighet",
       "allCategories": "Alla Matkategorier",
@@ -123,7 +124,12 @@
       "validationError": "Fel vid validering av kupong",
       "enterCode": "Vänligen ange en kupongkod",
       "removedMinimum": "Kupong borttagen: Minsta beställningsvärde är {amount} SEK",
-      "removedNoEligible": "Kupong borttagen: Inga giltiga artiklar kvar i varukorgen"
+      "removedNoEligible": "Kupong borttagen: Inga giltiga artiklar kvar i varukorgen",
+      "invalidTime": "Denna kupong är endast giltig mellan {{startTime}} och {{endTime}}. Vänligen försök igen under den giltiga tidsperioden.",
+      "invalidDay": "Denna kupong är endast giltig på: {{days}}. Vänligen försök igen på en av de giltiga dagarna.",
+      "notApplicableYet": "Inte Tillämpbar Än",
+      "minimumNotMet": "Lägg till {{required}} SEK mer för att använda denna kupong (Nuvarande: {{current}} SEK)",
+      "noEligibleItems": "Inga berättigade artiklar i varukorgen för denna kupong"
     },
     "checkout": {
       "loginRequired": "Du måste logga in för att slutföra din beställning.",
@@ -225,6 +231,8 @@
     "dineInDescription": "Ät din måltid på restaurangen",
     "takeoutDescription": "Hämta din beställning på restaurangen", 
     "deliveryDescription": "Vi levererar till din dörr",
+    "deliveryUnavailable": "Ingen leverans tillgänglig just nu",
+    "deliveryUnavailableMessage": "Leveransservice är för närvarande inte tillgänglig. Ingen leveranspersonal tillgänglig just nu.",
     "payAtRestaurant": "Betala på plats",
     "payOnPickup": "Betala vid avhämtning"
   },
@@ -350,5 +358,45 @@
     "customAddress": "Ange leveransadress",
     "continue": "Fortsätt till betalning",
     "requiredFieldsHint": "Fält markerade med * är obligatoriska"
+  },
+  "news": {
+    "marquee": {
+      "loading": "Laddar nyheter...",
+      "noNews": "Inga nyheter tillgängliga"
+    },
+    "admin": {
+      "title": "Nyheter & Meddelanden Hantering",
+      "addNew": "Lägg till nyhet",
+      "noItems": "Inga nyheter hittades",
+      "createFirst": "Skapa din första nyhet för att visa meddelanden i markisen.",
+      "searchPlaceholder": "Sök nyheter...",
+      "edit": "Redigera",
+      "delete": "Ta bort",
+      "hide": "Dölj",
+      "show": "Visa",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "priority": "Prioritet",
+      "maxItems": "Maximalt 10 nyheter tillåtna",
+      "modal": {
+        "addTitle": "Lägg till ny nyhet",
+        "editTitle": "Redigera nyhet",
+        "titleEnglish": "Titel (Engelska)",
+        "titleSwedish": "Titel (Svenska)",
+        "subtitleEnglish": "Underrubrik (Engelska)",
+        "subtitleSwedish": "Underrubrik (Svenska)",
+        "priorityLabel": "Prioritet (1-10, lägre nummer = högre prioritet)",
+        "activeLabel": "Aktiv (visa i markis)",
+        "cancel": "Avbryt",
+        "add": "Lägg till nyhet",
+        "update": "Uppdatera nyhet"
+      },
+      "delivery": {
+        "enabled": "Leverans PÅ",
+        "disabled": "Leverans AV",
+        "enable": "Aktivera leverans",
+        "disable": "Inaktivera leverans"
+      }
+    }
   }
 }

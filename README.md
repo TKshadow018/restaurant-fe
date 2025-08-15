@@ -17,6 +17,7 @@ A comprehensive restaurant management platform built with React, Firebase, and B
 - **Coupon System**: Apply discount coupons with validation
 - **User Profiles**: Manage personal information and addresses
 - **Multi-language Support**: Switch between English and Swedish
+- **News & Updates**: Scrolling marquee with latest restaurant announcements
 - **Responsive Design**: Works on all devices
 
 ### 🔧 **Admin Features**
@@ -37,6 +38,12 @@ A comprehensive restaurant management platform built with React, Firebase, and B
   - Manage discount coupons
   - Set campaign duration and eligibility
   - Multi-language campaign content
+- **News & Announcements**: 
+  - Create and manage scrolling news marquee
+  - Add/edit/delete news items (max 10)
+  - Multi-language news content (English/Swedish)
+  - Priority-based ordering
+  - Real-time updates across all pages
 - **User Management**: 
   - View all registered users
   - Manage user roles (Customer/Admin)
@@ -201,13 +208,38 @@ Admin accounts are configured through environment variables. Contact the system 
 - **Regular Campaigns**: Additional promotional offers
 - **Targeted Campaigns**: Specific to certain menu items
 
-### 👤 User Management
+### � News & Announcements Management
+
+#### Creating News Items
+1. Navigate to "News & Notices" section in admin dashboard
+2. Click "Add News Item" (maximum 10 items allowed)
+3. Fill in the news information:
+   - **Title**: Provide both Swedish and English titles (required)
+   - **Subtitle**: Optional additional information in both languages
+   - **Priority**: Set display order (1-10, lower numbers appear first)
+   - **Status**: Enable/disable to control visibility in marquee
+
+#### News Display Features
+- **Scrolling Marquee**: Appears under the navbar on all customer-facing pages
+- **Multi-language Support**: Automatically displays content in user's selected language
+- **Real-time Updates**: Changes appear immediately across all browsers
+- **Responsive Design**: Adapts to all screen sizes with different scroll speeds
+- **Interactive**: Hover to pause scrolling for easier reading
+
+#### Managing News Content
+- **Edit**: Modify existing news items at any time
+- **Priority Management**: Control display order with priority settings
+- **Toggle Visibility**: Quickly show/hide items without deleting
+- **Search & Filter**: Find specific news items easily
+- **Automatic Cleanup**: Only active items with content appear in marquee
+
+### � User Management
 - View all registered users
 - Assign admin roles to trusted users
 - Manage user account status (active/inactive)
 - View user activity and order history
 
-### 📞 Contact Information Management
+### �📞 Contact Information Management
 - Update restaurant contact details
 - Manage business hours and location information
 - Update social media links and other business information
@@ -227,7 +259,7 @@ Admin accounts are configured through environment variables. Contact the system 
    - Configure authorized domains
 
 2. **Firestore Database**
-   - Create collections: `users`, `foods`, `orders`, `campaigns`, `categories`, `contact`
+   - Create collections: `users`, `foods`, `orders`, `campaigns`, `categories`, `contact`, `news`
    - Set appropriate security rules
 
 3. **Storage**

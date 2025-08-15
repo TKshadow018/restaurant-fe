@@ -11,6 +11,7 @@ import { FoodProvider } from '@/contexts/FoodContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { OrderProvider } from '@/contexts/OrderContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
+import { DeliveryProvider } from '@/contexts/DeliveryContext';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 
@@ -23,9 +24,11 @@ function App() {
             <CartProvider>
               <OrderProvider>
                 <NotificationProvider>
-                  <div className="App">
-                    <AppRouter />
-                  </div>
+                  <DeliveryProvider>
+                    <div className="App">
+                      <AppRouter />
+                    </div>
+                  </DeliveryProvider>
                 </NotificationProvider>
               </OrderProvider>
             </CartProvider>

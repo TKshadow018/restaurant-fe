@@ -33,6 +33,13 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
     discountFixedAmount: 50,
     maxUsagesPerUser: 1,
     minimumOrderAmount: 0,
+    // Time-based restrictions
+    hasTimeRestriction: false,
+    startTime: '09:00',
+    endTime: '23:00',
+    daysOfWeek: [1, 2, 3, 4, 5, 6, 0], // 0=Sunday, 1=Monday, etc.
+    // Auto-apply functionality
+    autoApplyOnMenu: false,
     bannerColor: {
       title: '#ffcc00',
       subtitle: '#ff9900',
@@ -74,6 +81,13 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         discountFixedAmount: campaign.discountFixedAmount || 50,
         maxUsagesPerUser: campaign.maxUsagesPerUser || 1,
         minimumOrderAmount: campaign.minimumOrderAmount || 0,
+        // Time-based restrictions
+        hasTimeRestriction: campaign.hasTimeRestriction || false,
+        startTime: campaign.startTime || '09:00',
+        endTime: campaign.endTime || '23:00',
+        daysOfWeek: campaign.daysOfWeek || [1, 2, 3, 4, 5, 6, 0],
+        // Auto-apply functionality
+        autoApplyOnMenu: campaign.autoApplyOnMenu || false,
         bannerColor: campaign.bannerColor || {
           title: '#ffcc00',
           subtitle: '#ff9900',
@@ -110,6 +124,13 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         discountFixedAmount: 50,
         maxUsagesPerUser: 1,
         minimumOrderAmount: 0,
+        // Time-based restrictions
+        hasTimeRestriction: false,
+        startTime: '09:00',
+        endTime: '23:00',
+        daysOfWeek: [1, 2, 3, 4, 5, 6, 0], // 0=Sunday, 1=Monday, etc.
+        // Auto-apply functionality
+        autoApplyOnMenu: false,
         bannerColor: {
           title: '#ffcc00',
           subtitle: '#ff9900',
@@ -246,10 +267,19 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
         return updated;
       });
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value
-      }));
+      setFormData(prev => {
+        const updatedData = {
+          ...prev,
+          [name]: type === 'checkbox' ? checked : value
+        };
+        
+        // If hasTimeRestriction is unchecked, also uncheck autoApplyOnMenu
+        if (name === 'hasTimeRestriction' && !checked) {
+          updatedData.autoApplyOnMenu = false;
+        }
+        
+        return updatedData;
+      });
     }
   };
 
@@ -568,6 +598,111 @@ const CampaignModal = ({ show, onHide, campaign, onSave }) => {
               </Form.Group>
             </div>
           </div>
+
+          {/* Time Restriction Fields */}
+          <div className="row">
+            <div className="col-md-6">
+              <Form.Group className="mb-3">
+                <Form.Check
+                  type="checkbox"
+                  name="hasTimeRestriction"
+                  label="Enable Time Restrictions"
+                  checked={formData.hasTimeRestriction}
+                  onChange={handleChange}
+                />
+                <Form.Text className="text-muted">
+                  Restrict coupon usage to specific times and days
+                </Form.Text>
+              </Form.Group>
+            </div>
+            <div className="col-md-6">
+              <Form.Group className="mb-3">
+                <Form.Check
+                  type="checkbox"
+                  name="autoApplyOnMenu"
+                  label="Auto-Apply on Menu"
+                  checked={formData.autoApplyOnMenu}
+                  onChange={handleChange}
+                  disabled={!formData.hasTimeRestriction}
+                />
+                <Form.Text className="text-muted">
+                  {formData.hasTimeRestriction 
+                    ? "Automatically apply this coupon when viewing the menu"
+                    : "Enable time restrictions to use auto-apply feature"
+                  }
+                </Form.Text>
+              </Form.Group>
+            </div>
+          </div>
+
+          {formData.hasTimeRestriction && (
+            <>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Start Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name="startTime"
+                      value={formData.startTime}
+                      onChange={handleChange}
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <Form.Group className="mb-3">
+                    <Form.Label>End Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name="endTime"
+                      value={formData.endTime}
+                      onChange={handleChange}
+                    />
+                  </Form.Group>
+                </div>
+              </div>
+              
+              <div className="row">
+                <div className="col-12">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Days of Week</Form.Label>
+                    <div className="d-flex flex-wrap gap-2">
+                      {[
+                        { value: 1, label: 'Monday' },
+                        { value: 2, label: 'Tuesday' },
+                        { value: 3, label: 'Wednesday' },
+                        { value: 4, label: 'Thursday' },
+                        { value: 5, label: 'Friday' },
+                        { value: 6, label: 'Saturday' },
+                        { value: 0, label: 'Sunday' }
+                      ].map((day) => (
+                        <Form.Check
+                          key={day.value}
+                          type="checkbox"
+                          id={`day-${day.value}`}
+                          label={day.label}
+                          checked={formData.daysOfWeek.includes(day.value)}
+                          onChange={(e) => {
+                            const dayValue = day.value;
+                            const newDays = e.target.checked
+                              ? [...formData.daysOfWeek, dayValue]
+                              : formData.daysOfWeek.filter(d => d !== dayValue);
+                            setFormData(prev => ({
+                              ...prev,
+                              daysOfWeek: newDays
+                            }));
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <Form.Text className="text-muted">
+                      Select the days when this coupon can be used
+                    </Form.Text>
+                  </Form.Group>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Color Fields */}
           <div className="row">

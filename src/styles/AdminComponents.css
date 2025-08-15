@@ -83,3 +83,8 @@
 .campaign-modal-description {
   min-height: 120px;
 }
+
+/* NewsManagement.css */
+.news-loading-container {
+  height: 400px;
+}

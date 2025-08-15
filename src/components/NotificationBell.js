@@ -52,7 +52,7 @@ const NotificationBell = () => {
       <Dropdown.Toggle
         variant="link"
         className={`notification-bell text-decoration-none position-relative ${unreadCount > 0 ? 'has-new' : ''}`}
-        style={{ boxShadow: 'none', color: 'white' }}
+        style={{ boxShadow: 'none', color: 'white', height: '100%' }}
       >
         <i className="bi bi-bell fs-5"></i>
         {unreadCount > 0 && (

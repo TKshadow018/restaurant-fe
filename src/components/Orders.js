@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { collection, query, where, orderBy, getDocs, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { Card, Badge, Spinner, Alert } from 'react-bootstrap';
 import '@/styles/theme.css';
@@ -98,7 +98,7 @@ const Orders = () => {
     };
 
     fetchOrders();
-  }, [currentUser, currentLanguage]);
+  }, [currentUser, currentLanguage, t]);
 
   const getStatusColor = (status) => {
     switch (status) {

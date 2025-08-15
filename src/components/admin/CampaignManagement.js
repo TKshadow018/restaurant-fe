@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Banner from "../Banner";
 import CampaignModal from "./CampaignModal";
 import { db } from "../../firebase/config";
 import {
@@ -10,13 +9,9 @@ import {
   doc,
   onSnapshot,
 } from "firebase/firestore";
-import { useSelector } from "react-redux";
 import '../../styles/AdminComponents.css';
 
 const CampaignManagement = () => {
-  // Get food list from Redux
-  const foods = useSelector((state) => state.menu.menuItems);
-
   const [banners, setBanners] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
@@ -46,50 +41,6 @@ const CampaignManagement = () => {
     );
     return () => unsub();
   }, []);
-
-  // Function to generate multilingual duration from campaign dates
-  const generateDuration = (startDate, endDate) => {
-    if (!startDate && !endDate) {
-      return {
-        swedish: "",
-        english: ""
-      };
-    }
-
-    const formatDate = (dateString, language) => {
-      if (!dateString) return "";
-      
-      const date = new Date(dateString);
-      const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      };
-      
-      if (language === 'swedish') {
-        return date.toLocaleDateString('sv-SE', options);
-      } else {
-        return date.toLocaleDateString('en-US', options);
-      }
-    };
-
-    if (startDate && endDate) {
-      return {
-        swedish: `${formatDate(startDate, 'swedish')} - ${formatDate(endDate, 'swedish')}`,
-        english: `${formatDate(startDate, 'english')} - ${formatDate(endDate, 'english')}`
-      };
-    } else if (startDate) {
-      return {
-        swedish: `Från ${formatDate(startDate, 'swedish')}`,
-        english: `From ${formatDate(startDate, 'english')}`
-      };
-    } else if (endDate) {
-      return {
-        swedish: `Till ${formatDate(endDate, 'swedish')}`,
-        english: `Until ${formatDate(endDate, 'english')}`
-      };
-    }
-  };
 
   // Filter campaigns based on search and status
   const filteredBanners = banners.filter(banner => {
@@ -317,6 +268,28 @@ const CampaignManagement = () => {
                       {banner.maxUsagesPerUser && (
                         <small className="text-muted d-block">
                           <strong>Max Uses:</strong> {banner.maxUsagesPerUser} per user
+                        </small>
+                      )}
+                      {banner.hasTimeRestriction && (
+                        <>
+                          <small className="text-muted d-block">
+                            <strong>Time:</strong> {banner.startTime} - {banner.endTime}
+                          </small>
+                          {banner.daysOfWeek && banner.daysOfWeek.length < 7 && (
+                            <small className="text-muted d-block">
+                              <strong>Days:</strong> {
+                                banner.daysOfWeek
+                                  .sort((a, b) => a - b)
+                                  .map(day => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day])
+                                  .join(', ')
+                              }
+                            </small>
+                          )}
+                        </>
+                      )}
+                      {banner.autoApplyOnMenu && (
+                        <small className="text-muted d-block">
+                          <strong>Auto-Apply:</strong> <span className="badge bg-info">Enabled</span>
                         </small>
                       )}
                     </div>

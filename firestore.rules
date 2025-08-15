@@ -2,8 +2,72 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // News collection - read for all, write for admins only
+    match /news/{newsId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isAdmin(); // Allow admins to read all users
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read, write: if isAdmin(); // Allow admins to manage all orders
+    }
+    
+    // Foods/Menu collection
+    match /foods/{foodId} {
+      allow read: if true; // Anyone can read menu items
+      allow write: if isAdmin(); // Only admins can modify menu
+    }
+    
+    // Categories collection
+    match /categories/{categoryId} {
+      allow read: if true; // Anyone can read categories
+      allow write: if isAdmin(); // Only admins can modify categories
+    }
+    
+    // Campaigns collection
+    match /campaigns/{campaignId} {
+      allow read: if true; // Anyone can read campaigns
+      allow write: if isAdmin(); // Only admins can modify campaigns
+    }
+    
+    // Contact information
+    match /contact/{contactId} {
+      allow read: if true; // Anyone can read contact info
+      allow write: if isAdmin(); // Only admins can modify contact info
+    }
+    
+    // Admin notifications
+    match /admin_notifications/{notificationId} {
+      allow read, write: if isAdmin(); // Only admins can access notifications
+    }
+    
+    // User feedback
+    match /feedback/{feedbackId} {
+      allow read, write: if request.auth != null; // Authenticated users can submit feedback
+      allow read, delete: if isAdmin(); // Admins can read and delete feedback
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'admin@restaurant.com' ||
+        request.auth.token.email == 'dev@restaurant.com' ||
+        request.auth.token.email == 'contact@restaurant.com'
+        // Add more admin emails as needed
+      );
+    }
+    
+    // Fallback for any other collections - temporary permissive rule
     match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 12, 2);
+      allow read, write: if request.time < timestamp.date(2025, 12, 31);
     }
   }
 }
